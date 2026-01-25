@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b10721184159384b991ef41fdc8b098, type: 3}
+  m_Name: EnemySpaceshipSpawnerSettingsSO
+  m_EditorClassIdentifier: Assembly-CSharp::EnemySpaceshipSpawnerSettingsSO
+  enemySpaceshipPrefab: {fileID: 5549628142487207619, guid: 0c4ae840623f29e4cad6f92203c5dea3, type: 3}
+  spawnInterval: 5
+  enemiesPerSpawn: 1
+  minSpawnAreaSize: {x: 50, y: 50}
+  maxSpawnAreaSize: {x: 100, y: 100}
