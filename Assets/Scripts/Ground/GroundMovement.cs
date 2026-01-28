@@ -11,16 +11,20 @@ public class GroundMovement : MonoBehaviour
     [SerializeField] private float deceleration = 70f;
 
     [Header("Jump")]
-    [SerializeField] private float jumpVelocity = 12f;
-    [SerializeField] private float coyoteTime = 0.08f; // allows for jumping shortly after leaving ground(floating jump for some frames)
+    [SerializeField] private float jumpVelocity = 18f; // tweak this with gravity( grav set to 3 so fall fast enough plus jumps feels decent)
+    [SerializeField] private float coyoteTime = 0.08f; // allows for jumping shortly after leaving ground(floating jump for some frames) 
     [SerializeField] private float jumpBufferTime = 0.10f;
+
+    [Header("Jump (Extras)")]
+    [SerializeField] private bool enableDoubleJump = false;
+    [SerializeField] private int maxAirJumps = 1; // 1 = double jump, 2 = triple . . .
+    private int airJumpsRemaining;
 
     [Header("Ground Check")]
     [SerializeField] private Transform groundCheck;
     [SerializeField] private Vector2 groundCheckSize = new Vector2(0.6f, 0.1f);
     [SerializeField] private LayerMask groundMask;   // Ground + OneWayPlatform for jumping 
     [SerializeField] private LayerMask oneWayMask;   // OneWayPlatform only for dropping through select platforms
-
 
     [Header("Drop Through")]
     [SerializeField] private float dropDuration = 0.5f;
@@ -92,10 +96,17 @@ public class GroundMovement : MonoBehaviour
         // Ground check + timers
         isGrounded = Physics2D.OverlapBox(groundCheck.position, groundCheckSize, 0f, groundMask);
 
-        if (isGrounded) coyoteTimer = coyoteTime;
-        else coyoteTimer -= Time.deltaTime;
+        if (isGrounded)
+        {
+            coyoteTimer = coyoteTime;
 
-        jumpBufferTimer -= Time.deltaTime;
+            // Reset air jumps when you touch the ground
+            airJumpsRemaining = enableDoubleJump ? maxAirJumps : 0;
+        }
+        else
+        {
+            coyoteTimer -= Time.deltaTime;
+        }
     }
 
     private void FixedUpdate()
@@ -130,14 +141,25 @@ public class GroundMovement : MonoBehaviour
     {
         if (isDropping) return;
 
-        bool canJump = coyoteTimer > 0f;
         bool buffered = jumpBufferTimer > 0f;
+        if (!buffered) return;
 
-        if (canJump && buffered)
+        bool canGroundJump = coyoteTimer > 0f; // grounded or just left ground (coyote)
+        bool canAirJump = enableDoubleJump && !isGrounded && airJumpsRemaining > 0;
+
+        if (canGroundJump || canAirJump)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpVelocity);
-            coyoteTimer = 0f;
             jumpBufferTimer = 0f;
+
+            if (canGroundJump)
+            {
+                coyoteTimer = 0f; // saftey to prevent double jump within coyote time
+            }
+            else
+            {
+                airJumpsRemaining--;
+            }
         }
     }
 
