@@ -1096,6 +1096,8 @@ MonoBehaviour:
   jumpVelocity: 18
   coyoteTime: 0.08
   jumpBufferTime: 0.1
+  enableDoubleJump: 1
+  maxAirJumps: 1
   groundCheck: {fileID: 919925894}
   groundCheckSize: {x: 0.6, y: 0.1}
   groundMask:
