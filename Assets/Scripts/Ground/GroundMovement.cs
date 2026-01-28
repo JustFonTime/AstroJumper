@@ -93,6 +93,10 @@ public class GroundMovement : MonoBehaviour
         Vector2 move = moveAction.ReadValue<Vector2>();
         xInput = Mathf.Clamp(move.x, -1f, 1f);
 
+        //fixing timer so it counts down properly
+        jumpBufferTimer -= Time.deltaTime;
+        if (jumpBufferTimer < 0f) jumpBufferTimer = 0f;
+
         // Ground check + timers
         isGrounded = Physics2D.OverlapBox(groundCheck.position, groundCheckSize, 0f, groundMask);
 
