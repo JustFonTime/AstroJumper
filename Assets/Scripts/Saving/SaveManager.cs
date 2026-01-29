@@ -17,10 +17,15 @@ public class SaveManager : MonoBehaviour
 
     [Header("auto Save")] [SerializeField] private bool autoSave = true;
 
-    [SerializeField] private float autoSaveDelay = 2.0f;
+    [SerializeField] private float dirtyDelaySaveTime = 2.0f;
 
     private bool dirty;
     private float dirtyTimer;
+
+    [Header("AutoSave")] [SerializeField] private bool autoSaveAutoSave = true;
+    [SerializeField] private float autoSaveDelaySaveTime = 5.0f;
+
+
     private void Awake()
     {
         Debug.Log(Application.persistentDataPath);
@@ -34,16 +39,24 @@ public class SaveManager : MonoBehaviour
         DontDestroyOnLoad(this.gameObject);
 
         LoadGame();
-        AddNewMoney(10);
+        AddNewMoney(100);
         AddMoveForceLevel(1);
-        SaveGame();
+    }
+
+    private IEnumerator AutoSave()
+    {
+        while (autoSave)
+        {
+            yield return new WaitForSeconds(autoSaveDelaySaveTime);
+            SaveGame();
+        }
     }
 
     private void Update()
     {
         if (!autoSave || !dirty) return;
-        dirtyTimer+=Time.unscaledDeltaTime;
-        if (dirtyTimer >= autoSaveDelay)
+        dirtyTimer += Time.unscaledDeltaTime;
+        if (dirtyTimer >= dirtyDelaySaveTime)
         {
             SaveGame();
         }
@@ -54,7 +67,7 @@ public class SaveManager : MonoBehaviour
         dirty = true;
         dirtyTimer = 0f;
     }
-    
+
     private void LoadGame()
     {
         if (!File.Exists(SaveFilePath))
@@ -103,9 +116,9 @@ public class SaveManager : MonoBehaviour
 
     private void OnApplicationQuit()
     {
-        if(dirty) SaveGame();
+        if (dirty) SaveGame();
     }
-    
+
     private void OnApplicationFocus(bool hasFocus)
     {
         if (!hasFocus && dirty) SaveGame();
@@ -115,7 +128,7 @@ public class SaveManager : MonoBehaviour
     {
         if (paused && dirty) SaveGame();
     }
-    
+
     #region Helper Functions
 
     public int GetNewMoney() => (CurrentSaveData.newMoney != null) ? CurrentSaveData.newMoney : 0;
@@ -136,6 +149,52 @@ public class SaveManager : MonoBehaviour
         else
             Debug.LogError("CurrentSaveData.newMoney is null!");
         MakeDirty();
+    }
+
+    public int GetUpgradeLevel(PlayerUpgradeState.UpgradeType upgradeType)
+    {
+        switch (upgradeType)
+        {
+            case PlayerUpgradeState.UpgradeType.MoveForce:
+                return CurrentSaveData.spaceshipUpgradeData.moveForceLevel;
+            case PlayerUpgradeState.UpgradeType.MaxSpeed:
+                return CurrentSaveData.spaceshipUpgradeData.maxSpeedLevel;
+            case PlayerUpgradeState.UpgradeType.BoostForce:
+                return CurrentSaveData.spaceshipUpgradeData.boostForceLevel;
+            case PlayerUpgradeState.UpgradeType.BarrelRollDistance:
+                return CurrentSaveData.spaceshipUpgradeData.barrelRollDistanceLevel;
+            case PlayerUpgradeState.UpgradeType.BarrelRollSpeed:
+                return CurrentSaveData.spaceshipUpgradeData.barrelRollSpeedLevel;
+            case PlayerUpgradeState.UpgradeType.FireRate:
+                return CurrentSaveData.spaceshipUpgradeData.fireRateLevel;
+        }
+
+        return -1;
+    }
+
+    public void AddUpgradeLevel(PlayerUpgradeState.UpgradeType upgradeType)
+    {
+        switch (upgradeType)
+        {
+            case PlayerUpgradeState.UpgradeType.MoveForce:
+                CurrentSaveData.spaceshipUpgradeData.moveForceLevel++;
+                break;
+            case PlayerUpgradeState.UpgradeType.MaxSpeed:
+                CurrentSaveData.spaceshipUpgradeData.maxSpeedLevel++;
+                break;
+            case PlayerUpgradeState.UpgradeType.BoostForce:
+                CurrentSaveData.spaceshipUpgradeData.boostForceLevel++;
+                break;
+            case PlayerUpgradeState.UpgradeType.BarrelRollSpeed:
+                CurrentSaveData.spaceshipUpgradeData.barrelRollSpeedLevel++;
+                break;
+            case PlayerUpgradeState.UpgradeType.BarrelRollDistance:
+                CurrentSaveData.spaceshipUpgradeData.barrelRollDistanceLevel++;
+                break;
+            case PlayerUpgradeState.UpgradeType.FireRate:
+                CurrentSaveData.spaceshipUpgradeData.fireRateLevel++;
+                break;
+        }
     }
 
     public int GetMoveForceLevel() => CurrentSaveData != null ? CurrentSaveData.spaceshipUpgradeData.moveForceLevel : 0;
