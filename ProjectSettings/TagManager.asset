@@ -6,6 +6,7 @@ TagManager:
   tags:
   - PlanetUI
   - Canvas
+  - Planet
   layers:
   - Default
   - TransparentFX
