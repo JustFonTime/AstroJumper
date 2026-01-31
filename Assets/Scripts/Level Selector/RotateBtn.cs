@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 public class RotateBtn : MonoBehaviour
@@ -5,6 +6,7 @@ public class RotateBtn : MonoBehaviour
     [SerializeField] private bool rotateRight = false;
     private int whichPlanet = 0;
     public GameObject[] planets;
+    public TextMeshProUGUI planetTxt;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -49,6 +51,7 @@ public class RotateBtn : MonoBehaviour
             {
                 planets[i].transform.position = new Vector3(0, 1.4f, 0);
                 // call function which loads all data into the UI
+                planetTxt.text = planets[i].GetComponent<Planet>().planetName + "\n" + planets[i].GetComponent<Planet>().dificulty + "\n" + planets[i].GetComponent<Planet>().faction + "\n" + planets[i].GetComponent<Planet>().resources;
             }
             else
             {

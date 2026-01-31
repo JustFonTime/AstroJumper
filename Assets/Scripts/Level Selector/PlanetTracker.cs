@@ -87,8 +87,7 @@ public class PlanetTracker : MonoBehaviour
                 {
                     print("Clicked on " + planet.name);
                     // create UI panel showing planet info and get info from the planet script
-                    var info = planet.GetComponent<Planet>().GetInfo(); // this holds all info about the planet
-                    CreateUI(info.name, info.description, info.index, info.materials);
+                    CreateUI();
                     isHovering = true;
                 }
             }
@@ -117,15 +116,14 @@ public class PlanetTracker : MonoBehaviour
                 {
                     print("Clicked on " + planet.name);
                     // create UI panel showing planet info and get info from the planet script
-                    var info = planet.GetComponent<Planet>().GetInfo(); // this holds all info about the planet
-                    CreateUI(info.name, info.description, info.index, info.materials);
+                    CreateUI();
 
                 }
             }
         }
     }
 
-    void CreateUI(string name, string description, int index, string materials)
+    void CreateUI()
     {
         // create UI panel showing planet info
         Vector3 parentTransform = new Vector3(0, 0, 0);
