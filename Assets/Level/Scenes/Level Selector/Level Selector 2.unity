@@ -490,7 +490,7 @@ MonoBehaviour:
   UIpanelPrefab: {fileID: 3785556831217526800, guid: 20e6c419f9544474c9dd046509b2cc3e, type: 3}
   planets: []
   mouseWorldPos: {x: 0, y: 0, z: 0}
-  onHover: 1
+  onHover: 0
   isHovering: 0
 --- !u!4 &438613777
 Transform:

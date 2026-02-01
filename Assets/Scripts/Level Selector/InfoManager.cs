@@ -1,4 +1,5 @@
 using System;
+using TMPro;
 using UnityEngine;
 
 public class InfoManager : MonoBehaviour
@@ -18,17 +19,9 @@ public class InfoManager : MonoBehaviour
         readCSV();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     private void readCSV()
     {
         string[] data = textAssetData.text.Split(new char[] { ',', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-
-        int tableSize = data.Length / 5 - 1;
 
         for (int i = 0; i < planets.Length; i++)
         {
@@ -38,6 +31,7 @@ public class InfoManager : MonoBehaviour
             planet.resources = data[(i + 1) + 5 * 2];
             planet.dificulty = data[(i + 1) + 5 * 3];
             planet.faction = data[(i + 1) + 5 * 4];
+            planet.displayName();
         }
     }
 }

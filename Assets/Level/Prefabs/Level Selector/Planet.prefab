@@ -141,3 +141,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fd3141bcf8cbd5449cf45a0b8bfeef3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Planet
+  planetName: 
+  planetDescription: 
+  resources: 
+  dificulty: 
+  faction: 
+  nameTextPrefab: {fileID: 3513031692120122635, guid: b7e47d95d248ec042a0b452f35a263f2, type: 3}

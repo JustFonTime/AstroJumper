@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using NUnit.Framework;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -11,9 +12,6 @@ public class PlanetTracker : MonoBehaviour
     [SerializeField] List<GameObject> planets = new List<GameObject>();
     Vector3 mousePos;
     [SerializeField] Vector3 mouseWorldPos;
-
-    [SerializeField] bool onHover = false;
-    [SerializeField] bool isHovering = false;
 
     private void Awake() 
     {
@@ -30,73 +28,42 @@ public class PlanetTracker : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!onHover)
+        if (GameObject.FindAnyObjectByType<PlanetUIBtn>() != null)
         {
-            if (Mouse.current.leftButton.wasPressedThisFrame)
-            {
-                OnClick();
-            }   
-            mousePos = Mouse.current.position.ReadValue();
-            mousePos.z = Camera.main.nearClipPlane;
-            mouseWorldPos = Camera.main.ScreenToWorldPoint(mousePos);
-
-            // use raycast to see if it hits any planet colliders
-            Ray ray = Camera.main.ScreenPointToRay(mouseWorldPos);
-            Debug.DrawRay(mouseWorldPos, ray.direction * 10, Color.yellow);
-            RaycastHit2D hit = Physics2D.Raycast(mouseWorldPos, ray.direction * 10);
-            if(hit.collider != null)
-            {
-                foreach(GameObject planet in planets)
-                {
-                    if(hit.collider.gameObject.name == planet.name)
-                    {
-                        // mouse is hovering over planet, do some stuff, rn make bigger
-                        planet.transform.localScale = new Vector3(3, 3, 1);
-                    }
-                    
-                }
-            }
-            else
-            {
-                // reset all planet scales
-                foreach(GameObject planet in planets)
-                {
-                    planet.transform.localScale = new Vector3(2, 2, 1);
-                }
-            }
+            return;
         }
-        else
-        {
-            onPlanetHover();
-        }
-    }
-    private void onPlanetHover()
-    {
         mousePos = Mouse.current.position.ReadValue();
         mousePos.z = Camera.main.nearClipPlane;
         mouseWorldPos = Camera.main.ScreenToWorldPoint(mousePos);
 
         // use raycast to see if it hits any planet colliders
         Ray ray = Camera.main.ScreenPointToRay(mouseWorldPos);
+        Debug.DrawRay(mouseWorldPos, ray.direction * 10, Color.yellow);
         RaycastHit2D hit = Physics2D.Raycast(mouseWorldPos, ray.direction * 10);
-        if(hit.collider != null && !isHovering) 
+        if(hit.collider != null)
         {
             foreach(GameObject planet in planets)
             {
                 if(hit.collider.gameObject.name == planet.name)
                 {
-                    print("Clicked on " + planet.name);
-                    // create UI panel showing planet info and get info from the planet script
-                    CreateUI();
-                    isHovering = true;
+                    // mouse is hovering over planet, do some stuff, rn make bigger
+                    planet.transform.localScale = new Vector3(3, 3, 1);
                 }
             }
         }
-        else if (hit.collider == null && isHovering)
+        else
         {
-            isHovering = false;
-            Destroy(GameObject.FindGameObjectWithTag("PlanetUI"));
+            // reset all planet scales
+            foreach(GameObject planet in planets)
+            {
+                planet.transform.localScale = new Vector3(2, 2, 1);
+            }
         }
+
+        if (Mouse.current.leftButton.wasPressedThisFrame)
+        {
+            OnClick();
+        }   
     }
     private void OnClick()
     {
@@ -112,18 +79,21 @@ public class PlanetTracker : MonoBehaviour
         {
             foreach(GameObject planet in planets)
             {
+                // reset all planet scales
+                planet.transform.localScale = new Vector3(2, 2, 1);
                 if(hit.collider.gameObject.name == planet.name)
                 {
                     print("Clicked on " + planet.name);
+
                     // create UI panel showing planet info and get info from the planet script
-                    CreateUI();
+                    CreateUI(planet);
 
                 }
             }
         }
     }
 
-    void CreateUI()
+    void CreateUI(GameObject planetGO)
     {
         // create UI panel showing planet info
         Vector3 parentTransform = new Vector3(0, 0, 0);
@@ -131,6 +101,9 @@ public class PlanetTracker : MonoBehaviour
         
         print(GameObject.FindGameObjectWithTag("Canvas").transform);
 
+        TextMeshProUGUI UIText = UI.GetComponentInChildren<TextMeshProUGUI>();
+        Planet planet = planetGO.GetComponent<Planet>();
+        UIText.text = planet.planetName + "\n" + planet.dificulty + "\n" + planet.faction + "\n" + planet.resources;
 
         UI.GetComponent<RectTransform>().SetParent(GameObject.FindGameObjectWithTag("Canvas").transform, false);
 
