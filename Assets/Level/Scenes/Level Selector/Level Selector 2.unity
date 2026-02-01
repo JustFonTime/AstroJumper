@@ -270,7 +270,7 @@ PrefabInstance:
       objectReference: {fileID: 21300000, guid: d37ebee00e5d62b47976156bbd171b8c, type: 3}
     - target: {fileID: 5925794667870993622, guid: 6b39fa3b3db899d418cd0eb763bf1a58, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -5.0253882
+      value: -4
       objectReference: {fileID: 0}
     - target: {fileID: 5925794667870993622, guid: 6b39fa3b3db899d418cd0eb763bf1a58, type: 3}
       propertyPath: m_LocalPosition.y
@@ -312,8 +312,7 @@ PrefabInstance:
       propertyPath: m_Name
       value: Planet 4
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 6934221053434327442, guid: 6b39fa3b3db899d418cd0eb763bf1a58, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
@@ -490,8 +489,6 @@ MonoBehaviour:
   UIpanelPrefab: {fileID: 3785556831217526800, guid: 20e6c419f9544474c9dd046509b2cc3e, type: 3}
   planets: []
   mouseWorldPos: {x: 0, y: 0, z: 0}
-  onHover: 0
-  isHovering: 0
 --- !u!4 &438613777
 Transform:
   m_ObjectHideFlags: 0
@@ -1112,7 +1109,7 @@ Canvas:
   m_GameObject: {fileID: 1361977982}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 0
+  m_RenderMode: 1
   m_Camera: {fileID: 0}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
@@ -1207,6 +1204,52 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6b39fa3b3db899d418cd0eb763bf1a58, type: 3}
+--- !u!1 &1757461889
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1757461891}
+  - component: {fileID: 1757461890}
+  m_Layer: 0
+  m_Name: InfoManger
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1757461890
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1757461889}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a98c179425c68ae4caa23ac1df46218f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InfoManager
+  textAssetData: {fileID: 4900000, guid: be146adf085b5e94c9007134f89482e6, type: 3}
+  planets: []
+--- !u!4 &1757461891
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1757461889}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 176.87161, y: 105.29093, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &2137545620
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1421,3 +1464,4 @@ SceneRoots:
   - {fileID: 2137545620}
   - {fileID: 1727644613}
   - {fileID: 1037500531}
+  - {fileID: 1757461891}
