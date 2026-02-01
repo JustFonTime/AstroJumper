@@ -1,0 +1,4 @@
+These are three different small iterations that i've made for the level selection.
+ First scene is the closest to what the original game had
+ The second one when you hover over the planet the UI pops up, I think we can change it a bit to make it better.
+ The third one is a scroll planet kind of selector. This one also has CSV functionality for information for the planet descriptions. Look at infomanager script for that
