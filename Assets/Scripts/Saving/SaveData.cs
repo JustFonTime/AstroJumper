@@ -21,6 +21,8 @@ public class SaveData
         public int barrelRollDistanceLevel;
         public int barrelRollSpeedLevel;
         public int fireRateLevel;
+        public int maxShieldsLevel;
+        public int maxHealthLevel;
     }
 
     public static SaveData CreateDefualtSaveData(DefualtGameSaveSO defaults)
@@ -40,6 +42,8 @@ public class SaveData
             d.spaceshipUpgradeData.barrelRollSpeedLevel =
                 u.barrelRollSpeedStartingLevel;
             d.spaceshipUpgradeData.fireRateLevel = u.fireRateStartingLevel;
+            d.spaceshipUpgradeData.maxHealthLevel = u.maxHealthStartingLevel;
+            d.spaceshipUpgradeData.maxShieldsLevel = u.maxShieldsStartingLevel;
         }
         else
         {
@@ -50,6 +54,8 @@ public class SaveData
             d.spaceshipUpgradeData.barrelRollDistanceLevel = 0;
             d.spaceshipUpgradeData.barrelRollSpeedLevel = 0;
             d.spaceshipUpgradeData.fireRateLevel = 0;
+            d.spaceshipUpgradeData.maxHealthLevel = 0;
+            d.spaceshipUpgradeData.maxShieldsLevel = 0;
         }
 
         return d;

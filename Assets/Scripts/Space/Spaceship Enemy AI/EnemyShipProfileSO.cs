@@ -34,4 +34,8 @@ public class EnemyShipProfileSO : ScriptableObject
     [Header("Combat")] public float combatRange = 20f;
     public float minFireRate = 1f;
     public float maxFireRate = 2f;
+
+    [Header("Health")] public int maxHealth = 50;
+
+
 }

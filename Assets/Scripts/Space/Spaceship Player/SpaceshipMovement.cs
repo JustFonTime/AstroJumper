@@ -43,7 +43,6 @@ public class SpaceshipMovement : MonoBehaviour
 
     [SerializeField] private KeyCode boostKey = KeyCode.LeftShift;
     [SerializeField] private float boostConsumptionRate = 3;
-    [SerializeField] private float boostCooldown = 2f;
     [SerializeField] private bool isBoosting = false;
 
     [SerializeField] private bool isRecharging = false;
@@ -59,6 +58,7 @@ public class SpaceshipMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         cam = Camera.main;
+        
     }
 
     private void Update()

@@ -176,7 +176,7 @@ GameObject:
   - component: {fileID: 3101948059298077492}
   - component: {fileID: 3252553446457875857}
   m_Layer: 0
-  m_Name: Enemy Spaceship
+  m_Name: Normal Enemy Spaceship
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -273,7 +273,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HealthComponent
   isPlayer: 0
   playerUpgradeState: {fileID: 0}
-  shipProfile: {fileID: 0}
+  shipProfile: {fileID: 11400000, guid: ef7469ea06093c74a8fbc4e093560e99, type: 2}
   currentHealth: 100
   maxHealth: 100
   maxShileds: 100

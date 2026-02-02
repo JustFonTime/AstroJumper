@@ -25,7 +25,21 @@ public class PlayerSpaceshipUpgradesSO : ScriptableObject
     public float fireRateUpgradePerLevel = 0.05f;
     public float fireRateCostPerLevel = 100f;
 
+    [Header("Health Upgrades")] public int maxHealthStartingLevel = 1;
+    public int maxHealthUpgradePerLevel = 15;
+    public float maxHealthUpgradeCostPerLevel = 100f;
+
+    [Header("Shields Upgrades")] public int maxShieldsStartingLevel = 1;
+    public float maxShieldsPerLevel = 7.5f;
+    public float maxShieldCostPerLevel = 100f;
+
     //---------------------Helpers---------------------------------------
+
+    /// <summary>
+    /// Returns how much each upgrade cost
+    /// </summary>
+    /// <param name="upgradeType"></param>
+    /// <returns></returns>
     public float GetUpgradeCost(PlayerUpgradeState.UpgradeType upgradeType)
     {
         switch (upgradeType)
@@ -43,6 +57,10 @@ public class PlayerSpaceshipUpgradesSO : ScriptableObject
                 return barrelRollSpeedCostPerLevel;
             case PlayerUpgradeState.UpgradeType.FireRate:
                 return fireRateCostPerLevel;
+            case PlayerUpgradeState.UpgradeType.MaxHealth:
+                return maxHealthUpgradeCostPerLevel;
+            case PlayerUpgradeState.UpgradeType.MaxShields:
+                return maxShieldCostPerLevel;
         }
 
         return -1;
