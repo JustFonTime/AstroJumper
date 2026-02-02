@@ -19,6 +19,37 @@ public class Menu_Manager : MonoBehaviour
     void Start()
     {
         ShowMainMenu();
+
+        if (volumeSlider != null && volumeText != null)
+        {
+            float savedVolume = PlayerPrefs.GetFloat("MasterVolume", 0.75f);
+            volumeSlider.value = savedVolume;
+
+            UpdateVolumeText(savedVolume);
+
+            volumeSlider.onValueChanged.AddListener(SetMasterVolume);
+
+            SetMasterVolume(savedVolume);
+        }
+    }
+
+    public void SetMasterVolume(float sliderValue)
+    {
+        float volumedB = Mathf.Log10(sliderValue) * 20;
+        audioMixer.SetFloat("MasterVolume", volumedB);
+
+        UpdateVolumeText(sliderValue);
+
+        PlayerPrefs.SetFloat("MasterVolume", sliderValue);
+    }
+
+    void UpdateVolumeText(float sliderValue)
+    {
+        if (volumeText != null)
+        {
+            int volumePercent = Mathf.RoundToInt(sliderValue * 100);
+            volumeText.text = volumePercent.ToString() + "%";
+        }
     }
 
     public void ShowMainMenu()
