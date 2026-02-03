@@ -10,6 +10,7 @@ public class Menu_Manager : MonoBehaviour
     [Header("Menu Panels")]
     public GameObject mainMenuPanel;
     public GameObject optionsPanel;
+    public GameObject creditsPanel;
 
     [Header("Audio Settings")]
     public AudioMixer audioMixer;
@@ -63,6 +64,7 @@ public class Menu_Manager : MonoBehaviour
     {
         mainMenuPanel.SetActive(true);
         optionsPanel.SetActive(false);
+        creditsPanel.SetActive(false);
     }
 
     public void StartGame()
@@ -74,5 +76,13 @@ public class Menu_Manager : MonoBehaviour
     {
         mainMenuPanel.SetActive(false);
         optionsPanel.SetActive(true);
+        creditsPanel.SetActive(false);
+    }
+
+    public void ShowCreditsMenu()
+    {
+        mainMenuPanel.SetActive(false);
+        optionsPanel.SetActive(false);
+        creditsPanel.SetActive(true);
     }
 }
