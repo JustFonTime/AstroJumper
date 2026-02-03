@@ -3,6 +3,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.Audio;
 using TMPro;
+using System;
 
 public class Menu_Manager : MonoBehaviour
 {
@@ -35,6 +36,12 @@ public class Menu_Manager : MonoBehaviour
 
     public void SetMasterVolume(float sliderValue)
     {
+        AudioSource bgMusic = GameObject.FindObjectOfType<AudioSource>();
+        if (bgMusic != null)
+        {
+            bgMusic.volume = sliderValue;
+        }
+
         float volumedB = Mathf.Log10(sliderValue) * 20;
         audioMixer.SetFloat("MasterVolume", volumedB);
 
