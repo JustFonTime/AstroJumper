@@ -58,6 +58,11 @@ public class Menu_Manager : MonoBehaviour
         optionsPanel.SetActive(false);
     }
 
+    public void StartGame()
+    {
+        SceneManager.LoadScene("Level Selector");
+    }
+
     public void ShowOptionsMenu()
     {
         mainMenuPanel.SetActive(false);
