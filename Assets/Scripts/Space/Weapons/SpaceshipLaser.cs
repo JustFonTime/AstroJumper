@@ -26,7 +26,7 @@ public class SpaceshipLaser : MonoBehaviour
         // if we hit a child collider, look up the hierarchy
         var damageable = other.GetComponentInParent<ISpaceDamagable>();
         if (damageable == null) return;
-
+        
         damageable.TakeDamage(damage);
 
         if (destroyOnHit)

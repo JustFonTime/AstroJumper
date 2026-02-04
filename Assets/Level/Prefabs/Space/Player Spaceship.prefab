@@ -88,7 +88,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 10
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 75f5f34dc1b5347e0b8351032682f224, type: 3}
   m_Color: {r: 0.40606087, g: 0.56144124, b: 0.6886792, a: 1}
@@ -150,7 +150,7 @@ MonoBehaviour:
   upgrades: {fileID: 4162244750886775844}
   attacks:
   - id: Single Laser
-    projectile: {fileID: 7494528597148406353, guid: f738d5951d8b8224d972be56ec1293c3, type: 3}
+    projectile: {fileID: 659358672219713016, guid: 0f075aa575b24054d9af932f0af45de2, type: 3}
     firePoint: {fileID: 8310198182133585324}
     fireRate: 0.3
     canFire: 1
@@ -333,7 +333,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 10
   m_MaskInteraction: 0
   m_Sprite: {fileID: -9095717837082945937, guid: 207ee8102dd4143d288186ef0be518ee, type: 3}
   m_Color: {r: 1, g: 0.08018869, b: 0.14008042, a: 1}
@@ -462,7 +462,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 10
   m_MaskInteraction: 0
   m_Sprite: {fileID: -9095717837082945937, guid: 207ee8102dd4143d288186ef0be518ee, type: 3}
   m_Color: {r: 1, g: 0.08018869, b: 0.14008042, a: 1}

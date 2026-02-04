@@ -119,6 +119,8 @@ public class SpaceshipHealthComponent : MonoBehaviour, ISpaceDamagable
 
     private void Die()
     {
-        Destroy(this.gameObject);
+        var pooled = this.GetComponent<PooledEnemy>();
+        if (pooled != null) pooled.Despawn();
+        else Destroy(this);
     }
 }

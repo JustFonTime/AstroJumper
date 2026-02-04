@@ -1,62 +1,101 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class EnemySpaceshipAI : MonoBehaviour
 {
-    [SerializeField] private GameObject player;
+    [Header("Refs")] [SerializeField] private GameObject player;
     [SerializeField] private EnemyShipProfileSO shipProfile;
 
     private Rigidbody2D rb;
 
-    [SerializeField] private bool isMovingTowardsPlayer = false;
-    [SerializeField] private bool isBarrellRolling = false;
+    [Header("Runtime")] [SerializeField] private bool isBarrellRolling = false;
     [SerializeField] private bool strafeRight = true;
     [SerializeField] private float currentSpeedMultiplier = 1f;
 
-    // cached input/aim
-    private Vector2 moveInput;
     private float targetAngle;
 
+    // coroutines (so we can stop/restart when pooling)
+    private Coroutine barrelCo;
+    private Coroutine strafeCo;
+
+    [Header("Separation")] [SerializeField]
+    private float separationRadius = 2.5f;
+
+    [SerializeField] private float separationForce = 35f;
+    [SerializeField] private LayerMask enemyMask;
+
+    private readonly Collider2D[] sepHits = new Collider2D[16];
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
     }
 
+
     private void Start()
+    {
+        ResetForSpawn(player != null ? player : GameObject.FindGameObjectWithTag("Player"));
+    }
+
+
+    public void ResetForSpawn(GameObject playerTarget)
     {
         if (shipProfile == null)
         {
-            Debug.LogError("No ship profile assigned");
+            Debug.LogError($"{name} has no shipProfile assigned.");
             enabled = false;
             return;
         }
 
-        if (player == null)
-            player = GameObject.FindGameObjectWithTag("Player");
+        enabled = true;
 
-        if (shipProfile.useRandomBarrelRoll)
-            StartCoroutine(RandomBarrellRoll());
+        player = playerTarget != null ? playerTarget : GameObject.FindGameObjectWithTag("Player");
+
+
+        isBarrellRolling = false;
+        currentSpeedMultiplier = 1f;
+
+
+        rb.linearVelocity = Vector2.zero;
+        rb.angularVelocity = 0f;
+
+
+        if (barrelCo != null) StopCoroutine(barrelCo);
+        if (strafeCo != null) StopCoroutine(strafeCo);
+        barrelCo = null;
+        strafeCo = null;
+
+
+
+        strafeRight = shipProfile.startStrafeRight ^ (Random.value > 0.5f);
+
 
         if (shipProfile.useRandomStrafeDirection)
-            StartCoroutine(RandomSwitchStraffeDirection());
+            strafeCo = StartCoroutine(RandomSwitchStraffeDirection());
 
-        strafeRight = shipProfile.startStrafeRight;
+        if (shipProfile.useRandomBarrelRoll)
+            barrelCo = StartCoroutine(RandomBarrellRoll());
+    }
+
+    private void OnDisable()
+    {
+        if (barrelCo != null) StopCoroutine(barrelCo);
+        if (strafeCo != null) StopCoroutine(strafeCo);
+        barrelCo = null;
+        strafeCo = null;
     }
 
     private void FixedUpdate()
     {
-        UpdateSpeedMultiplyier();
-        if (isBarrellRolling)
-            return;
+        if (!enabled || player == null) return;
 
+        UpdateSpeedMultiplyier();
+        if (isBarrellRolling) return;
 
         StayInRangeOfPlayer();
         StraffeAroundPlayer();
+        ApplySeparation();
         RotateToPlayer();
         ClampSpeed();
     }
@@ -64,15 +103,14 @@ public class EnemySpaceshipAI : MonoBehaviour
     private void ClampSpeed()
     {
         float max = shipProfile.maxSpeed * (shipProfile.useRandomSpeed ? currentSpeedMultiplier : 1f);
-        if (rb.linearVelocity.magnitude > max)
-            rb.linearVelocity = rb.linearVelocity.normalized *
-                                (shipProfile.maxSpeed * (shipProfile.useRandomSpeed ? currentSpeedMultiplier : 1f));
-        ;
+
+        if (rb.linearVelocity.sqrMagnitude > max * max)
+            rb.linearVelocity = rb.linearVelocity.normalized * max;
     }
 
     private void RotateToPlayer()
     {
-        Vector2 direction = (player.transform.position - transform.position).normalized;
+        Vector2 direction = ((Vector2)player.transform.position - rb.position).normalized;
         targetAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg + shipProfile.rotationOffset;
 
         float newAngle = Mathf.LerpAngle(rb.rotation, targetAngle, shipProfile.rotationLerp * Time.fixedDeltaTime);
@@ -81,86 +119,93 @@ public class EnemySpaceshipAI : MonoBehaviour
 
     private void MoveTowardsPlayer()
     {
-        Vector2 direction = (player.transform.position - transform.position).normalized;
-        float mVoveForce = this.shipProfile.moveForce;
-
-        if (shipProfile.useRandomSpeed)
-            mVoveForce *= currentSpeedMultiplier;
-
-
-        rb.AddForce(direction * mVoveForce, ForceMode2D.Force);
+        Vector2 direction = ((Vector2)player.transform.position - rb.position).normalized;
+        float force = shipProfile.moveForce * (shipProfile.useRandomSpeed ? currentSpeedMultiplier : 1f);
+        rb.AddForce(direction * force, ForceMode2D.Force);
     }
 
     private void MoveAwayFromPlayer()
     {
-        Vector2 direction = (transform.position - player.transform.position).normalized;
-
-
-        float mVoveForce = this.shipProfile.moveForce;
-
-        if (shipProfile.useRandomSpeed)
-        {
-            mVoveForce *= currentSpeedMultiplier;
-        }
-
-        rb.AddForce(direction * mVoveForce, ForceMode2D.Force);
+        Vector2 direction = (rb.position - (Vector2)player.transform.position).normalized;
+        float force = shipProfile.moveForce * (shipProfile.useRandomSpeed ? currentSpeedMultiplier : 1f);
+        rb.AddForce(direction * force, ForceMode2D.Force);
     }
+
 
     private void StayInRangeOfPlayer()
     {
-        float distance = Vector2.Distance(transform.position, player.transform.position);
-        if (shipProfile.minDistanceFromPlayer <= distance && distance <= shipProfile.maxDistanceFromPlayer)
-        {
-        }
-        else
-        {
-        }
+        float distance = Vector2.Distance(rb.position, player.transform.position);
 
         if (distance < shipProfile.minDistanceFromPlayer)
         {
-            isMovingTowardsPlayer = false;
-        }
-        else if (distance > shipProfile.maxDistanceFromPlayer)
-        {
-            isMovingTowardsPlayer = true;
+            MoveAwayFromPlayer();
+            return;
         }
 
-
-        if (isMovingTowardsPlayer)
+        if (distance > shipProfile.maxDistanceFromPlayer)
         {
             MoveTowardsPlayer();
+            return;
         }
-        else
-        {
-            MoveAwayFromPlayer();
-        }
+
+        float target = (shipProfile.minDistanceFromPlayer + shipProfile.maxDistanceFromPlayer) * 0.5f;
+        float error = distance - target;
+
+        Vector2 toPlayer = ((Vector2)player.transform.position - rb.position).normalized;
+
+        float k = shipProfile.moveForce * 0.25f;
+        rb.AddForce(toPlayer * (error * k), ForceMode2D.Force);
     }
 
     private void StraffeAroundPlayer()
     {
-        Vector2 toPlayer = (player.transform.position - transform.position).normalized;
+        Vector2 toPlayer = ((Vector2)player.transform.position - rb.position).normalized;
 
         // perpendicular direction
-        Vector2 strafeDirection = new Vector2(-toPlayer.y, toPlayer.x);
+        Vector2 strafeDir = new Vector2(-toPlayer.y, toPlayer.x);
+        if (!strafeRight) strafeDir = -strafeDir;
 
+        float force = shipProfile.strafeForce;
 
-        if (!strafeRight)
-            strafeDirection = -strafeDirection;
+        if (shipProfile.useRandomSpeed)
+            force *= currentSpeedMultiplier;
 
-        float strafeForceModified = shipProfile.strafeForce;
-        if (shipProfile.useRandomBarrelRoll)
-            strafeForceModified *= currentSpeedMultiplier;
-
-        rb.AddForce(strafeDirection * strafeForceModified, ForceMode2D.Force);
+        rb.AddForce(strafeDir * force, ForceMode2D.Force);
     }
 
+    private void ApplySeparation()
+    {
+        int count = Physics2D.OverlapCircleNonAlloc(rb.position, separationRadius, sepHits, enemyMask);
+        Vector2 repel = Vector2.zero;
+
+        for (int i = 0; i < count; i++)
+        {
+            var col = sepHits[i];
+            if (!col) continue;
+
+            var otherRb = col.attachedRigidbody;
+            if (!otherRb || otherRb == rb) continue;
+
+            Vector2 away = rb.position - (Vector2)col.transform.position;
+            float d = away.magnitude;
+            if (d < 0.001f) continue;
+
+            repel += away / (d * d); // stronger when closer
+        }
+
+        if (repel.sqrMagnitude > 0.0001f)
+            rb.AddForce(repel.normalized * separationForce, ForceMode2D.Force);
+    }
 
     private IEnumerator RandomSwitchStraffeDirection()
     {
+        // desync enemies so they don't flip at the same time
+        yield return new WaitForSeconds(Random.Range(0f, 1.5f));
+
         while (shipProfile.useRandomStrafeDirection)
         {
             strafeRight = !strafeRight;
-            float waitTime = UnityEngine.Random.Range(shipProfile.minStrafeInterval, shipProfile.maxStrafeInterval);
+            float waitTime = Random.Range(shipProfile.minStrafeInterval, shipProfile.maxStrafeInterval);
             yield return new WaitForSeconds(waitTime);
         }
     }
@@ -179,32 +224,37 @@ public class EnemySpaceshipAI : MonoBehaviour
 
     private IEnumerator RandomBarrellRoll()
     {
+        // desync so not all roll together
+        yield return new WaitForSeconds(Random.Range(0f, 1.5f));
+
         while (shipProfile.useRandomBarrelRoll)
         {
-            float waitTime = UnityEngine.Random.Range(shipProfile.barrelRollMinTime, shipProfile.barrelRollMaxTime);
+            float waitTime = Random.Range(shipProfile.barrelRollMinTime, shipProfile.barrelRollMaxTime);
             yield return new WaitForSeconds(waitTime);
-            StartCoroutine(BarrellRolly());
+
+            // avoid stacking rolls
+            if (!isBarrellRolling)
+                yield return StartCoroutine(BarrellRolly());
         }
     }
 
     private IEnumerator BarrellRolly()
     {
         isBarrellRolling = true;
-        //use random direction for roll
-        Vector2 rollDir = new Vector2(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f)).normalized;
-        // math stuff
-        float desiredDeltaV = shipProfile.barrelRollDistance / Mathf.Max(0.01f, shipProfile.barrelRollDuration);
+
+        Vector2 rollDir = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized;
+
+        float duration = Mathf.Max(0.01f, shipProfile.barrelRollDuration);
+        float desiredDeltaV = shipProfile.barrelRollDistance / duration;
         float impulse = rb.mass * desiredDeltaV;
 
-        // add dash force
         rb.AddForce(rollDir * impulse, ForceMode2D.Impulse);
 
         float elapsed = 0f;
-        float spinPerSecond = shipProfile.barrelRollSpinDegrees / Mathf.Max(0.01f, shipProfile.barrelRollDuration);
+        float spinPerSecond = shipProfile.barrelRollSpinDegrees / duration;
 
-        while (elapsed < shipProfile.barrelRollDuration)
+        while (elapsed < duration)
         {
-            // spin the ship
             float newAngle = rb.rotation + spinPerSecond * Time.fixedDeltaTime;
             rb.MoveRotation(newAngle);
 
@@ -214,4 +264,12 @@ public class EnemySpaceshipAI : MonoBehaviour
 
         isBarrellRolling = false;
     }
+
+#if UNITY_EDITOR
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, separationRadius);
+    }
+#endif
 }

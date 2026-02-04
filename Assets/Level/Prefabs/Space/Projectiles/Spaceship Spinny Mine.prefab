@@ -385,8 +385,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b25bb5d51eb27fd4bad63ef913950039, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpaceshipSpinningMine
-  speed: 100
-  maxSpeed: 100
+  speed: 2.5
+  maxSpeed: 2.5
   lifeTime: 10
   damage: 10
 --- !u!58 &6516136832153952637

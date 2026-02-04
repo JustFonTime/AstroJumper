@@ -11,3 +11,4 @@ public class SpaceAttackInfo
 
     public bool canFire = true;
 }
+
