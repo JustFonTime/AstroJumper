@@ -1034,6 +1034,7 @@ GameObject:
   - component: {fileID: 2014226421}
   - component: {fileID: 2014226420}
   - component: {fileID: 2014226419}
+  - component: {fileID: 2014226424}
   m_Layer: 0
   m_Name: TempPlayer
   m_TagString: Untagged
@@ -1102,10 +1103,10 @@ MonoBehaviour:
   groundCheckSize: {x: 0.6, y: 0.1}
   groundMask:
     serializedVersion: 2
-    m_Bits: 192
+    m_Bits: 0
   oneWayMask:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 0
   dropDuration: 0.5
   actionsAsset: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   actionMapName: Player
@@ -1215,6 +1216,82 @@ Transform:
   - {fileID: 1284879303}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2014226424
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2014226418}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7cbfa63a283cb5544b69f913b76179d7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Player
+  name: Unit
+  health: 100
+  damage: 10
+  hitBoxPrefab: {fileID: 1306917755038486874, guid: 0386b52ded88e344d8bdb8cb69e044e7, type: 3}
+  actionsAsset: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  actionMapName: Player
+  attackActionName: Attack
+--- !u!1001 &2294671368820616466
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1306917755038486874, guid: 0386b52ded88e344d8bdb8cb69e044e7, type: 3}
+      propertyPath: m_Name
+      value: BaseHitBox
+      objectReference: {fileID: 0}
+    - target: {fileID: 5063777205161096238, guid: 0386b52ded88e344d8bdb8cb69e044e7, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 2.61
+      objectReference: {fileID: 0}
+    - target: {fileID: 5063777205161096238, guid: 0386b52ded88e344d8bdb8cb69e044e7, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -2.89
+      objectReference: {fileID: 0}
+    - target: {fileID: 5063777205161096238, guid: 0386b52ded88e344d8bdb8cb69e044e7, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5063777205161096238, guid: 0386b52ded88e344d8bdb8cb69e044e7, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5063777205161096238, guid: 0386b52ded88e344d8bdb8cb69e044e7, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5063777205161096238, guid: 0386b52ded88e344d8bdb8cb69e044e7, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5063777205161096238, guid: 0386b52ded88e344d8bdb8cb69e044e7, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5063777205161096238, guid: 0386b52ded88e344d8bdb8cb69e044e7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5063777205161096238, guid: 0386b52ded88e344d8bdb8cb69e044e7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5063777205161096238, guid: 0386b52ded88e344d8bdb8cb69e044e7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 0386b52ded88e344d8bdb8cb69e044e7, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -1222,3 +1299,4 @@ SceneRoots:
   - {fileID: 1807763309}
   - {fileID: 1105469826}
   - {fileID: 2014226423}
+  - {fileID: 2294671368820616466}
