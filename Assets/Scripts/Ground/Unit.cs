@@ -37,21 +37,46 @@ public class Unit : MonoBehaviour
 
     public void BeginAttack(GameObject hitBoxPrefab)
     {
-        GenerateHitBox(hitBoxPrefab);
+        GameObject attackSprite = GenerateAttackSprite(hitBoxPrefab);
+        GenerateHitBox(hitBoxPrefab, attackSprite);
     }
 
-    private void GenerateHitBox(GameObject hitBoxPrefab)
+    private void GenerateHitBox(GameObject hitBoxPrefab, GameObject attackSprite)
     {
         GameObject hitBox = Instantiate(hitBoxPrefab, transform.position, Quaternion.identity);
-        hitBox.transform.parent = transform; // make the hitbox a child of the unit so it moves with the unit
+        hitBox.transform.parent = attackSprite.transform; 
 
         HitBox hitBoxInfo = hitBox.GetComponent<HitBox>();
-        if (hitBoxInfo.GetIsMelee())
+        
+        hitBox.transform.position = attackSprite.transform.position;
+        hitBox.transform.parent = attackSprite.transform;
+    }
+
+    private GameObject GenerateAttackSprite(GameObject hitBoxPrefab)
+    {
+        GameObject attackSprite = new GameObject("AttackSprite");
+
+        HitBox hitBoxInfo = hitBoxPrefab.GetComponent<HitBox>();
+        GroundMovement groundMovement = GetComponent<GroundMovement>();
+        Vector3 offsetDirection = groundMovement.isFacingRight ? Vector3.right : Vector3.left;
+        Vector3 offset = new Vector3(hitBoxInfo.GetOffset().x * offsetDirection.x, hitBoxInfo.GetOffset().y, hitBoxInfo.GetOffset().z);
+        
+        SpriteRenderer spriteRenderer = attackSprite.AddComponent<SpriteRenderer>();
+        spriteRenderer.sprite = hitBoxInfo.GetSprite();
+        
+        attackSprite.transform.position = transform.position + offset;
+        attackSprite.transform.parent = transform; 
+        
+        if(hitBoxInfo.GetIsMelee())
         {
-            GroundMovement groundMovement = GetComponent<GroundMovement>();
-            Vector3 offsetDirection = groundMovement.isFacingRight ? Vector3.right : Vector3.left; // flip the offset based on facing direction
-            Vector3 offset = new Vector3(hitBoxInfo.GetOffset().x * offsetDirection.x, hitBoxInfo.GetOffset().y, hitBoxInfo.GetOffset().z);
-            hitBox.transform.position = transform.position + offset;
         }
+        else
+        {
+            Projectile projectile = attackSprite.AddComponent<Projectile>();
+            projectile.SetDirection(GetComponent<GroundMovement>().isFacingRight ? 1 : -1);
+        }
+
+        return attackSprite;
+        //Instantiate(attackSprite, transform.position, Quaternion.identity);
     }
 }

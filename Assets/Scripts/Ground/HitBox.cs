@@ -1,3 +1,5 @@
+// this script holds info for hitboxes, kinda named it wrong, should be named as attackInfo
+// WARNING: Not supposed to used as the visible object, meant to attach to other sprite object
 using UnityEngine;
 
 public class HitBox : MonoBehaviour
@@ -10,7 +12,9 @@ public class HitBox : MonoBehaviour
     [SerializeField] private float knockbackForce = 5f;
     [SerializeField] private bool isMelee = true; 
     [SerializeField] private LayerMask targetLayer; // which layer the hitbox should interact with (player, enemy, etc.)
+    [SerializeField] private LayerMask ignoreLayer; // which layer the hitbox should ignore 
     [SerializeField] private Vector3 offset = new Vector3(1f, 0f, 0f); // offset to tell where the hitbox should be based on the parent object
+    [SerializeField] private Sprite sprite; 
     private Collider2D hitBoxCollider;
     [SerializeField] private float currentHitboxActiveDurration = 0f; // how long has the hitbox out
 
@@ -33,21 +37,33 @@ public class HitBox : MonoBehaviour
         currentHitboxActiveDurration += Time.deltaTime;
         if (currentHitboxActiveDurration > duration && !isPermanent)
         {
-            Destroy(gameObject);
+            DestroyAttack();
+        }
+        if(!isMelee)
+        {
+            
         }
 
-        // Update the position of the hitbox based on the parent object and the offset
-        
-        //transform.position = transform.parent.position + offset;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
         print("HitBox: Trigger entered by " + other.name);
+        GameObject otherObject = other.gameObject;
+        if ((targetLayer.value & (1 << otherObject.layer)) == 0 || (ignoreLayer.value & (1 << otherObject.layer)) != 0) // Checks if objects layer is in the layer mask, found from https://discussions.unity.com/t/checking-if-a-layer-is-in-a-layer-mask/860331
+        {
+            print("hit wrong layer, ignoring");
+            return;
+        }
+        print("hitbox: Hit " + other.name);
         Unit unit = other.GetComponent<Unit>();
         if (unit != null)
         {
             unit.TakeDamage(damage);
+            if(!isMelee)
+            {
+                DestroyAttack();
+            }
         }
     }
 
@@ -59,6 +75,17 @@ public class HitBox : MonoBehaviour
     public Vector3 GetOffset()
     {
         return offset;
+    }
+
+    public Sprite GetSprite()
+    {
+        return sprite;
+    }
+
+    private void DestroyAttack()
+    {
+        Destroy(transform.parent.gameObject); 
+        Destroy(gameObject);
     }
 
 }

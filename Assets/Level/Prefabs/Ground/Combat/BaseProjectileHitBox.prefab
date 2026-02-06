@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6577929641708287723}
   - component: {fileID: 3405425898676861640}
   m_Layer: 0
-  m_Name: BaseHitBox
+  m_Name: BaseProjectileHitBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -84,7 +84,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 1, g: 0, b: 0, a: 0.23529412}
+  m_Color: {r: 1, g: 0, b: 0, a: 0.22352941}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -110,15 +110,15 @@ MonoBehaviour:
   isPermanent: 0
   duration: 1
   knockbackForce: 5
-  isMelee: 1
+  isMelee: 0
   targetLayer:
     serializedVersion: 2
     m_Bits: 4096
   ignoreLayer:
     serializedVersion: 2
-    m_Bits: 2048
+    m_Bits: 0
   offset: {x: 1, y: 0, z: 0}
-  sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
+  sprite: {fileID: 21300000, guid: f0ac408f34ad0c0419aca771715a18a7, type: 3}
   currentHitboxActiveDurration: 0
 --- !u!61 &3405425898676861640
 BoxCollider2D:
