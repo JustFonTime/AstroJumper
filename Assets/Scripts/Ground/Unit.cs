@@ -1,12 +1,30 @@
 // Unit is the base class for players and enemies.
 using UnityEngine;
+using System;
+using Unity.VisualScripting;
+using System.Collections;
 
 public class Unit : MonoBehaviour
 {
     // private GroundEventManager groundEventManager;
-    [SerializeField] private string name = "Unit";
-    [SerializeField] private int health = 100;
-    [SerializeField] private int damage = 10;
+    [Header("Unit Info")]
+    [SerializeField] private string _unitName;
+    public string UnitName
+    {get; set;}
+    [SerializeField] private int _health = 100;
+    public int Health
+    {
+        get { return _health; }
+        set { _health = value; }
+    }
+    [SerializeField] private int _damage = 10;
+    public int Damage
+    {
+        get { return _damage; }
+        set { _damage = value; }
+    }
+    public static event Action<Unit> onDeath;
+    public static event Action<Unit> onDamaged;
 
     void Start()
     {
@@ -20,22 +38,35 @@ public class Unit : MonoBehaviour
         // groundEventManager.OnUnitDeath += OnUnitDeath;
     }
 
-    public void TakeDamage(int amount)
+    public virtual void TakeDamage(int amount)
     {
-        health -= amount;
-        if (health <= 0)
+        print("Taking damage");
+        Health -= amount;
+        if (Health <= 0)
         {
             Death();
         }
+        SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
+        StartCoroutine(DamageEffect(spriteRenderer));
+        onDamaged?.Invoke(this);
     }
 
     public void Death()
     {
         // Eventually add death animation, sound, etc. For now just destroy the game object.
+        onDeath?.Invoke(this);
         Destroy(gameObject);
     }
 
+    
+    #region Attacking
+        
     public void BeginAttack(GameObject hitBoxPrefab)
+    {
+        CreateAttack(hitBoxPrefab);
+    }
+
+    private void CreateAttack(GameObject hitBoxPrefab)
     {
         GameObject attackSprite = GenerateAttackSprite(hitBoxPrefab);
         GenerateHitBox(hitBoxPrefab, attackSprite);
@@ -79,6 +110,19 @@ public class Unit : MonoBehaviour
         }
 
         return attackSprite;
-        //Instantiate(attackSprite, transform.position, Quaternion.identity);
     }
+
+    protected IEnumerator DamageEffect(SpriteRenderer spriteRenderer)
+    {
+        for (int i = 0; i < 2; i++)
+        {
+            Color baseColor = spriteRenderer.color;
+            spriteRenderer.color = Color.red;
+            yield return new WaitForSeconds(0.35f);
+            spriteRenderer.color = baseColor;
+            yield return new WaitForSeconds(0.35f);
+        }
+    }
+    #endregion
+
 }

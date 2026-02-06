@@ -46,14 +46,8 @@ public class HitBox : MonoBehaviour
 
     }
 
-    void LateUpdate()
-    {
-        
-    }
-
     private void OnTriggerEnter2D(Collider2D other)
     {
-        print("HitBox: Trigger entered by " + other.name);
         GameObject otherObject = other.gameObject;
         if ((targetLayer.value & (1 << otherObject.layer)) == 0 && (ignoreLayer.value & (1 << otherObject.layer)) != 0) // Checks if objects layer is in the layer mask, found from https://discussions.unity.com/t/checking-if-a-layer-is-in-a-layer-mask/860331
         {

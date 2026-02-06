@@ -1,11 +1,21 @@
 // This script will listen for interactions with units and trigger events
 using UnityEngine;
 using System;
+using UnityEngine.UIElements;
 
 public class GroundEventManager : MonoBehaviour
 {
-    public event Action OnUnitDamaged;
-    public event Action OnUnitDeath;
+    void OnEnable()
+    {
+        Unit.onDamaged += UnitDamaged;
+        Unit.onDeath += UnitDeath;
+    }
+
+    void OnDisable()
+    {
+        Unit.onDamaged -= UnitDamaged;
+        Unit.onDeath -= UnitDeath;
+    }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -18,13 +28,13 @@ public class GroundEventManager : MonoBehaviour
         
     }
 
-    public void UnitDamaged()
+    public void UnitDamaged(Unit unit)
     {
-        OnUnitDamaged?.Invoke();
+        print(unit.UnitName + " was damaged! Remaining health: " + unit.Health);
     }
     
-    public void UnitDeath()
+    public void UnitDeath(Unit unit)
     {
-        OnUnitDeath?.Invoke();
+        
     }
 }

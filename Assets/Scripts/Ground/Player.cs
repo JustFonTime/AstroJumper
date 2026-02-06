@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -10,6 +11,8 @@ public class Player : Unit
     [SerializeField] private string actionMapName = "Player";
     [SerializeField] private string attackActionName = "Attack";
     private InputAction attackAction;
+    public static event Action<Unit> onPlayerDeath;
+    public static event Action<Unit> onPlayerDamaged;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
@@ -42,6 +45,21 @@ public class Player : Unit
     {
         BeginAttack(hitBoxPrefab);
     }
+
+    public override void TakeDamage(int amount)
+    {
+        print("Taking damage");
+        Health -= amount;
+        if (Health <= 0)
+        {
+            Death();
+        }
+        SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
+        StartCoroutine(DamageEffect(spriteRenderer));
+        onPlayerDamaged?.Invoke(this);
+    }
+
+
 
     // Update is called once per frame
     void Update()
