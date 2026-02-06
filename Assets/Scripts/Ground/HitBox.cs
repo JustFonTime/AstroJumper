@@ -10,7 +10,7 @@ public class HitBox : MonoBehaviour
     [SerializeField] private float knockbackForce = 5f;
     [SerializeField] private bool isMelee = true; 
     [SerializeField] private LayerMask targetLayer; // which layer the hitbox should interact with (player, enemy, etc.)
-    [SerializeField] private Vector3 offset; // offset to tell where the hitbox should be based on the parent object
+    [SerializeField] private Vector3 offset = new Vector3(1f, 0f, 0f); // offset to tell where the hitbox should be based on the parent object
     private Collider2D hitBoxCollider;
     [SerializeField] private float currentHitboxActiveDurration = 0f; // how long has the hitbox out
 
@@ -49,6 +49,16 @@ public class HitBox : MonoBehaviour
         {
             unit.TakeDamage(damage);
         }
+    }
+
+    public bool GetIsMelee()
+    {
+        return isMelee;
+    }
+
+    public Vector3 GetOffset()
+    {
+        return offset;
     }
 
 }

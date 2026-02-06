@@ -109,6 +109,12 @@ MonoBehaviour:
   damage: 10
   isPermanent: 0
   duration: 1
+  knockbackForce: 5
+  isMelee: 1
+  targetLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  offset: {x: 1, y: 0, z: 0}
   currentHitboxActiveDurration: 0
 --- !u!61 &3405425898676861640
 BoxCollider2D:

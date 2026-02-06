@@ -40,11 +40,7 @@ public class Player : Unit
 
     private void OnAttack(InputAction.CallbackContext context)
     {
-        // spawn hitbox, bad way of doing it will update later
-        print("Player: Attack action performed.");
-        Vector3 hitBoxPosition = transform.position + new Vector3(1f, 0f, 0f);
-        GameObject hitBox = Instantiate(hitBoxPrefab, hitBoxPosition, Quaternion.identity);
-        hitBox.transform.parent = transform; 
+        BeginAttack(hitBoxPrefab);
     }
 
     // Update is called once per frame
@@ -52,4 +48,6 @@ public class Player : Unit
     {
         
     }
+
+
 }
