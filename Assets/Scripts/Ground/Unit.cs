@@ -65,15 +65,17 @@ public class Unit : MonoBehaviour
         spriteRenderer.sprite = hitBoxInfo.GetSprite();
         
         attackSprite.transform.position = transform.position + offset;
-        attackSprite.transform.parent = transform; 
         
         if(hitBoxInfo.GetIsMelee())
         {
+        attackSprite.transform.parent = transform; 
+            
         }
         else
         {
             Projectile projectile = attackSprite.AddComponent<Projectile>();
             projectile.SetDirection(GetComponent<GroundMovement>().isFacingRight ? 1 : -1);
+            projectile.SetYValue(attackSprite.transform.position.y);
         }
 
         return attackSprite;
