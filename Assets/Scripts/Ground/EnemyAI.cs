@@ -4,20 +4,45 @@ public class EnemyAI : MonoBehaviour
 {
     private enum State { Patrol, Chase, Attack, Knockback, Return }
 
+    [System.Flags]
+    public enum AttackType // different attack types
+    {
+        None = 0,
+        Melee = 1 << 0,
+        Ranged = 1 << 1
+    }
+
     [Header("Refs")]
     [SerializeField] private EnemySensors sensors;
     [SerializeField] private EnemyMotor motor;
 
     [Header("Chase/Attack")]
     [SerializeField] private float chaseRange = 4f;
-    [SerializeField] private float attackRange = 1.2f;
     [SerializeField] private float attackCooldown = 1.0f;
 
 
-    [Header("Aggro Memory")]
+    [Header("Aggro Memory")] // for giving the player a chance
+                             // to escape or hide after being seen also not instant deagro
     [SerializeField] private float loseSightGrace = 0.5f;
     [SerializeField] private float investigateDuration = 2.0f;
     [SerializeField] private float investigateTolerance = 0.15f;
+
+
+    [Header("Attack Capabilities")]
+    [SerializeField] private AttackType attackTypes = AttackType.Ranged;
+
+    [Header("Attack Ranges")] // numbers are defaults for melee and ranged reach
+    [SerializeField] private float meleeEnterBuffer = 0.25f; // this is a buffer because it keeps 
+                                                             //stopping right before range and not being able to atk
+    [SerializeField] private float meleeRange = 2f;
+    [SerializeField] private float rangedRange = 7f;
+
+
+    [Header("Ranged Attack")]
+    [SerializeField] private Transform firePoint;
+    [SerializeField] private EnemyProjectile projectilePrefab;
+    [SerializeField] private float projectileSpeed = 8f;
+    [SerializeField] private float minShootRange = 0.0f;
 
     [Header("Return")]
     [SerializeField] private Transform homePoint;
@@ -49,10 +74,10 @@ public class EnemyAI : MonoBehaviour
             case State.Chase: TickChase(); break;
             case State.Attack: TickAttack(); break;
             case State.Return: TickReturn(); break;
-            case State.Knockback:  break;
+            case State.Knockback: break;
         }
     }
-
+    private float GetMeleeEnterRange() => meleeRange + meleeEnterBuffer;
     private void TickPatrol()
     {
         //Check for Player
@@ -113,11 +138,26 @@ public class EnemyAI : MonoBehaviour
         if (player != null)
         {
             float dist = Mathf.Abs(player.position.x - transform.position.x);
-            if (dist <= attackRange)
+
+            // Melee only: enter attack only when in melee range
+            if (attackTypes == AttackType.Melee)
             {
-                motor.StopHorizontal();
-                state = State.Attack;
-                return;
+                if (dist <= GetMeleeEnterRange())
+                {
+                    state = State.Attack;
+                    return;
+                }
+            }
+            else
+            {
+                // Ranged or hybrid
+                float maxAttackRange = GetMaxAttackRange();
+                if (dist <= maxAttackRange)
+                {
+                    motor.StopHorizontal();
+                    state = State.Attack;
+                    return;
+                }
             }
         }
 
@@ -148,26 +188,111 @@ public class EnemyAI : MonoBehaviour
         }
 
         float dist = Mathf.Abs(player.position.x - transform.position.x);
-        if (dist > attackRange)
+        motor.SetFacingToward(player.position.x);
+
+        // Melee logic 
+        if (attackTypes == AttackType.Melee)
+        {
+            // If player is out of  range go back to chase
+            if (dist > GetMeleeEnterRange())
+            {
+                state = State.Chase;
+                return;
+            }
+
+            // If not in true hit range yet, continue to get closer
+            if (dist > meleeRange)
+            {
+                motor.Move();
+                return;
+            }
+
+            // Now we're close enough to strike - stop and attack
+            //motor.StopHorizontal();
+
+            if (Time.time >= nextAttackTime)
+            {
+                nextAttackTime = Time.time + attackCooldown;
+                DoAttack();
+            }
+            return; // Exit here to avoid the code below
+        }
+
+        // ranged and hybrid logic
+        float maxAttackRange = GetMaxAttackRange();
+        if (dist > maxAttackRange)
         {
             state = State.Chase;
             return;
         }
 
-        motor.SetFacingToward(player.position.x);
+        motor.StopHorizontal();
 
         if (Time.time >= nextAttackTime)
         {
             nextAttackTime = Time.time + attackCooldown;
-            DoAttack(); // hook into melee/shoot later
+            DoAttack();
         }
     }
 
+
+    //for attacking type (melee vs ranged or both) can change within the hierachy 
+    // There can customize the range of each attack type, will prioriize melee if they have both and
+    // if in ranged of melee
     private void DoAttack()
     {
-        // Placeholder: call animation trigger, spawn projectile, damage hitbox, etc.
-        // Debug.Log("Attack!");
+        if (!player)
+        {
+            state = State.Return;
+            return;
+        }
+
+        float dist = Vector2.Distance(transform.position, player.position);
+        if (attackTypes.HasFlag(AttackType.Melee) && dist <= meleeRange)
+        {
+            DoMeleeAttack();
+            return;
+        }
+
+        if (attackTypes.HasFlag(AttackType.Ranged) &&
+            dist >= minShootRange &&
+            dist <= rangedRange)
+        {
+            DoRangedAttack();
+            return;
+        }
+
+        state = State.Chase;
     }
+
+    private float GetMaxAttackRange()
+    {
+        float max = 0f;
+
+        if (attackTypes.HasFlag(AttackType.Melee))
+            max = Mathf.Max(max, meleeRange);
+
+        if (attackTypes.HasFlag(AttackType.Ranged))
+            max = Mathf.Max(max, rangedRange);
+
+        return max;
+    }
+
+    private void DoMeleeAttack()
+    {
+        // Placeholder
+        Debug.Log($"{name} performs MELEE attack");
+    }
+
+    private void DoRangedAttack()
+    {
+        if (!projectilePrefab || !firePoint) return;
+
+        Vector2 dir = (player.position - firePoint.position).normalized;
+        EnemyProjectile proj = Instantiate(projectilePrefab, firePoint.position, Quaternion.identity);
+        proj.Fire(dir * projectileSpeed);
+    }
+
 
     private void TickReturn()
     {

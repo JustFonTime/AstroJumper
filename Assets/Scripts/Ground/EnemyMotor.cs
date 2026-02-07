@@ -16,7 +16,7 @@ public class EnemyMotor : MonoBehaviour
     public void Move()
     {
         rb.linearVelocity = new Vector2(FacingDir * moveSpeed, rb.linearVelocity.y);
-        Debug.Log($"FacingDir={FacingDir}, velX={rb.linearVelocity.x}");
+        //Debug.Log($"FacingDir={FacingDir}, velX={rb.linearVelocity.x}");
     }
 
     public void StopHorizontal()
