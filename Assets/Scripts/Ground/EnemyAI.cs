@@ -20,9 +20,8 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] private float chaseRange = 4f;
     [SerializeField] private float attackCooldown = 1.0f;
 
-
-    [Header("Aggro Memory")] // for giving the player a chance
-                             // to escape or hide after being seen also not instant deagro
+    // for giving the player a chance to escape or hide after being seen also not instant deagro
+    [Header("Aggro Memory")] 
     [SerializeField] private float loseSightGrace = 0.5f;
     [SerializeField] private float investigateDuration = 2.0f;
     [SerializeField] private float investigateTolerance = 0.15f;
@@ -30,10 +29,12 @@ public class EnemyAI : MonoBehaviour
 
     [Header("Attack Capabilities")]
     [SerializeField] private AttackType attackTypes = AttackType.Ranged;
-
-    [Header("Attack Ranges")] // numbers are defaults for melee and ranged reach
-    [SerializeField] private float meleeEnterBuffer = 0.25f; // this is a buffer because it keeps 
-                                                             //stopping right before range and not being able to atk
+    
+    // numbers are defaults for melee and ranged reach
+    [Header("Attack Ranges")]
+    // this is a buffer because it keeps stopping right before range and not being able to atk
+    [SerializeField] private float meleeEnterBuffer = 0.25f;
+                                                             
     [SerializeField] private float meleeRange = 2f;
     [SerializeField] private float rangedRange = 7f;
 
@@ -43,10 +44,13 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] private EnemyProjectile projectilePrefab;
     [SerializeField] private float projectileSpeed = 8f;
     [SerializeField] private float minShootRange = 0.0f;
-
+    
+    //leash distance that makes the enemy give up and return back to home point
     [Header("Return")]
     [SerializeField] private Transform homePoint;
     [SerializeField] private float homeTolerance = 0.2f;
+    [SerializeField] private float maxLeashDistance = 15f;
+    
 
     private State state = State.Patrol;
     private Transform player;
@@ -65,7 +69,7 @@ public class EnemyAI : MonoBehaviour
 
     private void Update()
     {
-        // want to add sleep off screen for better performance later
+        // want to add sleep off screen for better performance later (pooling or sleep state idk yet)
         // if (!IsOnScreen()) return . . .
 
         switch (state)
@@ -77,15 +81,43 @@ public class EnemyAI : MonoBehaviour
             case State.Knockback: break;
         }
     }
+
+    //debugging helper to see state changes
+    private void ChangeState(State newState, string reason)
+    {
+        if (state == newState) return;
+
+        Debug.Log(
+            $"[EnemyAI:{name}] {state} -> {newState} | Reason: {reason}",
+            this
+        );
+
+        state = newState;
+    }
+
     private float GetMeleeEnterRange() => meleeRange + meleeEnterBuffer;
+
     private void TickPatrol()
     {
+        // Check if we've wandered too far from home while patrolling
+        if (homePoint)
+        {
+            float distFromHome = Mathf.Abs(transform.position.x - homePoint.position.x);
+            if (distFromHome > maxLeashDistance)
+            {
+                ChangeState(State.Return, "Wandered too far from home during patrol");
+                return;
+            }
+        }
+
         //Check for Player
         Transform seen = sensors.DetectPlayer();
         if (seen && Mathf.Abs(seen.position.x - transform.position.x) <= chaseRange)
         {
             player = seen;
-            state = State.Chase;
+            lastSeenPos = player.position;
+            lastSeenTime = Time.time;
+            ChangeState(State.Chase, "Player detected in patrol");
             return;
         }
 
@@ -109,70 +141,84 @@ public class EnemyAI : MonoBehaviour
             lastSeenTime = Time.time;
         }
 
-        // If we haven't seen the player recently, give up and return
-        float timeSinceSeen = Time.time - lastSeenTime;
-        if (player == null && timeSinceSeen > investigateDuration)
-        {
-            state = State.Return;
-            return;
-        }
-
-        // choose between player first then vs last seen locations 
-        Vector2 chaseTarget = (player != null) ? (Vector2)player.position : lastSeenPos;
-
-        // Drop aggro after grace if player is far beyond chaseRange
+        // If we have a player target, evaluate attack/chase
         if (player != null)
         {
             float distToPlayer = Mathf.Abs(player.position.x - transform.position.x);
+
+            // Check if player is too far (beyond chase range + grace)
+            float timeSinceSeen = Time.time - lastSeenTime;
             if (distToPlayer > chaseRange && timeSinceSeen > loseSightGrace)
             {
                 // player not found anymore
                 player = null;
             }
-        }
-
-        // Face target
-        motor.SetFacingToward(chaseTarget.x);
-
-        // Attack only if we currently have the player
-        if (player != null)
-        {
-            float dist = Mathf.Abs(player.position.x - transform.position.x);
-
-            // Melee only: enter attack only when in melee range
-            if (attackTypes == AttackType.Melee)
-            {
-                if (dist <= GetMeleeEnterRange())
-                {
-                    state = State.Attack;
-                    return;
-                }
-            }
             else
             {
-                // Ranged or hybrid
-                float maxAttackRange = GetMaxAttackRange();
-                if (dist <= maxAttackRange)
+                // We have the player - check attack range
+                motor.SetFacingToward(player.position.x);
+
+                // Melee only: enter attack when in melee range
+                if (attackTypes == AttackType.Melee)
+                {
+                    if (distToPlayer <= GetMeleeEnterRange())
+                    {
+                        ChangeState(State.Attack, "Entered melee range");
+                        return;
+                    }
+                }
+                else
+                {
+                    // Ranged or hybrid
+                    float maxAttackRange = GetMaxAttackRange();
+                    if (distToPlayer <= maxAttackRange)
+                    {
+                        ChangeState(State.Attack, "Entered attack range");
+                        return;
+                    }
+                }
+
+                // Not in attack range, continue chasing
+                // Don't chase off ledges or into walls
+                if (sensors.NoGroundAhead() || sensors.WallAhead())
                 {
                     motor.StopHorizontal();
-                    state = State.Attack;
                     return;
                 }
+
+                motor.Move();
+                return;
             }
         }
 
-        // If we reached the last seen spot and still didn't reacquire, return
-        if (player == null && Mathf.Abs(chaseTarget.x - transform.position.x) <= investigateTolerance)
+        // No current player target so investigate last position
+        float timeSinceLastSeen = Time.time - lastSeenTime;
+
+        // Give up after time limit and return home if player isn't found at last seen position
+        if (timeSinceLastSeen > investigateDuration)
         {
-            state = State.Return;
+            ChangeState(State.Return, "Player lost for too long");
             return;
         }
 
-        //  don't chase off ledges 
+        // Move toward last seen position and check if we reached the investigation point
+        motor.SetFacingToward(lastSeenPos.x);
+
+        if (Mathf.Abs(lastSeenPos.x - transform.position.x) <= investigateTolerance)
+        {
+            ChangeState(State.Return, "Reached last seen position, no player found");
+            return;
+        }
+
+        // Stay on platform don't fall off or run into walls while investigating
         if (sensors.NoGroundAhead() || sensors.WallAhead())
         {
             motor.StopHorizontal();
-            //  state = State.Patrol; 
+            // If blocked from investigating, give up faster
+            if (timeSinceLastSeen > loseSightGrace)
+            {
+                ChangeState(State.Return, "Blocked from investigating");
+            }
             return;
         }
 
@@ -183,7 +229,7 @@ public class EnemyAI : MonoBehaviour
     {
         if (!player)
         {
-            state = State.Return;
+            ChangeState(State.Return, "Lost player in attack state");
             return;
         }
 
@@ -196,7 +242,7 @@ public class EnemyAI : MonoBehaviour
             // If player is out of  range go back to chase
             if (dist > GetMeleeEnterRange())
             {
-                state = State.Chase;
+                ChangeState(State.Chase, "Player out of melee range");
                 return;
             }
 
@@ -208,21 +254,21 @@ public class EnemyAI : MonoBehaviour
             }
 
             // Now we're close enough to strike - stop and attack
-            //motor.StopHorizontal();
+            motor.StopHorizontal();
 
             if (Time.time >= nextAttackTime)
             {
                 nextAttackTime = Time.time + attackCooldown;
                 DoAttack();
             }
-            return; // Exit here to avoid the code below
+            return;
         }
 
         // ranged and hybrid logic
         float maxAttackRange = GetMaxAttackRange();
         if (dist > maxAttackRange)
         {
-            state = State.Chase;
+            ChangeState(State.Chase, "Player out of attack range");
             return;
         }
 
@@ -243,7 +289,7 @@ public class EnemyAI : MonoBehaviour
     {
         if (!player)
         {
-            state = State.Return;
+            ChangeState(State.Return, "Player lost before attack");
             return;
         }
 
@@ -262,7 +308,7 @@ public class EnemyAI : MonoBehaviour
             return;
         }
 
-        state = State.Chase;
+        ChangeState(State.Chase, "Player out of attack range during attack");
     }
 
     private float GetMaxAttackRange()
@@ -298,25 +344,42 @@ public class EnemyAI : MonoBehaviour
     {
         if (!homePoint)
         {
-            state = State.Patrol;
+            ChangeState(State.Patrol, "No home point set");
             return;
         }
 
-        float dx = homePoint.position.x - transform.position.x;
-        if (Mathf.Abs(dx) <= homeTolerance)
+        float distFromHome = Mathf.Abs(transform.position.x - homePoint.position.x);
+
+        // Check if we've reached home
+        if (distFromHome <= homeTolerance)
         {
             motor.StopHorizontal();
-            state = State.Patrol;
+            ChangeState(State.Patrol, "Reached home point");
             return;
         }
 
+        // If player is detected while returning, chase/atk again, chase/attack always takes priority
+        Transform seen = sensors.DetectPlayer();
+        if (seen)
+        {
+            float distToPlayer = Mathf.Abs(seen.position.x - transform.position.x);
+            if (distToPlayer <= chaseRange)
+            {
+                player = seen;
+                lastSeenPos = player.position;
+                lastSeenTime = Time.time;
+                ChangeState(State.Chase, "Player detected while returning");
+                return;
+            }
+        }
+
+        // Move toward home
         motor.SetFacingToward(homePoint.position.x);
 
-        // Turn around if wall/ledge blocks return
-        if (sensors.WallAhead() || sensors.NoGroundAhead())
+        // Don't walk off ledges or into walls while returning
+        if (sensors.NoGroundAhead() || sensors.WallAhead())
         {
-            // If you can't safely return, just patrol
-            state = State.Patrol;
+            motor.StopHorizontal();
             return;
         }
 
@@ -326,13 +389,13 @@ public class EnemyAI : MonoBehaviour
     // Call this from dmg system
     public void EnterKnockback(Vector2 force, float knockbackTime = 0.2f)
     {
-        state = State.Knockback;
+        ChangeState(State.Knockback, "Entered knockback");
         motor.ApplyKnockback(force);
         Invoke(nameof(ExitKnockback), knockbackTime);
     }
 
     private void ExitKnockback()
     {
-        state = State.Return;
+        ChangeState(State.Return, "Exiting knockback");
     }
 }
