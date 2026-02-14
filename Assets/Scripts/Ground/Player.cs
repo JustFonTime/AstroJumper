@@ -6,7 +6,8 @@ using UnityEngine.InputSystem;
 
 public class Player : Unit
 {
-    [SerializeField] private GameObject hitBoxPrefab; 
+    [SerializeField] private GameObject hitBoxPrefab;
+    [SerializeField] private GameObject hitBoxPrefab2; 
     [SerializeField] private InputActionAsset actionsAsset; //this is jsut to test, will move to GroundMovement when it is updated
     [SerializeField] private string actionMapName = "Player";
     [SerializeField] private string attackActionName = "Attack";
@@ -45,7 +46,7 @@ public class Player : Unit
         attackAction.performed += OnAttack;
 
         attackAction2.Enable();
-        attackAction2.performed += OnAttack;
+        attackAction2.performed += OnAttack2;
     }
 
     private void OnDisable()
@@ -53,13 +54,19 @@ public class Player : Unit
         attackAction.performed -= OnAttack;
         attackAction.Disable();
 
-        attackAction2.performed -= OnAttack;
+        attackAction2.performed -= OnAttack2;
         attackAction2.Disable();
     }
 
     private void OnAttack(InputAction.CallbackContext context)
     {
         BeginAttack(hitBoxPrefab);
+    }
+
+    private void OnAttack2(InputAction.CallbackContext context)
+    {
+        print("attack2");
+        BeginAttack(hitBoxPrefab2);
     }
 
     public override void TakeDamage(int amount)

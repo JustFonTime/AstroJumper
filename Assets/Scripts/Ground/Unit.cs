@@ -94,7 +94,7 @@ public class Unit : MonoBehaviour
         
         if(hitBoxInfo.GetIsMelee())
         {
-        attackSprite.transform.parent = transform; 
+            attackSprite.transform.parent = transform; 
             
         }
         else
