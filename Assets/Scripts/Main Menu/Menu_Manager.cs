@@ -3,12 +3,14 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.Audio;
 using TMPro;
+using System;
 
 public class Menu_Manager : MonoBehaviour
 {
     [Header("Menu Panels")]
     public GameObject mainMenuPanel;
     public GameObject optionsPanel;
+    public GameObject creditsPanel;
 
     [Header("Audio Settings")]
     public AudioMixer audioMixer;
@@ -35,6 +37,12 @@ public class Menu_Manager : MonoBehaviour
 
     public void SetMasterVolume(float sliderValue)
     {
+        AudioSource bgMusic = GameObject.FindObjectOfType<AudioSource>();
+        if (bgMusic != null)
+        {
+            bgMusic.volume = sliderValue;
+        }
+
         float volumedB = Mathf.Log10(sliderValue) * 20;
         audioMixer.SetFloat("MasterVolume", volumedB);
 
@@ -56,6 +64,7 @@ public class Menu_Manager : MonoBehaviour
     {
         mainMenuPanel.SetActive(true);
         optionsPanel.SetActive(false);
+        creditsPanel.SetActive(false);
     }
 
     public void StartGame()
@@ -67,5 +76,13 @@ public class Menu_Manager : MonoBehaviour
     {
         mainMenuPanel.SetActive(false);
         optionsPanel.SetActive(true);
+        creditsPanel.SetActive(false);
+    }
+
+    public void ShowCreditsMenu()
+    {
+        mainMenuPanel.SetActive(false);
+        optionsPanel.SetActive(false);
+        creditsPanel.SetActive(true);
     }
 }
