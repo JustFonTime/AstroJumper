@@ -91,7 +91,8 @@ public class Unit : MonoBehaviour
     {
         HitBox hitBoxInfo = hitBoxPrefab.GetComponent<HitBox>();
 
-        if(!hitBoxInfo.GetIsMelee())
+        // takes projectile from projectile pool.
+        if(!hitBoxInfo.GetIsMelee() && unitProjectilePool != null)
         {
             GameObject projectile = unitProjectilePool.GetProjectile();
             projectile.transform.position = transform.position;
