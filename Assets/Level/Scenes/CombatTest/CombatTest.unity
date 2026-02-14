@@ -555,6 +555,9 @@ MonoBehaviour:
   _unitName: Enemy
   _health: 100
   _damage: 10
+  hitBoxPrefab: {fileID: 0}
+  hitBoxPrefab2: {fileID: 0}
+  unitProjectilePool: {fileID: 0}
 --- !u!1 &606511479
 GameObject:
   m_ObjectHideFlags: 0
@@ -801,6 +804,52 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &813536775
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 813536776}
+  - component: {fileID: 813536777}
+  m_Layer: 0
+  m_Name: Projectile Pool
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &813536776
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 813536775}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2014226423}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &813536777
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 813536775}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0eddd17995c5df44beabbfa76a8832d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ProjectilePool
+  projectilePrefab: {fileID: 0}
+  poolSize: 10
 --- !u!1 &919925893
 GameObject:
   m_ObjectHideFlags: 0
@@ -1345,9 +1394,9 @@ GameObject:
   - component: {fileID: 2014226423}
   - component: {fileID: 2014226422}
   - component: {fileID: 2014226421}
+  - component: {fileID: 2014226424}
   - component: {fileID: 2014226420}
   - component: {fileID: 2014226419}
-  - component: {fileID: 2014226424}
   m_Layer: 0
   m_Name: TempPlayer
   m_TagString: Untagged
@@ -1528,6 +1577,7 @@ Transform:
   m_Children:
   - {fileID: 919925894}
   - {fileID: 1284879303}
+  - {fileID: 813536776}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2014226424
@@ -1547,10 +1597,13 @@ MonoBehaviour:
   _damage: 10
   hitBoxPrefab: {fileID: 1306917755038486874, guid: fdbd44605c9d2e541af42a308779a614, type: 3}
   hitBoxPrefab2: {fileID: 1306917755038486874, guid: 0386b52ded88e344d8bdb8cb69e044e7, type: 3}
+  unitProjectilePool: {fileID: 0}
   actionsAsset: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   actionMapName: Player
   attackActionName: Attack
   attackActionName2: Attack2
+  projectileCount: 0
+  maxProjectile: 3
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

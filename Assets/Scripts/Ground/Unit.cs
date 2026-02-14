@@ -27,9 +27,24 @@ public class Unit : MonoBehaviour
 
     protected bool isDamageAnimation = false;
     protected bool isAttacking = false;
+    [SerializeField] protected GameObject hitBoxPrefab;
+    [SerializeField] protected GameObject hitBoxPrefab2; 
+    public ProjectilePool unitProjectilePool;
 
     void Start()
     {
+        unitProjectilePool = GetComponentInChildren<ProjectilePool>();
+        if(unitProjectilePool)
+        {
+            for (int i = 0; i < unitProjectilePool.poolSize; i++)
+            {
+                GameObject projectile = GenerateProjectile(GetProjectilePrefab());
+                projectile.GetComponentInChildren<HitBox>().setPool(unitProjectilePool);
+                projectile.AddComponent<Projectile>().enabled = false; 
+                projectile.SetActive(false);
+                unitProjectilePool.projectilePool.Enqueue(projectile);
+            }
+        }
         
     }
 
@@ -56,17 +71,38 @@ public class Unit : MonoBehaviour
 
     
     #region Attacking
-        
+
+    public GameObject GenerateProjectile(GameObject hitBoxPrefab)
+    {
+        // this is the same function as CreateAttack but it doesn't have the check for if it is projectile
+        // this is a workaround to generate projectiles for the projectile pool at start
+        GameObject attackSprite = GenerateAttackSprite(hitBoxPrefab);
+        GenerateHitBox(hitBoxPrefab, attackSprite);
+        return attackSprite;
+    }
+
     public void BeginAttack(GameObject hitBoxPrefab)
     {
         CreateAttack(hitBoxPrefab);
         
     }
 
-    private void CreateAttack(GameObject hitBoxPrefab)
+    public GameObject CreateAttack(GameObject hitBoxPrefab)
     {
+        HitBox hitBoxInfo = hitBoxPrefab.GetComponent<HitBox>();
+
+        if(!hitBoxInfo.GetIsMelee())
+        {
+            GameObject projectile = unitProjectilePool.GetProjectile();
+            projectile.transform.position = transform.position;
+            projectile.GetComponent<Projectile>().SetDirection(GetComponent<GroundMovement>().isFacingRight ? 1 : -1);
+            projectile.GetComponent<Projectile>().SetYValue(transform.position.y);
+            return projectile;
+        }
+
         GameObject attackSprite = GenerateAttackSprite(hitBoxPrefab);
         GenerateHitBox(hitBoxPrefab, attackSprite);
+        return attackSprite;
     }
 
     private void GenerateHitBox(GameObject hitBoxPrefab, GameObject attackSprite)
@@ -101,8 +137,9 @@ public class Unit : MonoBehaviour
         else
         {
             Projectile projectile = attackSprite.AddComponent<Projectile>();
-            projectile.SetDirection(groundMovement.isFacingRight ? 1 : -1);
-            projectile.SetYValue(attackSprite.transform.position.y);
+            // projectile.SetDirection(GetComponent<GroundMovement>().isFacingRight ? 1 : -1);
+            // projectile.SetYValue(transform.position.y);
+            
         }
 
         return attackSprite;
@@ -123,4 +160,20 @@ public class Unit : MonoBehaviour
     }
     #endregion
 
+
+    public GameObject GetProjectilePrefab()
+    {
+        if(!hitBoxPrefab.GetComponent<HitBox>().GetIsMelee())
+        {
+            return hitBoxPrefab;
+        }
+        else if (!hitBoxPrefab2.GetComponent<HitBox>().GetIsMelee())
+        {
+            return hitBoxPrefab2;
+        }
+        else
+        {
+            return null;
+        }
+    }
 }

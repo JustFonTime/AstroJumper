@@ -6,8 +6,7 @@ using UnityEngine.InputSystem;
 
 public class Player : Unit
 {
-    [SerializeField] private GameObject hitBoxPrefab;
-    [SerializeField] private GameObject hitBoxPrefab2; 
+    
     [SerializeField] private InputActionAsset actionsAsset; //this is jsut to test, will move to GroundMovement when it is updated
     [SerializeField] private string actionMapName = "Player";
     [SerializeField] private string attackActionName = "Attack";
@@ -18,6 +17,8 @@ public class Player : Unit
     public static event Action<Unit> onPlayerDeath;
     public static event Action<Unit> onPlayerDamaged;
     private bool isAttacking2 = false;
+    [SerializeField] private int projectileCount = 0; 
+    [SerializeField] private int maxProjectile = 3;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
@@ -40,6 +41,8 @@ public class Player : Unit
         {
             Debug.Log("Player: Attack2 action found successfully.");
         }
+        hitBoxPrefab.GetComponent<HitBox>().attackListIndex = 1;
+        hitBoxPrefab2.GetComponent<HitBox>().attackListIndex = 2;
     }
     private void OnEnable()
     {
@@ -67,15 +70,29 @@ public class Player : Unit
     {
         if (isAttacking)
             return;
-        BeginAttack(hitBoxPrefab);
-        isAttacking =  true;
+
+        // check for projectile attack
+        if(!hitBoxPrefab.GetComponent<HitBox>().GetIsMelee() && projectileCount < maxProjectile)
+        {
+            projectileCount++;
+            BeginAttack(hitBoxPrefab);
+            return;
+        }
+        isAttacking = true;
     }
 
     private void OnAttack2(InputAction.CallbackContext context)
     {
         if (isAttacking2)
             return;
-        BeginAttack(hitBoxPrefab2);
+
+        // check for projectile attack
+        if(!hitBoxPrefab2.GetComponent<HitBox>().GetIsMelee() && projectileCount < maxProjectile)
+        {
+            projectileCount++;
+            BeginAttack(hitBoxPrefab2);
+            return;
+        }
         isAttacking2 = true;
     }
 
@@ -93,10 +110,24 @@ public class Player : Unit
         onPlayerDamaged?.Invoke(this);
     }
 
-    private void OnHitBoxDurationOver()
+    private void OnHitBoxDurationOver(int attackIndex)
     {
-        isAttacking = false;
-        isAttacking2 = false;
+        if(attackIndex == 1)
+        {
+            isAttacking = false;
+            if(!hitBoxPrefab.GetComponent<HitBox>().GetIsMelee())
+            {
+                projectileCount--;
+            }
+        }
+        else if(attackIndex == 2)
+        {
+            isAttacking2 = false;
+            if(!hitBoxPrefab2.GetComponent<HitBox>().GetIsMelee())
+            {
+                projectileCount--;
+            }
+        }
     }
 
     // Update is called once per frame
@@ -105,5 +136,5 @@ public class Player : Unit
         
     }
 
-
+    
 }

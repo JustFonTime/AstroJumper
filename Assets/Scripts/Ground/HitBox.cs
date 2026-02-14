@@ -20,8 +20,10 @@ public class HitBox : MonoBehaviour
     private Collider2D hitBoxCollider;
     [SerializeField] private float currentHitboxActiveDurration = 0f; // how long has the hitbox out
     [SerializeField] private bool displayHitbox = false;
-    public static event Action onDurationOver;
-
+    
+    public static event Action<int> onDurationOver;
+    public ProjectilePool projectilePool;
+    public int attackListIndex = 0;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -52,7 +54,7 @@ public class HitBox : MonoBehaviour
         if (currentHitboxActiveDurration > duration && !isPermanent)
         {
             DestroyAttack();
-            onDurationOver?.Invoke();
+            onDurationOver?.Invoke(attackListIndex);
         }
         if(!isMelee)
         {
@@ -98,8 +100,23 @@ public class HitBox : MonoBehaviour
 
     private void DestroyAttack()
     {
+        if(!isMelee)
+        {
+            projectilePool.ReturnProjectile(transform.parent.gameObject);
+            resetDuration();
+            return;
+        }
         Destroy(transform.parent.gameObject); 
         Destroy(gameObject);
     }
 
+    public void setPool(ProjectilePool pool)
+    {
+        projectilePool = pool;
+    }
+
+    private void resetDuration()
+    {
+        currentHitboxActiveDurration = 0f;
+    }
 }
