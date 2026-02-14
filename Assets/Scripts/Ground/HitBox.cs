@@ -2,6 +2,7 @@
 // WARNING: Not supposed to used as the visible object, meant to attach to other sprite object
 using Unity.VisualScripting;
 using UnityEngine;
+using System;
 
 public class HitBox : MonoBehaviour
 {
@@ -19,6 +20,7 @@ public class HitBox : MonoBehaviour
     private Collider2D hitBoxCollider;
     [SerializeField] private float currentHitboxActiveDurration = 0f; // how long has the hitbox out
     [SerializeField] private bool displayHitbox = false;
+    public static event Action onDurationOver;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -50,6 +52,7 @@ public class HitBox : MonoBehaviour
         if (currentHitboxActiveDurration > duration && !isPermanent)
         {
             DestroyAttack();
+            onDurationOver?.Invoke();
         }
         if(!isMelee)
         {
@@ -61,7 +64,7 @@ public class HitBox : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D other)
     {
         GameObject otherObject = other.gameObject;
-        if ((targetLayer.value & (1 << otherObject.layer)) == 0 && (ignoreLayer.value & (1 << otherObject.layer)) != 0) // Checks if objects layer is in the layer mask, found from https://discussions.unity.com/t/checking-if-a-layer-is-in-a-layer-mask/860331
+        if ((targetLayer.value & (1 << otherObject.layer)) == 0 && (ignoreLayer.value & (1 << otherObject.layer)) == 0) // Checks if objects layer is in the layer mask, found from https://discussions.unity.com/t/checking-if-a-layer-is-in-a-layer-mask/860331
         {
             print("hit wrong layer, ignoring");
             return;

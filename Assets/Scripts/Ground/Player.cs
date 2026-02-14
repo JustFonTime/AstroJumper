@@ -17,6 +17,7 @@ public class Player : Unit
 
     public static event Action<Unit> onPlayerDeath;
     public static event Action<Unit> onPlayerDamaged;
+    private bool isAttacking2 = false;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
@@ -47,6 +48,8 @@ public class Player : Unit
 
         attackAction2.Enable();
         attackAction2.performed += OnAttack2;
+
+        HitBox.onDurationOver += OnHitBoxDurationOver;
     }
 
     private void OnDisable()
@@ -56,17 +59,24 @@ public class Player : Unit
 
         attackAction2.performed -= OnAttack2;
         attackAction2.Disable();
+
+        HitBox.onDurationOver -= OnHitBoxDurationOver;
     }
 
     private void OnAttack(InputAction.CallbackContext context)
     {
+        if (isAttacking)
+            return;
         BeginAttack(hitBoxPrefab);
+        isAttacking =  true;
     }
 
     private void OnAttack2(InputAction.CallbackContext context)
     {
-        print("attack2");
+        if (isAttacking2)
+            return;
         BeginAttack(hitBoxPrefab2);
+        isAttacking2 = true;
     }
 
     public override void TakeDamage(int amount)
@@ -83,7 +93,11 @@ public class Player : Unit
         onPlayerDamaged?.Invoke(this);
     }
 
-
+    private void OnHitBoxDurationOver()
+    {
+        isAttacking = false;
+        isAttacking2 = false;
+    }
 
     // Update is called once per frame
     void Update()

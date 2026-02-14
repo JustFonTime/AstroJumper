@@ -26,6 +26,7 @@ public class Unit : MonoBehaviour
     public static event Action<Unit> onDamaged;
 
     protected bool isDamageAnimation = false;
+    protected bool isAttacking = false;
 
     void Start()
     {
@@ -59,6 +60,7 @@ public class Unit : MonoBehaviour
     public void BeginAttack(GameObject hitBoxPrefab)
     {
         CreateAttack(hitBoxPrefab);
+        
     }
 
     private void CreateAttack(GameObject hitBoxPrefab)
@@ -95,12 +97,11 @@ public class Unit : MonoBehaviour
         if(hitBoxInfo.GetIsMelee())
         {
             attackSprite.transform.parent = transform; 
-            
         }
         else
         {
             Projectile projectile = attackSprite.AddComponent<Projectile>();
-            projectile.SetDirection(GetComponent<GroundMovement>().isFacingRight ? 1 : -1);
+            projectile.SetDirection(groundMovement.isFacingRight ? 1 : -1);
             projectile.SetYValue(attackSprite.transform.position.y);
         }
 
