@@ -6,7 +6,6 @@ using System.Collections;
 
 public class Unit : MonoBehaviour
 {
-    // private GroundEventManager groundEventManager;
     [Header("Unit Info")]
     [SerializeField] private string _unitName;
     public string UnitName
@@ -26,16 +25,11 @@ public class Unit : MonoBehaviour
     public static event Action<Unit> onDeath;
     public static event Action<Unit> onDamaged;
 
+    protected bool isDamageAnimation = false;
+
     void Start()
     {
-        // groundEventManager = FindFirstObjectByType<GroundEventManager>();
-        // if (groundEventManager == null)
-        // {
-        //     Debug.LogError("Unit: No GroundEventManager found in the scene.");
-        // }
-
-        // groundEventManager.OnUnitDamaged += OnUnitDamaged;
-        // groundEventManager.OnUnitDeath += OnUnitDeath;
+        
     }
 
     public virtual void TakeDamage(int amount)
@@ -47,7 +41,8 @@ public class Unit : MonoBehaviour
             Death();
         }
         SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
-        StartCoroutine(DamageEffect(spriteRenderer));
+        if(!isDamageAnimation)
+            StartCoroutine(DamageEffect(spriteRenderer));
         onDamaged?.Invoke(this);
     }
 
@@ -114,6 +109,7 @@ public class Unit : MonoBehaviour
 
     protected IEnumerator DamageEffect(SpriteRenderer spriteRenderer)
     {
+        isDamageAnimation = true;
         for (int i = 0; i < 2; i++)
         {
             Color baseColor = spriteRenderer.color;
@@ -122,6 +118,7 @@ public class Unit : MonoBehaviour
             spriteRenderer.color = baseColor;
             yield return new WaitForSeconds(0.35f);
         }
+        isDamageAnimation = false;
     }
     #endregion
 

@@ -888,6 +888,10 @@ PrefabInstance:
       propertyPath: isPermanent
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6577929641708287723, guid: 0386b52ded88e344d8bdb8cb69e044e7, type: 3}
+      propertyPath: displayHitbox
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1545,6 +1549,7 @@ MonoBehaviour:
   actionsAsset: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   actionMapName: Player
   attackActionName: Attack
+  attackActionName2: Attack2
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

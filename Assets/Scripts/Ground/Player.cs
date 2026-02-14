@@ -10,7 +10,10 @@ public class Player : Unit
     [SerializeField] private InputActionAsset actionsAsset; //this is jsut to test, will move to GroundMovement when it is updated
     [SerializeField] private string actionMapName = "Player";
     [SerializeField] private string attackActionName = "Attack";
+    [SerializeField] private string attackActionName2 = "Attack2";
     private InputAction attackAction;
+    private InputAction attackAction2;
+
     public static event Action<Unit> onPlayerDeath;
     public static event Action<Unit> onPlayerDamaged;
     
@@ -26,19 +29,32 @@ public class Player : Unit
         else        {
             Debug.Log("Player: Attack action found successfully.");
         }
+        attackAction2 = map.FindAction(attackActionName2);
+        if (attackAction2 == null)
+        {
+            Debug.LogError("Player: Attack2 action not found in the InputActionAsset.");
+        }
+        else
+        {
+            Debug.Log("Player: Attack2 action found successfully.");
+        }
     }
     private void OnEnable()
     {
         attackAction.Enable();
-
         attackAction.performed += OnAttack;
+
+        attackAction2.Enable();
+        attackAction2.performed += OnAttack;
     }
 
     private void OnDisable()
     {
         attackAction.performed -= OnAttack;
-
         attackAction.Disable();
+
+        attackAction2.performed -= OnAttack;
+        attackAction2.Disable();
     }
 
     private void OnAttack(InputAction.CallbackContext context)
@@ -55,7 +71,8 @@ public class Player : Unit
             Death();
         }
         SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
-        StartCoroutine(DamageEffect(spriteRenderer));
+        if(!isDamageAnimation)
+            StartCoroutine(DamageEffect(spriteRenderer));
         onPlayerDamaged?.Invoke(this);
     }
 

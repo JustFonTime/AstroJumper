@@ -1,5 +1,6 @@
 // this script holds info for hitboxes, kinda named it wrong, should be named as attackInfo
 // WARNING: Not supposed to used as the visible object, meant to attach to other sprite object
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class HitBox : MonoBehaviour
@@ -17,6 +18,7 @@ public class HitBox : MonoBehaviour
     [SerializeField] private Sprite sprite; 
     private Collider2D hitBoxCollider;
     [SerializeField] private float currentHitboxActiveDurration = 0f; // how long has the hitbox out
+    [SerializeField] private bool displayHitbox = false;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -26,6 +28,16 @@ public class HitBox : MonoBehaviour
         if (hitBoxCollider == null)
         {
             Debug.LogError("HitBox: No Collider2D found on the GameObject.");
+        }
+
+        SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
+        if (!displayHitbox)
+        {
+            spriteRenderer.sprite = null;
+        }
+        else
+        {
+            spriteRenderer.sprite = sprite;    
         }
         
     }
