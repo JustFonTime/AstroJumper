@@ -138,8 +138,8 @@ public class Unit : MonoBehaviour
         else
         {
             Projectile projectile = attackSprite.AddComponent<Projectile>();
-            // projectile.SetDirection(GetComponent<GroundMovement>().isFacingRight ? 1 : -1);
-            // projectile.SetYValue(transform.position.y);
+            projectile.SetDirection(GetComponent<GroundMovement>().isFacingRight ? 1 : -1);
+            projectile.SetYValue(transform.position.y);
             
         }
 
