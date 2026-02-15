@@ -4,29 +4,33 @@ using UnityEngine;
 using UnityEngine.Pool;
 using Random = UnityEngine.Random;
 
-
 public class EnemySpaceshipSpawner : MonoBehaviour
 {
-    public enum SpawnType
-    {
-        Infinite,
-        SetWaves
-    }
+    public enum SpawnType { Infinite, SetWaves }
 
-    [Header("Mode")] [SerializeField] private SpawnType spawnType = SpawnType.Infinite;
+    [Header("Mode")] 
+    [SerializeField] private SpawnType spawnType = SpawnType.Infinite;
 
-    [Header("Infinite Settings")] [SerializeField]
-    private EnemySpaceshipSpawnerSettingsSO spawnerSettings;
+    [Header("Infinite Settings")]
+    [SerializeField] private EnemySpaceshipSpawnerSettingsSO spawnerSettings;
 
-    [Header("Wave Settings")] [SerializeField]
-    private List<WaveSpawnSettings> waves = new List<WaveSpawnSettings>();
+    [Header("Wave Settings")]
+    [SerializeField] private List<WaveSpawnSettings> waves = new List<WaveSpawnSettings>();
 
-    [Header("Pooling")] [SerializeField] private int defaultPoolCapacity = 50;
+    [Header("Teams (any number)")]
+    [SerializeField] private bool assignTeams = true;
+
+    [Tooltip("Enemies will be randomly assigned one of these team IDs. Example: [1,2]. Player should be team 0.")]
+    [SerializeField] private List<int> enemyTeamIds = new List<int> { 1, 2 };
+
+    [SerializeField] private int fallbackEnemyTeamId = 1;
+
+    [Header("Pooling")] 
+    [SerializeField] private int defaultPoolCapacity = 50;
     [SerializeField] private int maxPoolSize = 200;
 
-    [Header("Hierarchy Parents (optional)")] [SerializeField]
-    private Transform activeEnemiesRoot;
-
+    [Header("Hierarchy Parents (optional)")]
+    [SerializeField] private Transform activeEnemiesRoot;
     [SerializeField] private Transform pooledRoot;
 
     private GameObject player;
@@ -47,13 +51,21 @@ public class EnemySpaceshipSpawner : MonoBehaviour
         if (pooledRoot == null)
         {
             var go = new GameObject("Enemies_Pooled");
-            Prewarm(go, 50);
-            pooledRoot = go.transform;
+            pooledRoot = go.transform; // IMPORTANT: set BEFORE prewarm/pool creation
         }
 
-        
+        // prewarm the actual enemy prefab pool (not the pooledRoot object)
+        if (spawnerSettings != null && spawnerSettings.enemySpaceshipPrefab != null)
+            Prewarm(spawnerSettings.enemySpaceshipPrefab, Mathf.Max(0, defaultPoolCapacity));
 
         StartCoroutine(RunSpawner());
+    }
+
+    private int PickEnemyTeamId()
+    {
+        if (!assignTeams) return fallbackEnemyTeamId;
+        if (enemyTeamIds == null || enemyTeamIds.Count == 0) return fallbackEnemyTeamId;
+        return enemyTeamIds[Random.Range(0, enemyTeamIds.Count)];
     }
 
     private void Prewarm(GameObject prefab, int count)
@@ -65,7 +77,6 @@ public class EnemySpaceshipSpawner : MonoBehaviour
             pool.Release(go);
         }
     }
-
 
     private IEnumerator RunSpawner()
     {
@@ -82,7 +93,6 @@ public class EnemySpaceshipSpawner : MonoBehaviour
         {
             for (int w = 0; w < waves.Count; w++)
             {
-                // spawn this wave
                 foreach (var entry in waves[w].enemies)
                 {
                     if (entry.prefab == null || entry.count <= 0) continue;
@@ -95,7 +105,6 @@ public class EnemySpaceshipSpawner : MonoBehaviour
                     }
                 }
 
-                // wait until all spawned enemies are dead/despawned
                 while (aliveEnemies > 0)
                     yield return null;
 
@@ -116,31 +125,24 @@ public class EnemySpaceshipSpawner : MonoBehaviour
         go.transform.position = spawnPosition;
         go.transform.rotation = Quaternion.identity;
 
+        // Assign a team (so enemies can fight each other)
+        if (go.TryGetComponent<TeamAgent>(out var agent))
+            agent.SetTeam(PickEnemyTeamId());
+
         // Re-init AI every spawn (pool-safe)
         if (go.TryGetComponent<EnemySpaceshipAI>(out var ai))
             ai.ResetForSpawn(player);
 
+        if (go.TryGetComponent<EnemySpaceshipCombatAI>(out var combat))
+            combat.ResetForSpawn();
+
         aliveEnemies++;
-    }
-
-    public void ReleaseEnemy(GameObject enemyGO)
-    {
-        if (enemyGO == null) return;
-
-        if (enemyGO.TryGetComponent<PooledEnemy>(out var pooled))
-            pooled.Despawn();
-        else
-        {
-            NotifyEnemyGone();
-            Destroy(enemyGO);
-        }
     }
 
     public void NotifyEnemyGone()
     {
         aliveEnemies = Mathf.Max(0, aliveEnemies - 1);
     }
-
 
     private ObjectPool<GameObject> GetPool(GameObject prefab)
     {
@@ -157,7 +159,6 @@ public class EnemySpaceshipSpawner : MonoBehaviour
 
                 var pe = go.GetComponent<PooledEnemy>();
                 if (pe == null) pe = go.AddComponent<PooledEnemy>();
-                // We'll store spawner+pool in the component
                 pe.Init(this, pool);
 
                 return go;
@@ -166,7 +167,6 @@ public class EnemySpaceshipSpawner : MonoBehaviour
             {
                 go.SetActive(true);
 
-                // Reset physics
                 if (go.TryGetComponent<Rigidbody2D>(out var rb))
                 {
                     rb.linearVelocity = Vector2.zero;
@@ -195,7 +195,10 @@ public class EnemySpaceshipSpawner : MonoBehaviour
 
         float randomX = Random.Range(-spawnAreaWidth / 2f, spawnAreaWidth / 2f);
         float randomY = Random.Range(-spawnAreaHeight / 2f, spawnAreaHeight / 2f);
-
+        if (player == null)
+        {
+            return Vector3.zero;
+        }
         return new Vector3(
             randomX + player.transform.position.x,
             randomY + player.transform.position.y,
@@ -203,3 +206,5 @@ public class EnemySpaceshipSpawner : MonoBehaviour
         );
     }
 }
+
+

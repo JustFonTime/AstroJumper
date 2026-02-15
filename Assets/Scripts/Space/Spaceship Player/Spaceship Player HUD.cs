@@ -32,9 +32,9 @@ public class SpaceshipPlayerHUD : MonoBehaviour
     }
 
     public void SetBoost()
-    {
-        float boost = player.GetComponent<SpaceshipMovement>().CurrentBoost;
-        float maxBoost = player.GetComponent<SpaceshipMovement>().MaxBoost;
-        boostSlider.value = boost / maxBoost;
+    { 
+        //float boost = player.GetComponent<SpaceshipMovement>().CurrentBoost;
+        //float maxBoost = player.GetComponent<SpaceshipMovement>().MaxBoost;
+        //boostSlider.value = boost / maxBoost;
     }
 }

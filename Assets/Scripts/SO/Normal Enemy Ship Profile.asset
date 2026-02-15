@@ -12,13 +12,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 248b8a0131e4c5e429b42dd520b481b1, type: 3}
   m_Name: Normal Enemy Ship Profile
   m_EditorClassIdentifier: Assembly-CSharp::EnemyShipProfileSO
-  moveForce: 30
+  forwardThrust: 12
+  reverseThrust: 8
+  strafeThrust: 6
+  maxStrafeFraction: 0.6
   maxSpeed: 60
+  alignStrength: 6
+  dampStrength: 1.2
+  brakeMultiplier: 2
   rotationOffset: -90
   rotationLerp: 12
   minDistanceFromPlayer: 5
   maxDistanceFromPlayer: 25
-  strafeForce: 40
+  orbitStrength: 1
+  radialSpring: 0.25
   startStrafeRight: 1
   useRandomStrafeDirection: 1
   minStrafeInterval: 2

@@ -175,6 +175,8 @@ GameObject:
   - component: {fileID: 6402403643007393690}
   - component: {fileID: 3101948059298077492}
   - component: {fileID: 3252553446457875857}
+  - component: {fileID: 6146821176628325350}
+  - component: {fileID: 7849794099789389228}
   m_Layer: 12
   m_Name: Enemy Spaceship
   m_TagString: Untagged
@@ -295,9 +297,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpaceshipCombatAI
   firePoint: {fileID: 3234909650482045839}
   shipProfile: {fileID: 11400000, guid: 8bd50cbd59634a2448b1c6805ea7ad4d, type: 2}
-  shipAI: {fileID: 6402403643007393690}
   laserPrefab: {fileID: 659358672219713016, guid: 0f075aa575b24054d9af932f0af45de2, type: 3}
-  canFire: 1
 --- !u!114 &6402403643007393690
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -312,15 +312,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpaceshipAI
   player: {fileID: 0}
   shipProfile: {fileID: 11400000, guid: 8bd50cbd59634a2448b1c6805ea7ad4d, type: 2}
-  isMovingTowardsPlayer: 0
   isBarrellRolling: 0
-  strafeRight: 1
   currentSpeedMultiplier: 1
-  separationRadius: 2.5
-  separationForce: 35
-  enemyMask:
-    serializedVersion: 2
-    m_Bits: 4096
+  returnToCenterRadius: 25
+  hardReturnRadius: 80
+  returnForceMultiplier: 1.25
+  drawDebug: 1
+  drawOnlyWhenSelected: 0
+  drawTargetLine: 1
+  hasTargetColor: {r: 0, g: 1, b: 0, a: 1}
+  noTargetColor: {r: 1, g: 0, b: 0, a: 1}
+  velocityGizmoScale: 0.25
+  forceGizmoScale: 0.05
+  maxVelocityGizmoLength: 8
+  maxForceGizmoLength: 6
 --- !u!50 &3101948059298077492
 Rigidbody2D:
   serializedVersion: 5
@@ -384,6 +389,35 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0.21133338}
   m_Radius: 0.5000001
+--- !u!114 &6146821176628325350
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5549628142487207619}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f45735e77e5d6bd41807ace5c099a2f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamAgent
+  teamId: 1
+--- !u!114 &7849794099789389228
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5549628142487207619}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 764bb458fb0973a4b8c537d639265f5e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TargetingComponent
+  aggroRadius: 40
+  retargetInterval: 2
+  enforceTargetSlots: 1
+  stickToTarget: 0
 --- !u!1 &6433051643367477689
 GameObject:
   m_ObjectHideFlags: 0

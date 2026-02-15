@@ -1,52 +1,73 @@
-using System;
 using System.Collections;
 using UnityEngine;
 
+[RequireComponent(typeof(TeamAgent))]
+[RequireComponent(typeof(TargetingComponent))]
 public class EnemySpaceshipCombatAI : MonoBehaviour
 {
     [SerializeField] private Transform firePoint;
     [SerializeField] private EnemyShipProfileSO shipProfile;
-    [SerializeField] private EnemySpaceshipAI shipAI;
     [SerializeField] private GameObject laserPrefab;
-    private GameObject player;
-    [SerializeField] public bool canFire = false;
 
-    private void Start()
+    private TargetingComponent targeting;
+    private Coroutine fireCo;
+    private bool canFire;
+
+    private void Awake()
     {
-        if (shipProfile == null)
-        {
-            Debug.LogError("No ship profile assigned");
-            enabled = false;
-            return;
-        }
-
-        player = GameObject.FindGameObjectWithTag("Player");
-        StartCoroutine(FireLaserCooldown());
+        targeting = GetComponent<TargetingComponent>();
     }
 
-    private void Update()
+    private void OnEnable()
     {
-        if (player == null)
-            return;
-
-        float distanceToPlayer = Vector2.Distance(transform.position, player.transform.position);
-        if (distanceToPlayer <= shipProfile.combatRange && canFire)
-        {
-            FireLaser();
-        }
+        StartFiringLoop();
     }
 
-    private void FireLaser()
+    private void OnDisable()
     {
-        Instantiate(laserPrefab, firePoint.position, firePoint.rotation);
-        StartCoroutine(FireLaserCooldown());
-    }
-
-    IEnumerator FireLaserCooldown()
-    {
+        StopFiringLoop();
         canFire = false;
-        float fireRate = UnityEngine.Random.Range(shipProfile.minFireRate, shipProfile.maxFireRate);
-        yield return new WaitForSeconds(fireRate);
-        canFire = true;
+    }
+
+    // Pool-safe
+    public void ResetForSpawn()
+    {
+        StopFiringLoop();
+        canFire = false;
+        StartFiringLoop();
+    }
+
+    private void StartFiringLoop()
+    {
+        if (shipProfile == null || laserPrefab == null || firePoint == null) return;
+        if (fireCo != null) StopCoroutine(fireCo);
+        fireCo = StartCoroutine(FireLoop());
+    }
+
+    private void StopFiringLoop()
+    {
+        if (fireCo != null) StopCoroutine(fireCo);
+        fireCo = null;
+    }
+
+    private IEnumerator FireLoop()
+    {
+        // Desync so all enemies don't shoot in the same frame
+        yield return new WaitForSeconds(Random.Range(0f, 0.4f));
+
+        while (true)
+        {
+            float fireRate = Random.Range(shipProfile.minFireRate, shipProfile.maxFireRate);
+            yield return new WaitForSeconds(fireRate);
+
+            var t = targeting != null ? targeting.CurrentTarget : null;
+            if (t == null) continue;
+
+            float dist = Vector2.Distance(transform.position, t.transform.position);
+            if (dist <= shipProfile.combatRange)
+            {
+                Instantiate(laserPrefab, firePoint.position, firePoint.rotation);
+            }
+        }
     }
 }
