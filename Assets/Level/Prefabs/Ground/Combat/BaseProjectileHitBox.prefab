@@ -117,10 +117,12 @@ MonoBehaviour:
   ignoreLayer:
     serializedVersion: 2
     m_Bits: 2048
-  offset: {x: 1, y: 0, z: 0}
+  offset: {x: 1.5, y: 0, z: 0}
   sprite: {fileID: 21300000, guid: f0ac408f34ad0c0419aca771715a18a7, type: 3}
   currentHitboxActiveDurration: 0
-  displayHitbox: 0
+  displayHitbox: 1
+  projectilePool: {fileID: 0}
+  attackListIndex: 0
 --- !u!61 &3405425898676861640
 BoxCollider2D:
   m_ObjectHideFlags: 0

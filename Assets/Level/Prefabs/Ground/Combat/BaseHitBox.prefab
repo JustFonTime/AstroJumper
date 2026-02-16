@@ -120,6 +120,9 @@ MonoBehaviour:
   offset: {x: 1, y: 0, z: 0}
   sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   currentHitboxActiveDurration: 0
+  displayHitbox: 1
+  projectilePool: {fileID: 0}
+  attackListIndex: 2
 --- !u!61 &3405425898676861640
 BoxCollider2D:
   m_ObjectHideFlags: 0

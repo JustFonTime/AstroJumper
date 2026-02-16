@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Unity.VisualScripting;
 
 public class Player : Unit
 {
@@ -78,6 +79,10 @@ public class Player : Unit
             BeginAttack(hitBoxPrefab);
             return;
         }
+        else
+        {
+            BeginAttack(hitBoxPrefab);
+        }
         isAttacking = true;
     }
 
@@ -92,6 +97,10 @@ public class Player : Unit
             projectileCount++;
             BeginAttack(hitBoxPrefab2);
             return;
+        }
+        else
+        {
+            BeginAttack(hitBoxPrefab2);
         }
         isAttacking2 = true;
     }

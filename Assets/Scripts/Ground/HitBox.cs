@@ -66,10 +66,14 @@ public class HitBox : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D other)
     {
         GameObject otherObject = other.gameObject;
-        if ((targetLayer.value & (1 << otherObject.layer)) == 0 && (ignoreLayer.value & (1 << otherObject.layer)) == 0) // Checks if objects layer is in the layer mask, found from https://discussions.unity.com/t/checking-if-a-layer-is-in-a-layer-mask/860331
+        if ((targetLayer.value & (1 << otherObject.layer)) == 0 || (ignoreLayer.value & (1 << otherObject.layer)) != 0) // Checks if objects layer is in the layer mask, found from https://discussions.unity.com/t/checking-if-a-layer-is-in-a-layer-mask/860331
         {
             print("hit wrong layer, ignoring");
             return;
+        }
+        else if((targetLayer.value & (1 << otherObject.layer)) != 0)
+        {
+            print("hit");
         }
         print("hitbox: Hit " + other.name);
         Unit unit = other.GetComponent<Unit>();

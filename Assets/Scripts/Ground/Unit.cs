@@ -30,20 +30,25 @@ public class Unit : MonoBehaviour
     [SerializeField] protected GameObject hitBoxPrefab;
     [SerializeField] protected GameObject hitBoxPrefab2; 
     public ProjectilePool unitProjectilePool;
+    private bool useProjectilePool = true;
+
 
     void Start()
     {
-        unitProjectilePool = GetComponentInChildren<ProjectilePool>();
-        if(unitProjectilePool)
+        if(useProjectilePool)
         {
-            for (int i = 0; i < unitProjectilePool.poolSize; i++)
+            unitProjectilePool = GetComponentInChildren<ProjectilePool>();
+            if(unitProjectilePool)
             {
-                GameObject projectile = GenerateProjectile(GetProjectilePrefab());
-                projectile.GetComponentInChildren<HitBox>().setPool(unitProjectilePool);
-                projectile.AddComponent<Projectile>().enabled = false; 
-                projectile.SetActive(false);
-                unitProjectilePool.projectilePool.Enqueue(projectile);
+                for (int i = 0; i < unitProjectilePool.poolSize; i++)
+                {
+                    GameObject projectile = GenerateProjectile(GetProjectilePrefab());
+                    projectile.GetComponentInChildren<HitBox>().setPool(unitProjectilePool);
+                    projectile.SetActive(false);
+                    unitProjectilePool.projectilePool.Enqueue(projectile);
+                }
             }
+            
         }
         
     }
@@ -95,7 +100,9 @@ public class Unit : MonoBehaviour
         if(!hitBoxInfo.GetIsMelee() && unitProjectilePool != null)
         {
             GameObject projectile = unitProjectilePool.GetProjectile();
-            projectile.transform.position = transform.position;
+            Vector3 offsetDirection = GetComponent<GroundMovement>().isFacingRight ? Vector3.right : Vector3.left;
+            Vector3 offset = new Vector3(hitBoxInfo.GetOffset().x * offsetDirection.x, hitBoxInfo.GetOffset().y, hitBoxInfo.GetOffset().z);
+            projectile.transform.position = transform.position + offset;
             projectile.GetComponent<Projectile>().SetDirection(GetComponent<GroundMovement>().isFacingRight ? 1 : -1);
             projectile.GetComponent<Projectile>().SetYValue(transform.position.y);
             return projectile;
@@ -111,8 +118,6 @@ public class Unit : MonoBehaviour
         GameObject hitBox = Instantiate(hitBoxPrefab, transform.position, Quaternion.identity);
         hitBox.transform.parent = attackSprite.transform; 
 
-        HitBox hitBoxInfo = hitBox.GetComponent<HitBox>();
-        
         hitBox.transform.position = attackSprite.transform.position;
         hitBox.transform.parent = attackSprite.transform;
     }
@@ -130,7 +135,6 @@ public class Unit : MonoBehaviour
         spriteRenderer.sprite = hitBoxInfo.GetSprite();
         
         attackSprite.transform.position = transform.position + offset;
-        
         if(hitBoxInfo.GetIsMelee())
         {
             attackSprite.transform.parent = transform; 

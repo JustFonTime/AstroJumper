@@ -814,7 +814,7 @@ GameObject:
   m_Component:
   - component: {fileID: 813536776}
   - component: {fileID: 813536777}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Projectile Pool
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -859,7 +859,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 919925894}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: GroundCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -941,6 +941,18 @@ PrefabInstance:
       propertyPath: displayHitbox
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6577929641708287723, guid: 0386b52ded88e344d8bdb8cb69e044e7, type: 3}
+      propertyPath: ignoreLayer.m_Bits
+      value: 4096
+      objectReference: {fileID: 0}
+    - target: {fileID: 6577929641708287723, guid: 0386b52ded88e344d8bdb8cb69e044e7, type: 3}
+      propertyPath: targetLayer.m_Bits
+      value: 2048
+      objectReference: {fileID: 0}
+    - target: {fileID: 8477802174989769030, guid: 0386b52ded88e344d8bdb8cb69e044e7, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 3df763bb22251d740b97a1774ded0098, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1131,7 +1143,7 @@ GameObject:
   - component: {fileID: 1284879302}
   - component: {fileID: 1284879301}
   - component: {fileID: 1284879304}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Main Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
@@ -1397,7 +1409,7 @@ GameObject:
   - component: {fileID: 2014226424}
   - component: {fileID: 2014226420}
   - component: {fileID: 2014226419}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: TempPlayer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
