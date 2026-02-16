@@ -1,6 +1,6 @@
 // this script holds info for hitboxes, kinda named it wrong, should be named as attackInfo
 // WARNING: Not supposed to used as the visible object, meant to attach to other sprite object
-// WARNING: One of the objects which is interacting has to have a rigidbody2D for OnTriggerEnter2D to work,
+// WARNING: One of the objects which is interacting has to have a rigidbody2D for OnTriggerEnter2D to work
 // I might just add a rigidbody2D to the hitbox if more problems appear.
 using Unity.VisualScripting;
 using UnityEngine;
