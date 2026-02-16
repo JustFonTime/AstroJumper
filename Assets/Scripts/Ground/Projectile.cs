@@ -35,4 +35,9 @@ public class Projectile : MonoBehaviour
     {
         yValue = y;
     }
+    
+    public void SetSpeed(float newSpeed)
+    {
+        speed = newSpeed;
+    }
 }

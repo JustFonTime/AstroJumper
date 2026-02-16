@@ -109,8 +109,9 @@ MonoBehaviour:
   damage: 10
   isPermanent: 0
   duration: 1
-  knockbackForce: 5
+  knockbackForce: 1
   isMelee: 0
+  projectileSpeed: 1
   targetLayer:
     serializedVersion: 2
     m_Bits: 4096
@@ -122,7 +123,7 @@ MonoBehaviour:
   currentHitboxActiveDurration: 0
   displayHitbox: 1
   projectilePool: {fileID: 0}
-  attackListIndex: 0
+  attackListIndex: 1
 --- !u!61 &3405425898676861640
 BoxCollider2D:
   m_ObjectHideFlags: 0

@@ -105,6 +105,7 @@ public class Unit : MonoBehaviour
             projectile.transform.position = transform.position + offset;
             projectile.GetComponent<Projectile>().SetDirection(GetComponent<GroundMovement>().isFacingRight ? 1 : -1);
             projectile.GetComponent<Projectile>().SetYValue(transform.position.y);
+            projectile.GetComponent<Projectile>().SetSpeed(hitBoxInfo.GetProjectileSpeed());
             return projectile;
         }
 
@@ -144,7 +145,6 @@ public class Unit : MonoBehaviour
             Projectile projectile = attackSprite.AddComponent<Projectile>();
             projectile.SetDirection(GetComponent<GroundMovement>().isFacingRight ? 1 : -1);
             projectile.SetYValue(transform.position.y);
-            
         }
 
         return attackSprite;

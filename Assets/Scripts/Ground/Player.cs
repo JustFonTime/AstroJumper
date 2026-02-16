@@ -69,21 +69,32 @@ public class Player : Unit
 
     private void OnAttack(InputAction.CallbackContext context)
     {
+
+        //
         if (isAttacking)
             return;
 
         // check for projectile attack
-        if(!hitBoxPrefab.GetComponent<HitBox>().GetIsMelee() && projectileCount < maxProjectile)
+        if(unitProjectilePool && projectileCount < maxProjectile)
         {
+            print("Projectile attack from pool");
             projectileCount++;
             BeginAttack(hitBoxPrefab);
             return;
         }
-        else
+        else if(hitBoxPrefab.GetComponent<HitBox>().GetIsMelee())
         {
+            print("melee attack");
             BeginAttack(hitBoxPrefab);
+            isAttacking = true;
+            return;
         }
-        isAttacking = true;
+        else if(projectileCount < maxProjectile)
+        {
+            print("no projectile pool, creating projectile");
+            BeginAttack(hitBoxPrefab);
+            return;
+        }
     }
 
     private void OnAttack2(InputAction.CallbackContext context)
@@ -92,17 +103,26 @@ public class Player : Unit
             return;
 
         // check for projectile attack
-        if(!hitBoxPrefab2.GetComponent<HitBox>().GetIsMelee() && projectileCount < maxProjectile)
+        if(unitProjectilePool && projectileCount < maxProjectile)
         {
+            print("Projectile attack from pool");
             projectileCount++;
             BeginAttack(hitBoxPrefab2);
             return;
         }
-        else
+        else if(hitBoxPrefab2.GetComponent<HitBox>().GetIsMelee())
         {
+            print("melee attack");
             BeginAttack(hitBoxPrefab2);
+            isAttacking2 = true;
+            return;
         }
-        isAttacking2 = true;
+        else if(projectileCount < maxProjectile)
+        {
+            print("no projectile pool, creating projectile");
+            BeginAttack(hitBoxPrefab2);
+            return;
+        }
     }
 
     public override void TakeDamage(int amount)
