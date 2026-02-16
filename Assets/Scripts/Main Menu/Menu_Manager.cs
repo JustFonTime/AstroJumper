@@ -69,7 +69,7 @@ public class Menu_Manager : MonoBehaviour
 
     public void StartGame()
     {
-        SceneManager.LoadScene("Level Selector");
+        SceneManager.LoadScene("Level Selector 2");
     }
 
     public void ShowOptionsMenu()
