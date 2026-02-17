@@ -13,23 +13,36 @@ MonoBehaviour:
   m_Name: Normal Enemy Ship Profile
   m_EditorClassIdentifier: Assembly-CSharp::EnemyShipProfileSO
   forwardThrust: 12
-  reverseThrust: 8
-  strafeThrust: 6
-  maxStrafeFraction: 0.6
   maxSpeed: 60
+  rotationOffset: -90
+  minTurnDegPerSec: 10
+  maxTurnDegPerSec: 110
+  turnAuthorityBySpeed:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   alignStrength: 6
   dampStrength: 1.2
-  brakeMultiplier: 2
-  rotationOffset: -90
-  rotationLerp: 12
-  minDistanceFromPlayer: 5
-  maxDistanceFromPlayer: 25
-  orbitStrength: 1
-  radialSpring: 0.25
-  startStrafeRight: 1
-  useRandomStrafeDirection: 1
-  minStrafeInterval: 2
-  maxStrafeInterval: 5
   useRandomSpeed: 1
   minSpeedMultiplier: 0.6
   maxSpeedMultiplier: 1.4
@@ -40,7 +53,7 @@ MonoBehaviour:
   barrelRollSpinDegrees: 360
   barrelRollMinTime: 4
   barrelRollMaxTime: 10
-  combatRange: 67
-  minFireRate: 1
-  maxFireRate: 2
+  combatRange: 167
+  minFireRate: 0.3
+  maxFireRate: 0.6
   maxHealth: 50

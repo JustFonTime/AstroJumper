@@ -332,7 +332,7 @@ MonoBehaviour:
     CustomLookAtTarget: 0
   Lens:
     FieldOfView: 34
-    OrthographicSize: 30
+    OrthographicSize: 25
     NearClipPlane: 0.3
     FarClipPlane: 1000
     Dutch: 0
@@ -585,16 +585,16 @@ MonoBehaviour:
   waves:
   - enemies:
     - prefab: {fileID: 5549628142487207619, guid: 0c4ae840623f29e4cad6f92203c5dea3, type: 3}
-      count: 1
-    spawnSpacing: 2
+      count: 4
+    spawnSpacing: 0.5
     timeToSpawnAfterFinalDeath: 4
   - enemies:
     - prefab: {fileID: 5549628142487207619, guid: 0c4ae840623f29e4cad6f92203c5dea3, type: 3}
       count: 3
     spawnSpacing: 4
     timeToSpawnAfterFinalDeath: 4
-  assignTeams: 0
-  enemyTeamIds: 0100000002000000
+  assignTeams: 1
+  enemyTeamIds: 01000000
   fallbackEnemyTeamId: 1
   defaultPoolCapacity: 50
   maxPoolSize: 200
@@ -754,7 +754,7 @@ Camera:
   far clip plane: 1000
   field of view: 34
   orthographic: 1
-  orthographic size: 30
+  orthographic size: 25
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -800,6 +800,26 @@ PrefabInstance:
     - target: {fileID: 3350557924722327067, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7396577382986853205, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
+      propertyPath: drawDebug
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7396577382986853205, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
+      propertyPath: alignStrength
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7396577382986853205, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
+      propertyPath: coastDampStrength
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7396577382986853205, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
+      propertyPath: drawOnlyWhenSelected
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7396577382986853205, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
+      propertyPath: preventBackwardVelocity
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7670360865814592282, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
       propertyPath: m_LocalPosition.x
@@ -860,6 +880,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 572487956370856678, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 1020784283}
     - target: {fileID: 1029587659160723094, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
       propertyPath: m_Name
       value: Spaceship Player HUD
@@ -944,6 +968,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3242227169495131606, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 1020784283}
     - target: {fileID: 4709896190755064355, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
