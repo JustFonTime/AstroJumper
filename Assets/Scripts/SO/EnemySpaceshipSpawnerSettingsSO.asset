@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b10721184159384b991ef41fdc8b098, type: 3}
   m_Name: EnemySpaceshipSpawnerSettingsSO
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpaceshipSpawnerSettingsSO
-  enemySpaceshipPrefab: {fileID: 5549628142487207619, guid: 0c4ae840623f29e4cad6f92203c5dea3, type: 3}
+  enemySpaceshipPrefab: {fileID: 5549628142487207619, guid: 66b35331de539834f819bbbac8b67800, type: 3}
   spawnInterval: 2.5
   enemiesPerSpawn: 2
   minSpawnAreaSize: {x: 100, y: 100}

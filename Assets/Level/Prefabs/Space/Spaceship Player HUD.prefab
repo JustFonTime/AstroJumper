@@ -553,7 +553,6 @@ GameObject:
   - component: {fileID: 6070728143027895498}
   - component: {fileID: 917342338683489951}
   - component: {fileID: 3242227169495131606}
-  - component: {fileID: 572487956370856678}
   m_Layer: 5
   m_Name: Radar
   m_TagString: Untagged
@@ -652,36 +651,11 @@ MonoBehaviour:
   enemyMasl:
     serializedVersion: 2
     m_Bits: 4096
-  radarRangeWorld: 150
-  maxEnemies: 10
-  refreshRate: 0.5
-  rotateWithPlayer: 1
-  edgePaddingPixels: 6
-  showOUtOfRangeEdg: 1
---- !u!114 &572487956370856678
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8593533628255852149}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 100f08f9c60289c4fa2b0b35944cc5a7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RadarUI
-  player: {fileID: 0}
-  radarRect: {fileID: 0}
-  dotsRoot: {fileID: 0}
-  dotPrefab: {fileID: 0}
-  enemyMasl:
-    serializedVersion: 2
-    m_Bits: 0
   radarRangeWorld: 60
   maxEnemies: 10
-  refreshRate: 0.5
+  refreshRate: 0.016666668
   rotateWithPlayer: 1
-  edgePaddingPixels: 6
+  edgePaddingPixels: 2
   showOUtOfRangeEdg: 1
 --- !u!1 &8649298041764895367
 GameObject:

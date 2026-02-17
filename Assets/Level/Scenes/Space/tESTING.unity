@@ -332,7 +332,7 @@ MonoBehaviour:
     CustomLookAtTarget: 0
   Lens:
     FieldOfView: 34
-    OrthographicSize: 25
+    OrthographicSize: 30
     NearClipPlane: 0.3
     FarClipPlane: 1000
     Dutch: 0
@@ -580,7 +580,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b0f199f077509c47bad15ab404b6ffb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpaceshipSpawner
-  spawnType: 1
+  spawnType: 0
   spawnerSettings: {fileID: 11400000, guid: 3e818ecb229b1c84f9565281337883cc, type: 2}
   waves:
   - enemies:
@@ -594,7 +594,7 @@ MonoBehaviour:
     spawnSpacing: 4
     timeToSpawnAfterFinalDeath: 4
   assignTeams: 1
-  enemyTeamIds: 01000000
+  enemyTeamIds: 000000000100000002000000
   fallbackEnemyTeamId: 1
   defaultPoolCapacity: 50
   maxPoolSize: 200
@@ -648,7 +648,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineBrain
   ShowDebugText: 0
-  ShowCameraFrustum: 1
+  ShowCameraFrustum: 0
   IgnoreTimeScale: 0
   WorldUpOverride: {fileID: 0}
   ChannelMask: -1
@@ -754,7 +754,7 @@ Camera:
   far clip plane: 1000
   field of view: 34
   orthographic: 1
-  orthographic size: 25
+  orthographic size: 30
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -880,10 +880,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 572487956370856678, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
-      propertyPath: player
-      value: 
-      objectReference: {fileID: 1020784283}
     - target: {fileID: 1029587659160723094, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
       propertyPath: m_Name
       value: Spaceship Player HUD
@@ -972,6 +968,14 @@ PrefabInstance:
       propertyPath: player
       value: 
       objectReference: {fileID: 1020784283}
+    - target: {fileID: 3242227169495131606, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
+      propertyPath: maxEnemies
+      value: 67
+      objectReference: {fileID: 0}
+    - target: {fileID: 3242227169495131606, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
+      propertyPath: radarRangeWorld
+      value: 150
+      objectReference: {fileID: 0}
     - target: {fileID: 4709896190755064355, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -1050,6 +1054,63 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0c408d1be629c404a88b3bc91f3ca708, type: 3}
+--- !u!1001 &8390017776939807120
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 621257867614630666, guid: 2d8bd610fd5b7824ba49b1ce59044b6f, type: 3}
+      propertyPath: m_Name
+      value: FlagShip
+      objectReference: {fileID: 0}
+    - target: {fileID: 4562730758590106680, guid: 2d8bd610fd5b7824ba49b1ce59044b6f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -23.61186
+      objectReference: {fileID: 0}
+    - target: {fileID: 4562730758590106680, guid: 2d8bd610fd5b7824ba49b1ce59044b6f, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.81306
+      objectReference: {fileID: 0}
+    - target: {fileID: 4562730758590106680, guid: 2d8bd610fd5b7824ba49b1ce59044b6f, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4562730758590106680, guid: 2d8bd610fd5b7824ba49b1ce59044b6f, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4562730758590106680, guid: 2d8bd610fd5b7824ba49b1ce59044b6f, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4562730758590106680, guid: 2d8bd610fd5b7824ba49b1ce59044b6f, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4562730758590106680, guid: 2d8bd610fd5b7824ba49b1ce59044b6f, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4562730758590106680, guid: 2d8bd610fd5b7824ba49b1ce59044b6f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4562730758590106680, guid: 2d8bd610fd5b7824ba49b1ce59044b6f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4562730758590106680, guid: 2d8bd610fd5b7824ba49b1ce59044b6f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 2d8bd610fd5b7824ba49b1ce59044b6f, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -1064,3 +1125,4 @@ SceneRoots:
   - {fileID: 1354088538}
   - {fileID: 245580821}
   - {fileID: 847576195}
+  - {fileID: 8390017776939807120}
