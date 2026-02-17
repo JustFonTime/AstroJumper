@@ -17,7 +17,7 @@ public class PlanetText : MonoBehaviour
 
     void UpdateTransform()
     {
-        Vector3 textPos = Camera.main.WorldToScreenPoint(planetGO.transform.position + new Vector3(0.8f, -1.5f, 0));
+        Vector3 textPos = planetGO.transform.position + new Vector3(0.8f, -1.5f, 0);
         transform.position = textPos;
     }
 }

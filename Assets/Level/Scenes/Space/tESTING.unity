@@ -131,6 +131,7 @@ GameObject:
   - component: {fileID: 519420031}
   - component: {fileID: 519420029}
   - component: {fileID: 519420030}
+  - component: {fileID: 519420033}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -256,6 +257,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &519420033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 519420028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17015c9ad65e9164db7cf82acee88235, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GreyscalePostProcess
+  isGrey: 0
 --- !u!1 &619394800
 GameObject:
   m_ObjectHideFlags: 0
@@ -799,6 +813,14 @@ PrefabInstance:
     - target: {fileID: 5850687036317708674, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7023339647511468553, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
+      propertyPath: m_Camera
+      value: 
+      objectReference: {fileID: 519420031}
+    - target: {fileID: 7023339647511468553, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
+      propertyPath: m_RenderMode
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
