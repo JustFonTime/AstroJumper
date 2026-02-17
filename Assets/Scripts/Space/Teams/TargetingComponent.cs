@@ -13,7 +13,7 @@ using Random = UnityEngine.Random;
 public class TargetingComponent : MonoBehaviour
 {
     [Header("Targeting ")] [SerializeField]
-    private float aggroRadius = 40f;
+    private float aggroRadius = 300f;
 
     [SerializeField] private float retargetInterval = 0.25f;
 

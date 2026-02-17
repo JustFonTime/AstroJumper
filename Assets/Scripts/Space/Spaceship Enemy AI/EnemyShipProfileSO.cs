@@ -10,20 +10,20 @@ public class EnemyShipProfileSO : ScriptableObject
     [Header("Steering")]
     public float rotationOffset = -90f;
 
-    [Tooltip("Turning when nearly stopped (deg/sec). Keep > 0 so they don't get 'stuck'.")]
+    [Tooltip("Turning when stopped (deg/sec).")]
     public float minTurnDegPerSec = 10f;
 
     [Tooltip("Turning at full forward speed (deg/sec).")]
     public float maxTurnDegPerSec = 60f;
 
-    [Tooltip("Maps speed01 (0..1) -> turn authority (0..1).")]
+    [Tooltip("maps speed to turning authority (0-1)")]
     public AnimationCurve turnAuthorityBySpeed = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
 
     [Header("Flight Assist ")]
-    [Tooltip("Higher = kills sideways drift harder.")]
+    [Tooltip("kills sideways drift")]
     public float alignStrength = 6f;
 
-    [Tooltip("Only applied when NOT thrusting (or returning).")]
+    [Tooltip("Dmping for all movement, including forward. Higher values = stronger damping, 1 = no damping, <1 = anti-damping (aka acceleration)")]
     public float dampStrength = 1.5f;
 
     [Header("Random Speed")]

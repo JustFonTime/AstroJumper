@@ -26,10 +26,10 @@ public class EnemySpaceshipAI : MonoBehaviour
     private Coroutine barrelCo;
 
     [Header("Arena / Return (no navmesh needed)")]
-    [Tooltip("If no target exists, ship will drift back toward center when farther than this.")]
+    [Tooltip("When no target, if farther than this from center, will thrust toward center. If 0, will not return and just idle in place.")]
     [SerializeField] private float returnToCenterRadius = 25f;
 
-    [Tooltip("Extra pull when very far (optional safety).")]
+    [Tooltip("Harder pull when supper far away")]
     [SerializeField] private float hardReturnRadius = 80f;
 
     [SerializeField] private float returnForceMultiplier = 1.25f;
@@ -163,10 +163,10 @@ public class EnemySpaceshipAI : MonoBehaviour
 
         dbgDesiredDir = toDesired.normalized;
 
-        // 1) Turn using speed-based turn authority
+        //  Turn using speed-based turn authority
         SteerToward(dbgDesiredDir);
 
-        // 2) Forward-only thrust
+        // Forward-only thrust
         bool shouldThrust = hasTarget;
 
         if (!hasTarget)
@@ -177,13 +177,13 @@ public class EnemySpaceshipAI : MonoBehaviour
 
         ApplyForwardThrust(shouldThrust, hasTarget);
 
-        // 3) Simple flight assist (kills sideways drift a bit)
+        //  flight assist (kills sideways drift a bit)
         ApplyFlightAssist(shouldThrust);
 
-        // 4) Clamp max speed
+      
         ClampSpeed();
 
-        // Optional: draw target line in scene/game view
+        
         if (drawTargetLine)
         {
             if (hasTarget)
@@ -211,7 +211,7 @@ public class EnemySpaceshipAI : MonoBehaviour
 
     private Vector2 GetArenaCenter()
     {
-        // If player exists, keep things near player; otherwise default to origin.
+        // if player exists, use their position as center of arena. otherwise use world zero.
         return player != null ? (Vector2)player.transform.position : Vector2.zero;
     }
 
@@ -223,7 +223,7 @@ public class EnemySpaceshipAI : MonoBehaviour
         float delta = Mathf.DeltaAngle(rb.rotation, desiredAngle);
         dbgDeltaAngle = delta;
 
-        // Turn authority scales with FORWARD speed (not sideways)
+        //turning authority scales with forward speed (cant turn as well when stopped or moving backwards)
         float forwardSpeed = Mathf.Max(0f, Vector2.Dot(rb.linearVelocity, transform.up));
         dbgForwardSpeed = forwardSpeed;
 
@@ -251,7 +251,7 @@ public class EnemySpaceshipAI : MonoBehaviour
         float speedMul = shipProfile.useRandomSpeed ? currentSpeedMultiplier : 1f;
         float thrust = shipProfile.forwardThrust * speedMul;
 
-        // If returning (no target), optionally push a bit harder when super far
+        //return to center when no target and past certain radius (optional safety if somehow drifted very far)
         if (!hasTarget)
         {
             float dist = Vector2.Distance(rb.position, GetArenaCenter());
@@ -277,7 +277,7 @@ public class EnemySpaceshipAI : MonoBehaviour
 
         float speedMul = shipProfile.useRandomSpeed ? currentSpeedMultiplier : 1f;
 
-        // Align: nudge velocity toward forward component (reduces sideways drift)
+        // nullify sideways velocity (keep forward velocity intact)
         Vector2 forward = transform.up;
         float fwdSpeed = Vector2.Dot(v, forward);
         Vector2 desiredVel = forward * fwdSpeed;
@@ -286,7 +286,7 @@ public class EnemySpaceshipAI : MonoBehaviour
         rb.AddForce(alignForce, ForceMode2D.Force);
         dbgAlignForce = alignForce;
 
-        // Damping only when not thrusting (prevents infinite drifting when idle/returning)
+        //damp when not thrusting
         Vector2 dampForce = Vector2.zero;
         if (!shouldThrust && shipProfile.dampStrength > 0f)
         {
@@ -321,7 +321,7 @@ public class EnemySpaceshipAI : MonoBehaviour
 
     private IEnumerator RandomBarrellRoll()
     {
-        // desync so they don't all roll together
+        // random desync so not all ships roll at same time on spawn
         yield return new WaitForSeconds(Random.Range(0f, 1.5f));
 
         while (shipProfile.useRandomBarrelRoll)

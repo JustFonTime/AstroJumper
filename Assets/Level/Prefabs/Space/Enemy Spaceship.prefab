@@ -317,9 +317,9 @@ MonoBehaviour:
   returnToCenterRadius: 25
   hardReturnRadius: 80
   returnForceMultiplier: 1.25
-  drawDebug: 1
+  drawDebug: 0
   drawOnlyWhenSelected: 0
-  drawTargetLine: 1
+  drawTargetLine: 0
   hasTargetColor: {r: 0, g: 1, b: 0, a: 1}
   noTargetColor: {r: 1, g: 0, b: 0, a: 1}
   velocityGizmoScale: 0.25
@@ -414,10 +414,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 764bb458fb0973a4b8c537d639265f5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TargetingComponent
-  aggroRadius: 40
+  aggroRadius: 300
   retargetInterval: 2
   enforceTargetSlots: 1
-  stickToTarget: 0
+  stickToTarget: 1
 --- !u!1 &6433051643367477689
 GameObject:
   m_ObjectHideFlags: 0

@@ -32,7 +32,6 @@ public class PlayerSpaceshipCombat : MonoBehaviour
         if (attack == null) return;
         if (!attack.canFire) return;
         if (attack.projectile == null || attack.firePoint == null) return;
-        print("firing single laser");
         Instantiate(attack.projectile, attack.firePoint.position, attack.firePoint.rotation);
         StartCoroutine(AttackCooldown(attack));
     }

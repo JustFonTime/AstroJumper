@@ -21,18 +21,13 @@ public class SpaceshipMovement : MonoBehaviour
     [Header("Brake (S key)")] [Tooltip("Extra damping force when braking (S). Higher = stops faster.")] [SerializeField]
     private float brakeStrength = 6f;
 
-    [Tooltip("If true, cancels backwards drift (so ship never moves backwards for long).")] [SerializeField]
-    private bool preventBackwardVelocity = true;
-
-    [Tooltip("How aggressively we kill backward velocity when preventBackwardVelocity is on.")] [SerializeField]
-    private float backwardKillStrength = 18f;
-
+ 
     [Header("Flight Assist")]
-    [Tooltip("How strongly we remove sideways drift (higher = snappier, lower = drifty).")]
+    [Tooltip("Removes sideways drift")]
     [SerializeField]
     private float alignStrength = 6f;
 
-    [Tooltip("Base damping when you give no input (helps stop endless drifting).")] [SerializeField]
+    [Tooltip("damping if no input")] [SerializeField]
     private float coastDampStrength = 1.25f;
 
     [Header("Rotation (Mouse Aim)")] [SerializeField]
@@ -64,8 +59,8 @@ public class SpaceshipMovement : MonoBehaviour
     private bool isRecharging = false;
 
     // Input
-    private float throttle01; // 0..1 (W)
-    private float brake01; // 0..1 (S)
+    private float throttle01; 
+    private float brake01; 
     private float targetAngle;
 
     [Header("Debug Gizmos")] [SerializeField]
@@ -83,7 +78,7 @@ public class SpaceshipMovement : MonoBehaviour
     private Vector2 dbgAlignForce;
     private Vector2 dbgDampForce;
     private Vector2 dbgThrustForce;
-    private Vector2 dbgBackwardKillForce;
+
 
     private void Awake()
     {
@@ -97,8 +92,7 @@ public class SpaceshipMovement : MonoBehaviour
 
     private void Update()
     {
-        // Axis-based (works for keyboard + gamepad)
-        // Vertical: W = +1, S = -1
+     
         float v = Input.GetAxisRaw("Vertical");
         throttle01 = Mathf.Clamp01(v);
         brake01 = Mathf.Clamp01(-v);
@@ -151,25 +145,23 @@ public class SpaceshipMovement : MonoBehaviour
         {
             dbgAlignForce = Vector2.zero;
             dbgDampForce = Vector2.zero;
-            dbgBackwardKillForce = Vector2.zero;
             return;
         }
 
         Vector2 forward = transform.up;
 
-        // --- 1) Align: kill sideways drift (keeps it modern-arcade)
+        // kill sideways drift
         float forwardSpeed = Vector2.Dot(v, forward);
-        Vector2 desiredVel = forward * forwardSpeed; // remove lateral component
+        Vector2 desiredVel = forward * forwardSpeed;
         Vector2 alignForce = (desiredVel - v) * alignStrength;
         rb.AddForce(alignForce, ForceMode2D.Force);
         dbgAlignForce = alignForce;
 
-        // --- 2) Damping: coast + brake
-        // Coasting damping when not thrusting
+        // damping when not throttling
         bool noThrottle = throttle01 < 0.001f;
         float damp = noThrottle ? coastDampStrength : 0f;
 
-        // Braking adds more damping
+        // braking increases dampiong
         if (brake01 > 0.001f)
             damp += brakeStrength * brake01;
 
@@ -182,15 +174,7 @@ public class SpaceshipMovement : MonoBehaviour
 
         dbgDampForce = dampForce;
 
-        // --- 3) Prevent backward motion (optional)
-        dbgBackwardKillForce = Vector2.zero;
-        if (preventBackwardVelocity && forwardSpeed < 0f)
-        {
-            // push forward proportional to how fast we’re moving backwards
-            Vector2 kill = forward * (-forwardSpeed * backwardKillStrength);
-            rb.AddForce(kill, ForceMode2D.Force);
-            dbgBackwardKillForce = kill;
-        }
+
     }
 
     private void RotateShipPhysics()
@@ -265,7 +249,7 @@ public class SpaceshipMovement : MonoBehaviour
         isBarrellRolling = true;
         canBarrellRoll = false;
 
-        // With forward-only ships, barrel roll is a sideways dodge (feels great + readable)
+        //sideways dodge
         Vector2 right = transform.right;
         Vector2 rollDir = right * (Input.GetAxisRaw("Horizontal") < 0f ? -1f : 1f);
 
@@ -339,8 +323,7 @@ public class SpaceshipMovement : MonoBehaviour
         DrawArrow(pos, ClampVec3(dbgAlignForce * forceGizmoScale, maxForceGizmoLength),
             new Color(1f, 0.6f, 0f)); // align
         DrawArrow(pos, ClampVec3(dbgDampForce * forceGizmoScale, maxForceGizmoLength), Color.red); // damping/brake
-        DrawArrow(pos, ClampVec3(dbgBackwardKillForce * forceGizmoScale, maxForceGizmoLength),
-            Color.blue); // backward kill
+
 
         DrawArrow(pos, (Vector3)(forward * 2f), Color.yellow); // facing
 

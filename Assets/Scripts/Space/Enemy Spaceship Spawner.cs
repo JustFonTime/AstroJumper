@@ -6,31 +6,35 @@ using Random = UnityEngine.Random;
 
 public class EnemySpaceshipSpawner : MonoBehaviour
 {
-    public enum SpawnType { Infinite, SetWaves }
+    public enum SpawnType
+    {
+        Infinite,
+        SetWaves
+    }
 
-    [Header("Mode")] 
-    [SerializeField] private SpawnType spawnType = SpawnType.Infinite;
+    [Header("Mode")] [SerializeField] private SpawnType spawnType = SpawnType.Infinite;
 
-    [Header("Infinite Settings")]
-    [SerializeField] private EnemySpaceshipSpawnerSettingsSO spawnerSettings;
+    [Header("Infinite Settings")] [SerializeField]
+    private EnemySpaceshipSpawnerSettingsSO spawnerSettings;
 
-    [Header("Wave Settings")]
-    [SerializeField] private List<WaveSpawnSettings> waves = new List<WaveSpawnSettings>();
+    [Header("Wave Settings")] [SerializeField]
+    private List<WaveSpawnSettings> waves = new List<WaveSpawnSettings>();
 
-    [Header("Teams (any number)")]
-    [SerializeField] private bool assignTeams = true;
+    [Header("Teams (any number)")] [SerializeField]
+    private bool assignTeams = true;
 
     [Tooltip("Enemies will be randomly assigned one of these team IDs. Example: [1,2]. Player should be team 0.")]
-    [SerializeField] private List<int> enemyTeamIds = new List<int> { 1, 2 };
+    [SerializeField]
+    private List<int> enemyTeamIds = new List<int> { 1, 2 };
 
     [SerializeField] private int fallbackEnemyTeamId = 1;
 
-    [Header("Pooling")] 
-    [SerializeField] private int defaultPoolCapacity = 50;
+    [Header("Pooling")] [SerializeField] private int defaultPoolCapacity = 50;
     [SerializeField] private int maxPoolSize = 200;
 
-    [Header("Hierarchy Parents (optional)")]
-    [SerializeField] private Transform activeEnemiesRoot;
+    [Header("Hierarchy Parents ")] [SerializeField]
+    private Transform activeEnemiesRoot;
+
     [SerializeField] private Transform pooledRoot;
 
     private GameObject player;
@@ -197,8 +201,9 @@ public class EnemySpaceshipSpawner : MonoBehaviour
         float randomY = Random.Range(-spawnAreaHeight / 2f, spawnAreaHeight / 2f);
         if (player == null)
         {
-            return Vector3.zero;
+            return new Vector3(randomX, randomY, 0);
         }
+
         return new Vector3(
             randomX + player.transform.position.x,
             randomY + player.transform.position.y,
@@ -206,5 +211,3 @@ public class EnemySpaceshipSpawner : MonoBehaviour
         );
     }
 }
-
-
