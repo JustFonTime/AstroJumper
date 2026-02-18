@@ -21,7 +21,7 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] private float attackCooldown = 1.0f;
 
     // for giving the player a chance to escape or hide after being seen also not instant deagro
-    [Header("Aggro Memory")] 
+    [Header("Aggro Memory")]
     [SerializeField] private float loseSightGrace = 0.5f;
     [SerializeField] private float investigateDuration = 2.0f;
     [SerializeField] private float investigateTolerance = 0.15f;
@@ -29,7 +29,7 @@ public class EnemyAI : MonoBehaviour
 
     [Header("Attack Capabilities")]
     [SerializeField] private AttackType attackTypes = AttackType.Ranged;
-    
+
     // numbers are defaults for melee and ranged reach
     [Header("Attack Ranges")]
     // this is a buffer because it keeps stopping right before range and not being able to atk
@@ -44,13 +44,13 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] private EnemyProjectile projectilePrefab;
     [SerializeField] private float projectileSpeed = 8f;
     [SerializeField] private float minShootRange = 0.0f;
-    
+
     //leash distance that makes the enemy give up and return back to home point
     [Header("Return")]
     [SerializeField] private Transform homePoint;
     [SerializeField] private float homeTolerance = 0.2f;
     [SerializeField] private float maxLeashDistance = 15f;
-    
+
 
     private State state = State.Patrol;
     private Transform player;
@@ -59,6 +59,8 @@ public class EnemyAI : MonoBehaviour
 
     private Vector2 lastSeenPos;
     private float lastSeenTime = -999f;
+    // Tracks the last time we had clear LOS drives the grace window separately from lastSeenTime
+    private float lastLOSTime = -999f;
 
 
     private void Reset()
@@ -117,6 +119,7 @@ public class EnemyAI : MonoBehaviour
             player = seen;
             lastSeenPos = player.position;
             lastSeenTime = Time.time;
+            lastLOSTime = Time.time;
             ChangeState(State.Chase, "Player detected in patrol");
             return;
         }
@@ -132,69 +135,70 @@ public class EnemyAI : MonoBehaviour
 
     private void TickChase()
     {
-        //  detection range and tracking last seen position
+        // null if wall is blocking LOS
         Transform seen = sensors.DetectPlayer();
+
         if (seen)
         {
+            // Clear LOS refresh everything
             player = seen;
             lastSeenPos = player.position;
             lastSeenTime = Time.time;
+            lastLOSTime = Time.time;
         }
-
-        // If we have a player target, evaluate attack/chase
+        else if (player != null)
+        {
+            // We have a cached player ref but lost LOS (wall blocking or out of radius)
+            // Start the grace window from the moment LOS was lost (lastLOSTime)
+            float timeSinceLOS = Time.time - lastLOSTime;
+            if (timeSinceLOS > loseSightGrace)
+            {
+                // Grace window expired drop the target and investigate last seen pos
+                player = null;
+            }
+        }
+        //if we have the player (seen or cached)
         if (player != null)
         {
             float distToPlayer = Mathf.Abs(player.position.x - transform.position.x);
+            motor.SetFacingToward(player.position.x);
 
-            // Check if player is too far (beyond chase range + grace)
-            float timeSinceSeen = Time.time - lastSeenTime;
-            if (distToPlayer > chaseRange && timeSinceSeen > loseSightGrace)
+            // Melee only: enter attack when in melee range
+            if (attackTypes == AttackType.Melee)
             {
-                // player not found anymore
-                player = null;
+                if (distToPlayer <= GetMeleeEnterRange())
+                {
+                    ChangeState(State.Attack, "Entered melee range");
+                    return;
+                }
             }
             else
             {
-                // We have the player - check attack range
-                motor.SetFacingToward(player.position.x);
-
-                // Melee only: enter attack when in melee range
-                if (attackTypes == AttackType.Melee)
+                // Ranged or hybrid
+                float maxAttackRange = GetMaxAttackRange();
+                if (distToPlayer <= maxAttackRange)
                 {
-                    if (distToPlayer <= GetMeleeEnterRange())
-                    {
-                        ChangeState(State.Attack, "Entered melee range");
-                        return;
-                    }
-                }
-                else
-                {
-                    // Ranged or hybrid
-                    float maxAttackRange = GetMaxAttackRange();
-                    if (distToPlayer <= maxAttackRange)
-                    {
-                        ChangeState(State.Attack, "Entered attack range");
-                        return;
-                    }
-                }
-
-                // Not in attack range, continue chasing
-                // Don't chase off ledges or into walls
-                if (sensors.NoGroundAhead() || sensors.WallAhead())
-                {
-                    motor.StopHorizontal();
+                    ChangeState(State.Attack, "Entered attack range");
                     return;
                 }
+            }
 
-                motor.Move();
+            // Not in attack range continue chasing toward last known position
+            // Don't chase off ledges or into walls
+            if (sensors.NoGroundAhead() || sensors.WallAhead())
+            {
+                motor.StopHorizontal();
                 return;
             }
+
+            motor.Move();
+            return;
         }
 
-        // No current player target so investigate last position
+        // No player target investigate last seen position
         float timeSinceLastSeen = Time.time - lastSeenTime;
 
-        // Give up after time limit and return home if player isn't found at last seen position
+        // Give up after investigate window expires
         if (timeSinceLastSeen > investigateDuration)
         {
             ChangeState(State.Return, "Player lost for too long");
@@ -233,14 +237,35 @@ public class EnemyAI : MonoBehaviour
             return;
         }
 
+        // If LOS is broken while attacking, drop back to chase so the grace/investigate
+        // logic handles it properly rather than attacking thin air
+        Transform seen = sensors.DetectPlayer();
+        if (seen)
+        {
+            lastSeenPos = player.position;
+            lastSeenTime = Time.time;
+            lastLOSTime = Time.time;
+        }
+        else
+        {
+            float timeSinceLOS = Time.time - lastLOSTime;
+            if (timeSinceLOS > loseSightGrace)
+            {
+                player = null;
+                ChangeState(State.Chase, "Lost LOS during attack, investigating");
+                return;
+            }
+        }
+
         float dist = Mathf.Abs(player.position.x - transform.position.x);
         motor.SetFacingToward(player.position.x);
 
         // Melee logic 
         if (attackTypes == AttackType.Melee)
         {
-            // If player is out of  range go back to chase
-            if (dist > GetMeleeEnterRange())
+            // If player is out of range go back to chase
+            // Exit threshold is wider than entry to prevent border oscillation
+            if (dist > GetMeleeEnterRange() * 1.5f)
             {
                 ChangeState(State.Chase, "Player out of melee range");
                 return;
@@ -293,7 +318,8 @@ public class EnemyAI : MonoBehaviour
             return;
         }
 
-        float dist = Vector2.Distance(transform.position, player.position);
+        // Use X-only distance to match TickAttack - Vector2.Distance
+        float dist = Mathf.Abs(player.position.x - transform.position.x);
         if (attackTypes.HasFlag(AttackType.Melee) && dist <= meleeRange)
         {
             DoMeleeAttack();
@@ -368,6 +394,7 @@ public class EnemyAI : MonoBehaviour
                 player = seen;
                 lastSeenPos = player.position;
                 lastSeenTime = Time.time;
+                lastLOSTime = Time.time;
                 ChangeState(State.Chase, "Player detected while returning");
                 return;
             }

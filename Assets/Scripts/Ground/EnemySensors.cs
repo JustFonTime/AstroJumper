@@ -17,6 +17,8 @@ public class EnemySensors : MonoBehaviour
     [Header("Player Detect")]
     [SerializeField] private Transform playerDetectOrigin;
     [SerializeField] private float detectRadius = 4f;
+    // Blocks line of sight (typically Ground + Wall layers combined into one mask)
+    [SerializeField] private LayerMask sightBlockMask;
 
     public bool WallAhead()
     {
@@ -36,7 +38,22 @@ public class EnemySensors : MonoBehaviour
     public Transform DetectPlayer()
     {
         Collider2D hit = Physics2D.OverlapCircle(playerDetectOrigin.position, detectRadius, playerMask);
-        return hit ? hit.transform : null;
+        if (!hit) return null;
+
+
+        // Is the player in line of sight? (not blocked by walls/ground)
+        Transform player = hit.transform;
+        Vector2 origin = playerDetectOrigin.position;
+        Vector2 target = player.position;
+        float dist = Vector2.Distance(origin, target); 
+
+
+        // Linecast towards the player and if it hits a wall/ground before them then its blocked
+        RaycastHit2D sightCheck = Physics2D.Raycast(origin, (target - origin).normalized, dist, sightBlockMask);
+        if (sightCheck.collider != null) return null;
+
+        return player;
+
     }
 
     private void OnDrawGizmos()
@@ -50,5 +67,12 @@ public class EnemySensors : MonoBehaviour
         // Blue ray for ledge check
         Gizmos.color = Color.blue;
         Gizmos.DrawRay(ledgeCheck.position, Vector2.down * ledgeCheckDistance);
+
+        // Yellow wire sphere for detection radius
+        if (playerDetectOrigin)
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(playerDetectOrigin.position, detectRadius);
+        }
     }
 }
