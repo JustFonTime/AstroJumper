@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Collections;
 using NUnit.Framework;
 using TMPro;
 using Unity.VisualScripting;
@@ -12,6 +13,10 @@ public class PlanetTracker : MonoBehaviour
     [SerializeField] List<GameObject> planets = new List<GameObject>();
     Vector3 mousePos;
     [SerializeField] Vector3 mouseWorldPos;
+    [SerializeField] Vector3 planetBaseScale = new Vector3(2,2,1);
+    [SerializeField] Vector3 planetExpandedScale = new Vector3(3,3,1);
+    [SerializeField] float expandTime = 1f;
+    [SerializeField]private string planetExpanding = "";
 
     private void Awake() 
     {
@@ -22,11 +27,8 @@ public class PlanetTracker : MonoBehaviour
     {
         // get all planets in the scene using the tag system
         planets.AddRange(GameObject.FindGameObjectsWithTag("Planet"));
-
     }
-
-    // Update is called once per frame
-    void Update()
+    void Update() 
     {
         if (GameObject.FindAnyObjectByType<PlanetUIBtn>() != null)
         {
@@ -47,24 +49,31 @@ public class PlanetTracker : MonoBehaviour
                 if(hit.collider.gameObject.name == planet.name)
                 {
                     // mouse is hovering over planet, do some stuff, rn make bigger
-                    planet.transform.localScale = new Vector3(3, 3, 1);
+                    planetExpanding = planet.name;
+                    expandPlanet(planet);
                 }
             }
         }
-        else
-        {
+        // else
+        // {
+            
             // reset all planet scales
+            planetExpanding = "";
             foreach(GameObject planet in planets)
             {
-                planet.transform.localScale = new Vector3(2, 2, 1);
+                if(planet.transform.localScale != planetBaseScale)
+                {
+                    shrinkPlanet(planet);
+                }
             }
-        }
+        //}
 
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
             OnClick();
         }   
     }
+
     private void OnClick()
     {
         print("clicked");
@@ -106,6 +115,27 @@ public class PlanetTracker : MonoBehaviour
         UIText.text = planet.planetName + "\n" + planet.dificulty + "\n" + planet.faction + "\n" + planet.resources;
 
         UI.GetComponent<RectTransform>().SetParent(GameObject.FindGameObjectWithTag("Canvas").transform, false);
+
+
+    }
+
+    public void expandPlanet(GameObject planet)
+    {
+        var startScale = planet.transform.localScale;
+        var endScale = planetExpandedScale;
+
+        planet.transform.localScale = Vector3.Lerp(startScale, endScale, expandTime * Time.deltaTime);
+
+   
+        
+    }
+
+    public void shrinkPlanet(GameObject planet)
+    {
+        var startScale = planet.transform.localScale;
+        var endScale = planetBaseScale;
+
+        planet.transform.localScale = Vector3.Lerp(startScale, endScale, expandTime * Time.deltaTime);
 
 
     }
