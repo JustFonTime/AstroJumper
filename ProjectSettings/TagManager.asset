@@ -9,6 +9,7 @@ TagManager:
   - Planet
   - Projectile
   - Enemy
+  - OptionButton
   layers:
   - Default
   - TransparentFX
