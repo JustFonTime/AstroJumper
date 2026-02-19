@@ -7,6 +7,8 @@ TagManager:
   - PlanetUI
   - Canvas
   - Planet
+  - Projectile
+  - Enemy
   layers:
   - Default
   - TransparentFX
@@ -19,10 +21,10 @@ TagManager:
   - 
   - 
   - 
-  - 
-  - 
-  - 
-  - 
+  - Player
+  - Enemy
+  - Ground
+  - OneWayPlat
   - 
   - 
   - 
