@@ -143,10 +143,12 @@ public class GroundMovement : MonoBehaviour
         if (xInput > 0.01f)
         {
             isFacingRight = true;
+            this.gameObject.GetComponent<SpriteRenderer>().flipX = false;
         }
         else if (xInput < -0.01f)
         {
             isFacingRight = false;
+            this.gameObject.GetComponent<SpriteRenderer>().flipX = true;
         }
     }
 
