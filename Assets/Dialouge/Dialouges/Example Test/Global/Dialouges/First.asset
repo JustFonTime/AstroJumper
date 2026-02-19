@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: First
   m_EditorClassIdentifier: Assembly-CSharp::DialougeSO
   <DialougeName>k__BackingField: First
-  <Text>k__BackingField: Hoepfully I can make this dialouge system better
+  <Text>k__BackingField: This is a dialogue system
   <Choices>k__BackingField:
   - <Name>k__BackingField: 
     <Text>k__BackingField: Next Dialouge
-    <NextDialouge>k__BackingField: {fileID: 11400000, guid: ebc5e3480f0df90448c028cf2fcbb3d4, type: 2}
+    <NextDialouge>k__BackingField: {fileID: 11400000, guid: 7dd992cdb1b2b8c47aef94e4443fea9f, type: 2}
   <DialougeTypes>k__BackingField: 0
   <IsStartingDialouge>k__BackingField: 1

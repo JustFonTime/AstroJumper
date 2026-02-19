@@ -14,22 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp-Editor::DialougeGraphSavaDataSO
   <FileName>k__BackingField: Example Test
   <Nodes>k__BackingField:
-  - <Name>k__BackingField: Third
-    <Text>k__BackingField: It is very bad atm
-    <ID>k__BackingField: c69b9813-948b-454a-be80-76a9273fd853
-    <Choices>k__BackingField:
-    - <Text>k__BackingField: Next Dialouge
-      <NodeID>k__BackingField: d978ab80-31b7-4558-ab39-c5e6d4bbb775
-    <DialougeType>k__BackingField: 0
-    <Position>k__BackingField: {x: 659.3334, y: 185.33333}
-  - <Name>k__BackingField: Fourth
-    <Text>k__BackingField: I also spelled Dialogue Wrong EVERYWHERE
-    <ID>k__BackingField: d978ab80-31b7-4558-ab39-c5e6d4bbb775
-    <Choices>k__BackingField:
-    - <Text>k__BackingField: Next Dialouge
-      <NodeID>k__BackingField: 85995ee2-2e92-4000-a4b8-3afae99efb9b
-    <DialougeType>k__BackingField: 0
-    <Position>k__BackingField: {x: 938.6667, y: 185.33333}
   - <Name>k__BackingField: Fifth
     <Text>k__BackingField: Sorry :)
     <ID>k__BackingField: 85995ee2-2e92-4000-a4b8-3afae99efb9b
@@ -39,15 +23,31 @@ MonoBehaviour:
     <DialougeType>k__BackingField: 0
     <Position>k__BackingField: {x: 1251.3333, y: 185.33333}
   - <Name>k__BackingField: First
-    <Text>k__BackingField: Hoepfully I can make this dialouge system better
+    <Text>k__BackingField: This is a dialogue system
     <ID>k__BackingField: 11cd6f62-b7ab-479a-b831-d083fba52671
     <Choices>k__BackingField:
     - <Text>k__BackingField: Next Dialouge
-      <NodeID>k__BackingField: 70c078ff-80ec-4716-97c5-6792bb95892d
+      <NodeID>k__BackingField: 95a0561d-9ef6-4006-b057-0606282922c8
     <DialougeType>k__BackingField: 0
     <Position>k__BackingField: {x: -52, y: 185.33333}
+  - <Name>k__BackingField: Fourth
+    <Text>k__BackingField: I also spelled Dialogue Wrong EVERYWHERE
+    <ID>k__BackingField: d978ab80-31b7-4558-ab39-c5e6d4bbb775
+    <Choices>k__BackingField:
+    - <Text>k__BackingField: Next Dialouge
+      <NodeID>k__BackingField: 85995ee2-2e92-4000-a4b8-3afae99efb9b
+    <DialougeType>k__BackingField: 0
+    <Position>k__BackingField: {x: 850, y: 360}
+  - <Name>k__BackingField: Third
+    <Text>k__BackingField: It is very bad atm
+    <ID>k__BackingField: c69b9813-948b-454a-be80-76a9273fd853
+    <Choices>k__BackingField:
+    - <Text>k__BackingField: Next Dialouge
+      <NodeID>k__BackingField: d978ab80-31b7-4558-ab39-c5e6d4bbb775
+    <DialougeType>k__BackingField: 0
+    <Position>k__BackingField: {x: 865.3334, y: 126}
   - <Name>k__BackingField: Second
-    <Text>k__BackingField: New Text
+    <Text>k__BackingField: Multiple Choices!!!!
     <ID>k__BackingField: 70c078ff-80ec-4716-97c5-6792bb95892d
     <Choices>k__BackingField:
     - <Text>k__BackingField: Third
@@ -55,10 +55,19 @@ MonoBehaviour:
     - <Text>k__BackingField: Fourth
       <NodeID>k__BackingField: d978ab80-31b7-4558-ab39-c5e6d4bbb775
     <DialougeType>k__BackingField: 1
-    <Position>k__BackingField: {x: 302.66666, y: 185.33333}
+    <Position>k__BackingField: {x: 558.6667, y: 185.33333}
+  - <Name>k__BackingField: DialougeName
+    <Text>k__BackingField: Hopefully it will get better over time
+    <ID>k__BackingField: 95a0561d-9ef6-4006-b057-0606282922c8
+    <Choices>k__BackingField:
+    - <Text>k__BackingField: Next Dialouge
+      <NodeID>k__BackingField: 70c078ff-80ec-4716-97c5-6792bb95892d
+    <DialougeType>k__BackingField: 0
+    <Position>k__BackingField: {x: 250, y: 185.33333}
   <OldUngroupedNodeNames>k__BackingField:
-  - Third
-  - Fourth
   - Fifth
   - First
+  - Fourth
+  - Third
   - Second
+  - DialougeName

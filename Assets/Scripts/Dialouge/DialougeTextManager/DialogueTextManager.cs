@@ -24,12 +24,22 @@ public class DialogueTextManager : MonoBehaviour
     private void OnEnable()
     {
         clickAction.Enable();
-        clickAction.performed += OnClick;    
+        clickAction.performed += OnClick;
+        print($"Enabled click action: {clickAction.name}");    
     }
     private void OnDisable()
     {
         clickAction.Disable();
         clickAction.performed -= OnClick;
+    }
+
+    private void EnableTextClick()
+    {
+        clickAction.Enable();
+    }
+    private void DisableTextClick()
+    {
+        clickAction.Disable();
     }
 
     public void LoadData()
@@ -39,6 +49,8 @@ public class DialogueTextManager : MonoBehaviour
     private void Start()
     {
         dialogueText.text = currentDialouge.Text;
+        dialogueText.enabled = false;
+        DisableTextClick();
     }
 
     private void Update()
@@ -57,12 +69,20 @@ public class DialogueTextManager : MonoBehaviour
         print($"going to dialouge: {currentDialouge.DialougeName}");
     }
 
+    public void StartDialouge()
+    {
+        // display anything related to dialouge here
+        dialogueText.enabled = true;
+        EnableTextClick();
+    }
+
     private void NextDialouge()
     {
         if (currentDialouge.Choices[0].NextDialouge == null)
         {
             // end of dialouge
             //probably should have a check to see if the next dialouge is the last one or not so that we can create like an end button.
+            EndDialogue();
             return;
         }
 
@@ -91,16 +111,21 @@ public class DialogueTextManager : MonoBehaviour
         return;
     }
 
-    private DialougeSO GetNextDialouge(DialougeSO dialougeSO, int choiceIndex)
+    private DialougeSO GetNextDialogue(DialougeSO dialougeSO, int choiceIndex)
     {
         print("Getting next dialouge for choice index: " + choiceIndex);
         return dialougeSO.Choices[choiceIndex].NextDialouge;
     }
 
+    private void EndDialogue()
+    {
+        dialogueText.enabled = false;
+    }
+
     private void OnChoiceSelected(int choiceIndex)
     {
         print("Choice " + choiceIndex + " selected");
-        currentDialouge = GetNextDialouge(currentDialouge, choiceIndex);
+        currentDialouge = GetNextDialogue(currentDialouge, choiceIndex);
         UpdateText();
         foreach (GameObject child in GameObject.FindGameObjectsWithTag("OptionButton"))
         {

@@ -14,8 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DialougeContainerSO
   <FileName>k__BackingField: Example Test
   <Dialouges>k__BackingField:
-  - {fileID: 11400000, guid: 60654aa803970d2479f0c00e73bbdb9c, type: 2}
-  - {fileID: 11400000, guid: 2e464bd34dec0854f90e80fa77424306, type: 2}
   - {fileID: 11400000, guid: 75cfdf0d1775de04f8c525dcf816d6d6, type: 2}
   - {fileID: 11400000, guid: 8a14329b46616fa4b84085988bc612f5, type: 2}
+  - {fileID: 11400000, guid: 2e464bd34dec0854f90e80fa77424306, type: 2}
+  - {fileID: 11400000, guid: 60654aa803970d2479f0c00e73bbdb9c, type: 2}
   - {fileID: 11400000, guid: ebc5e3480f0df90448c028cf2fcbb3d4, type: 2}
+  - {fileID: 11400000, guid: 7dd992cdb1b2b8c47aef94e4443fea9f, type: 2}

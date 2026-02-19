@@ -10,16 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d145281873616314eabf77c7718bad03, type: 3}
-  m_Name: Second
+  m_Name: DialougeName
   m_EditorClassIdentifier: Assembly-CSharp::DialougeSO
-  <DialougeName>k__BackingField: Second
-  <Text>k__BackingField: Multiple Choices!!!!
+  <DialougeName>k__BackingField: DialougeName
+  <Text>k__BackingField: Hopefully it will get better over time
   <Choices>k__BackingField:
   - <Name>k__BackingField: 
-    <Text>k__BackingField: Third
-    <NextDialouge>k__BackingField: {fileID: 11400000, guid: 60654aa803970d2479f0c00e73bbdb9c, type: 2}
-  - <Name>k__BackingField: 
-    <Text>k__BackingField: Fourth
-    <NextDialouge>k__BackingField: {fileID: 11400000, guid: 2e464bd34dec0854f90e80fa77424306, type: 2}
-  <DialougeTypes>k__BackingField: 1
+    <Text>k__BackingField: Next Dialouge
+    <NextDialouge>k__BackingField: {fileID: 11400000, guid: ebc5e3480f0df90448c028cf2fcbb3d4, type: 2}
+  <DialougeTypes>k__BackingField: 0
   <IsStartingDialouge>k__BackingField: 0
