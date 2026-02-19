@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d145281873616314eabf77c7718bad03, type: 3}
+  m_Name: Fifth
+  m_EditorClassIdentifier: Assembly-CSharp::DialougeSO
+  <DialougeName>k__BackingField: Fifth
+  <Text>k__BackingField: Sorry :)
+  <Choices>k__BackingField:
+  - <Name>k__BackingField: 
+    <Text>k__BackingField: Next Dialouge
+    <NextDialouge>k__BackingField: {fileID: 0}
+  <DialougeTypes>k__BackingField: 0
+  <IsStartingDialouge>k__BackingField: 0

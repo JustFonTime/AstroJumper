@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0339091ce14bb0640878a4b65c6c98e9, type: 3}
+  m_Name: Example TestGraphData
+  m_EditorClassIdentifier: Assembly-CSharp-Editor::DialougeGraphSavaDataSO
+  <FileName>k__BackingField: Example Test
+  <Nodes>k__BackingField:
+  - <Name>k__BackingField: Third
+    <Text>k__BackingField: It is very bad atm
+    <ID>k__BackingField: c69b9813-948b-454a-be80-76a9273fd853
+    <Choices>k__BackingField:
+    - <Text>k__BackingField: Next Dialouge
+      <NodeID>k__BackingField: d978ab80-31b7-4558-ab39-c5e6d4bbb775
+    <DialougeType>k__BackingField: 0
+    <Position>k__BackingField: {x: 659.3334, y: 185.33333}
+  - <Name>k__BackingField: Fourth
+    <Text>k__BackingField: I also spelled Dialogue Wrong EVERYWHERE
+    <ID>k__BackingField: d978ab80-31b7-4558-ab39-c5e6d4bbb775
+    <Choices>k__BackingField:
+    - <Text>k__BackingField: Next Dialouge
+      <NodeID>k__BackingField: 85995ee2-2e92-4000-a4b8-3afae99efb9b
+    <DialougeType>k__BackingField: 0
+    <Position>k__BackingField: {x: 938.6667, y: 185.33333}
+  - <Name>k__BackingField: Fifth
+    <Text>k__BackingField: Sorry :)
+    <ID>k__BackingField: 85995ee2-2e92-4000-a4b8-3afae99efb9b
+    <Choices>k__BackingField:
+    - <Text>k__BackingField: Next Dialouge
+      <NodeID>k__BackingField: 
+    <DialougeType>k__BackingField: 0
+    <Position>k__BackingField: {x: 1251.3333, y: 185.33333}
+  - <Name>k__BackingField: First
+    <Text>k__BackingField: Hoepfully I can make this dialouge system better
+    <ID>k__BackingField: 11cd6f62-b7ab-479a-b831-d083fba52671
+    <Choices>k__BackingField:
+    - <Text>k__BackingField: Next Dialouge
+      <NodeID>k__BackingField: 70c078ff-80ec-4716-97c5-6792bb95892d
+    <DialougeType>k__BackingField: 0
+    <Position>k__BackingField: {x: -52, y: 185.33333}
+  - <Name>k__BackingField: Second
+    <Text>k__BackingField: New Text
+    <ID>k__BackingField: 70c078ff-80ec-4716-97c5-6792bb95892d
+    <Choices>k__BackingField:
+    - <Text>k__BackingField: Third
+      <NodeID>k__BackingField: c69b9813-948b-454a-be80-76a9273fd853
+    - <Text>k__BackingField: Fourth
+      <NodeID>k__BackingField: d978ab80-31b7-4558-ab39-c5e6d4bbb775
+    <DialougeType>k__BackingField: 1
+    <Position>k__BackingField: {x: 302.66666, y: 185.33333}
+  <OldUngroupedNodeNames>k__BackingField:
+  - Third
+  - Fourth
+  - Fifth
+  - First
+  - Second

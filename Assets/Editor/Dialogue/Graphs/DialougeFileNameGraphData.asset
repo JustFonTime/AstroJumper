@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0339091ce14bb0640878a4b65c6c98e9, type: 3}
+  m_Name: DialougeFileNameGraphData
+  m_EditorClassIdentifier: Assembly-CSharp-Editor::DialougeGraphSavaDataSO
+  <FileName>k__BackingField: DialougeFileName
+  <Nodes>k__BackingField:
+  - <Name>k__BackingField: Branching OUt
+    <Text>k__BackingField: New Text
+    <ID>k__BackingField: 13605601-8c37-42c7-9202-c7604a6d2ed8
+    <Choices>k__BackingField:
+    - <Text>k__BackingField: Choice 1
+      <NodeID>k__BackingField: 5cbdebad-7244-4e0a-9f9a-80538290ee50
+    - <Text>k__BackingField: Choice 2
+      <NodeID>k__BackingField: 633ee74d-f450-4d15-9f06-cde9a5cb48d5
+    <DialougeType>k__BackingField: 1
+    <Position>k__BackingField: {x: 67.333336, y: 224}
+  - <Name>k__BackingField: Choice1
+    <Text>k__BackingField: New Text
+    <ID>k__BackingField: 5cbdebad-7244-4e0a-9f9a-80538290ee50
+    <Choices>k__BackingField:
+    - <Text>k__BackingField: Next Dialouge
+      <NodeID>k__BackingField: 
+    <DialougeType>k__BackingField: 0
+    <Position>k__BackingField: {x: 434.66666, y: 125.33333}
+  - <Name>k__BackingField: Choice 2
+    <Text>k__BackingField: New Text
+    <ID>k__BackingField: 633ee74d-f450-4d15-9f06-cde9a5cb48d5
+    <Choices>k__BackingField:
+    - <Text>k__BackingField: Next Dialouge
+      <NodeID>k__BackingField: 
+    <DialougeType>k__BackingField: 0
+    <Position>k__BackingField: {x: 434.66666, y: 328.66666}
+  <OldUngroupedNodeNames>k__BackingField:
+  - Branching OUt
+  - Choice1
+  - Choice 2
