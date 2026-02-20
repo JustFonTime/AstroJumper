@@ -3,14 +3,12 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.Audio;
 using TMPro;
-using System;
 
-public class Menu_Manager : MonoBehaviour
+public class PauseManager : MonoBehaviour
 {
     [Header("Menu Panels")]
-    public GameObject mainMenuPanel;
-    public GameObject optionsPanel;
-    public GameObject creditsPanel;
+    public GameObject pauseMenuPanel;
+    public GameObject optionsMenuPanel;
 
     [Header("Audio Settings")]
     public AudioMixer audioMixer;
@@ -20,8 +18,7 @@ public class Menu_Manager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        ShowMainMenu();
-
+        ShowPauseMenu();
         if (volumeSlider != null && volumeText != null)
         {
             float savedVolume = PlayerPrefs.GetFloat("MasterVolume", 0.75f);
@@ -33,6 +30,18 @@ public class Menu_Manager : MonoBehaviour
 
             SetMasterVolume(savedVolume);
         }
+    }
+
+    public void ShowPauseMenu()
+    {
+        pauseMenuPanel.SetActive(true);
+        optionsMenuPanel.SetActive(false);
+    }
+
+    public void ShowOptionsMenu()
+    {
+        pauseMenuPanel.SetActive(false);
+        optionsMenuPanel.SetActive(true);
     }
 
     public void SetMasterVolume(float sliderValue)
@@ -51,6 +60,18 @@ public class Menu_Manager : MonoBehaviour
         PlayerPrefs.SetFloat("MasterVolume", sliderValue);
     }
 
+    public void ResumeGame()
+    {
+        SceneManager.UnloadSceneAsync("PauseMenu"); // Unload the pause menu scene
+        Time.timeScale = 1f; // Resume the game
+    }
+
+    public void QuitToMainMenu()
+    {
+        Time.timeScale = 1f; // Ensure time scale is reset
+        SceneManager.LoadScene("Menus"); // Load the main menu scene
+    }
+
     void UpdateVolumeText(float sliderValue)
     {
         if (volumeText != null)
@@ -58,31 +79,5 @@ public class Menu_Manager : MonoBehaviour
             int volumePercent = Mathf.RoundToInt(sliderValue * 100);
             volumeText.text = volumePercent.ToString() + "%";
         }
-    }
-
-    public void ShowMainMenu()
-    {
-        mainMenuPanel.SetActive(true);
-        optionsPanel.SetActive(false);
-        creditsPanel.SetActive(false);
-    }
-
-    public void StartGame()
-    {
-        SceneManager.LoadScene("Level Selector 2");
-    }
-
-    public void ShowOptionsMenu()
-    {
-        mainMenuPanel.SetActive(false);
-        optionsPanel.SetActive(true);
-        creditsPanel.SetActive(false);
-    }
-
-    public void ShowCreditsMenu()
-    {
-        mainMenuPanel.SetActive(false);
-        optionsPanel.SetActive(false);
-        creditsPanel.SetActive(true);
     }
 }
