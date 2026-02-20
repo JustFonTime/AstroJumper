@@ -8896,30 +8896,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: ProjectileEnemy
       objectReference: {fileID: 0}
-    - target: {fileID: 6673901974885723949, guid: 332ecf6d81038f149b3267de2f549a21, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 8187129136833211444, guid: 332ecf6d81038f149b3267de2f549a21, type: 3}
       propertyPath: homePoint
       value: 
       objectReference: {fileID: 2121169799}
-    - target: {fileID: 8187129136833211444, guid: 332ecf6d81038f149b3267de2f549a21, type: 3}
-      propertyPath: chaseRange
-      value: 15
-      objectReference: {fileID: 0}
-    - target: {fileID: 8187129136833211444, guid: 332ecf6d81038f149b3267de2f549a21, type: 3}
-      propertyPath: meleeEnterBuffer
-      value: 0.75
-      objectReference: {fileID: 0}
-    - target: {fileID: 8290834329959521489, guid: 332ecf6d81038f149b3267de2f549a21, type: 3}
-      propertyPath: detectRadius
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 8290834329959521489, guid: 332ecf6d81038f149b3267de2f549a21, type: 3}
-      propertyPath: sightBlockMask.m_Bits
-      value: 24576
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -8937,22 +8917,6 @@ PrefabInstance:
       propertyPath: homePoint
       value: 
       objectReference: {fileID: 479005361}
-    - target: {fileID: 2916840892436311964, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
-      propertyPath: meleeRange
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 2916840892436311964, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
-      propertyPath: meleeEnterBuffer
-      value: 0.7
-      objectReference: {fileID: 0}
-    - target: {fileID: 4255045886575685431, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
-      propertyPath: detectRadius
-      value: 7
-      objectReference: {fileID: 0}
-    - target: {fileID: 4255045886575685431, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
-      propertyPath: sightBlockMask.m_Bits
-      value: 24576
-      objectReference: {fileID: 0}
     - target: {fileID: 7415500675629748956, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
       propertyPath: m_LocalPosition.x
       value: 12

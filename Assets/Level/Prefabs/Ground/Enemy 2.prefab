@@ -120,7 +120,10 @@ MonoBehaviour:
   ledgeCheck: {fileID: 3011895998120404585}
   ledgeCheckDistance: 0.4
   playerDetectOrigin: {fileID: 8440172888546649125}
-  detectRadius: 4
+  detectRadius: 7
+  sightBlockMask:
+    serializedVersion: 2
+    m_Bits: 24576
 --- !u!1 &2676203520584879081
 GameObject:
   m_ObjectHideFlags: 0
@@ -270,9 +273,9 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -9095717837082945937, guid: 207ee8102dd4143d288186ef0be518ee, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 0
+  m_Sprite: {fileID: 929755403, guid: ead0f2db8582a7c43b113402fcba8681, type: 3}
+  m_Color: {r: 0.48742133, g: 0.922276, b: 1, a: 1}
+  m_FlipX: 1
   m_FlipY: 0
   m_DrawMode: 0
   m_Size: {x: 1, y: 2}
@@ -358,12 +361,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAI
   sensors: {fileID: 8290834329959521489}
   motor: {fileID: 6569328820202535863}
-  chaseRange: 12
+  chaseRange: 15
   attackCooldown: 1
   loseSightGrace: 0.5
   investigateDuration: 2
   investigateTolerance: 0.15
   attackTypes: -1
+  meleeEnterBuffer: 0.75
   meleeRange: 2
   rangedRange: 12
   firePoint: {fileID: 2958658368263112852}
@@ -372,6 +376,7 @@ MonoBehaviour:
   minShootRange: 0
   homePoint: {fileID: 0}
   homeTolerance: 0.2
+  maxLeashDistance: 15
 --- !u!114 &6569328820202535863
 MonoBehaviour:
   m_ObjectHideFlags: 0

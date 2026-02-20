@@ -211,9 +211,9 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 0
+  m_Sprite: {fileID: 929755403, guid: ead0f2db8582a7c43b113402fcba8681, type: 3}
+  m_Color: {r: 0.7314848, g: 1, b: 0, a: 1}
+  m_FlipX: 1
   m_FlipY: 0
   m_DrawMode: 0
   m_Size: {x: 1, y: 1}
@@ -317,6 +317,7 @@ MonoBehaviour:
   investigateDuration: 2
   investigateTolerance: 0.15
   attackTypes: 1
+  meleeEnterBuffer: 0.7
   meleeRange: 2
   rangedRange: 5
   firePoint: {fileID: 4124021642724615479}
@@ -325,6 +326,7 @@ MonoBehaviour:
   minShootRange: 0
   homePoint: {fileID: 0}
   homeTolerance: 10
+  maxLeashDistance: 15
 --- !u!1 &9037043406219051716
 GameObject:
   m_ObjectHideFlags: 0
@@ -383,4 +385,7 @@ MonoBehaviour:
   ledgeCheck: {fileID: 8897213448893803018}
   ledgeCheckDistance: 0.4
   playerDetectOrigin: {fileID: 6656321853175989257}
-  detectRadius: 4
+  detectRadius: 5
+  sightBlockMask:
+    serializedVersion: 2
+    m_Bits: 24576
