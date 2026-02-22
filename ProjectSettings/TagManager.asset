@@ -9,6 +9,7 @@ TagManager:
   - Planet
   - Projectile
   - Enemy
+  - Terrain
   layers:
   - Default
   - TransparentFX

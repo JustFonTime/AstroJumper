@@ -19,8 +19,9 @@ public class EnemyProjectile : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        // For now: just destroy on hitting anything that isn't the enemy itself.
-        // Later: check Player, apply damage, etc.
-        Destroy(gameObject);
+        if (other.CompareTag("Player") || other.CompareTag("Terrain"))
+        {
+            Destroy(gameObject);
+        }
     }
 }
