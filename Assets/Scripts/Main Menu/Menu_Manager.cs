@@ -37,7 +37,7 @@ public class Menu_Manager : MonoBehaviour
 
     public void SetMasterVolume(float sliderValue)
     {
-        AudioSource bgMusic = GameObject.FindObjectOfType<AudioSource>();
+        AudioSource bgMusic = FindFirstObjectByType<AudioSource>();
         if (bgMusic != null)
         {
             bgMusic.volume = sliderValue;
@@ -69,7 +69,7 @@ public class Menu_Manager : MonoBehaviour
 
     public void StartGame()
     {
-        SceneManager.LoadScene("Level Selector");
+        SceneManager.LoadScene("LoadingScreen");
     }
 
     public void ShowOptionsMenu()
