@@ -405,7 +405,7 @@ GameObject:
   - component: {fileID: 397349851}
   - component: {fileID: 397349850}
   m_Layer: 5
-  m_Name: Panel
+  m_Name: GameOverPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -633,7 +633,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 475772603}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1499202407}
+        m_TargetAssemblyTypeName: GameOverManager, Assembly-CSharp
+        m_MethodName: RetryLevel
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &475772603
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -846,7 +858,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 890614527}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1499202407}
+        m_TargetAssemblyTypeName: GameOverManager, Assembly-CSharp
+        m_MethodName: GoToMainMenu
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &890614527
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1507,7 +1531,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1455511816}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1499202407}
+        m_TargetAssemblyTypeName: GameOverManager, Assembly-CSharp
+        m_MethodName: GoToLevelSelect
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1455511816
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1575,6 +1611,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6964e4ad49df948aa9e371d8ec429cc2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameOverManager
+  gameOverPanel: {fileID: 397349848}
+  levelSelectScene: LevelSelector
+  mainMenuScene: MainMenu
 --- !u!4 &1499202408
 Transform:
   m_ObjectHideFlags: 0
