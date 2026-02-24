@@ -69,11 +69,7 @@ public class Menu_Manager : MonoBehaviour
 
     public void StartGame()
     {
-<<<<<<< Updated upstream
-        SceneManager.LoadScene("LoadingScreen");
-=======
-        SceneManager.LoadScene("LoadingScene");
->>>>>>> Stashed changes
+        SceneManager.LoadScene("Level Selector 2");
     }
 
     public void ShowOptionsMenu()
