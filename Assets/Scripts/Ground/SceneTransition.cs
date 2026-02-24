@@ -8,8 +8,7 @@ public class SceneTransition : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            SceneLoader.Instance.LoadNextScene();
-            SceneLoader.Instance.SceneToLoad = "tESTING";
+            SceneLoader.Instance.LoadNextScene("tESTING");
         }
     }
 }

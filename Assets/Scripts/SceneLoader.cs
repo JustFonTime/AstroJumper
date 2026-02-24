@@ -25,4 +25,10 @@ public class SceneLoader : MonoBehaviour
     {
         SceneManager.LoadScene("LoadingScreen");
     }
+
+    public void LoadNextScene(string nextScene)
+    {
+        SceneToLoad = nextScene;
+        SceneManager.LoadScene("LoadingScreen");
+    }
 }
