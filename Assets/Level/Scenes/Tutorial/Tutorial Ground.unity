@@ -6510,52 +6510,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1217266851}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &624015265
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 624015266}
-  - component: {fileID: 624015267}
-  m_Layer: 11
-  m_Name: Enemy Projectile Pool
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &624015266
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 624015265}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -8.206959, y: -5.9957724, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1701850131}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &624015267
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 624015265}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b0eddd17995c5df44beabbfa76a8832d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ProjectilePool
-  projectilePrefab: {fileID: 1306917755038486874, guid: 7c147a90d573073409ba9ca63e53018d, type: 3}
-  poolSize: 3
 --- !u!1 &660597662
 GameObject:
   m_ObjectHideFlags: 0
@@ -124331,52 +124285,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &916280971
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 916280972}
-  - component: {fileID: 916280973}
-  m_Layer: 11
-  m_Name: Enemy Projectile Pool
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &916280972
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 916280971}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -8.206959, y: -5.9957724, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1201777330}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &916280973
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 916280971}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b0eddd17995c5df44beabbfa76a8832d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ProjectilePool
-  projectilePrefab: {fileID: 1306917755038486874, guid: 7c147a90d573073409ba9ca63e53018d, type: 3}
-  poolSize: 3
 --- !u!1 &919925893
 GameObject:
   m_ObjectHideFlags: 0
@@ -125564,52 +125472,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9327566fb4b17934992bb979093e2583, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GroundEventManager
---- !u!1 &1095045927
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1095045928}
-  - component: {fileID: 1095045929}
-  m_Layer: 11
-  m_Name: Enemy Projectile Pool
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1095045928
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1095045927}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -8.206959, y: -5.9957724, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1876838172}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1095045929
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1095045927}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b0eddd17995c5df44beabbfa76a8832d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ProjectilePool
-  projectilePrefab: {fileID: 1306917755038486874, guid: 7c147a90d573073409ba9ca63e53018d, type: 3}
-  poolSize: 3
 --- !u!1001 &1173072212
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -125737,8 +125599,8 @@ MonoBehaviour:
   _unitName: RangedEnemy
   _health: 80
   _damage: 10
-  hitBoxPrefab: {fileID: 1306917755038486874, guid: 7c147a90d573073409ba9ca63e53018d, type: 3}
-  hitBoxPrefab2: {fileID: 1306917755038486874, guid: 2499a14b1010fa8428b612eac1309c9b, type: 3}
+  hitBoxPrefab: {fileID: 0}
+  hitBoxPrefab2: {fileID: 0}
   unitProjectilePool: {fileID: 0}
 --- !u!1 &1217266850
 GameObject:
@@ -126381,9 +126243,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3075443926583324366, guid: 332ecf6d81038f149b3267de2f549a21, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1718155227}
-    - targetCorrespondingSourceObject: {fileID: 3075443926583324366, guid: 332ecf6d81038f149b3267de2f549a21, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 624015266}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 6673901974885723949, guid: 332ecf6d81038f149b3267de2f549a21, type: 3}
       insertIndex: -1
@@ -126414,8 +126273,8 @@ MonoBehaviour:
   _unitName: RangedEnemy
   _health: 80
   _damage: 10
-  hitBoxPrefab: {fileID: 1306917755038486874, guid: 7c147a90d573073409ba9ca63e53018d, type: 3}
-  hitBoxPrefab2: {fileID: 1306917755038486874, guid: 2499a14b1010fa8428b612eac1309c9b, type: 3}
+  hitBoxPrefab: {fileID: 0}
+  hitBoxPrefab2: {fileID: 0}
   unitProjectilePool: {fileID: 0}
 --- !u!1001 &1718155226
 PrefabInstance:
@@ -126732,9 +126591,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3075443926583324366, guid: 332ecf6d81038f149b3267de2f549a21, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1173072213}
-    - targetCorrespondingSourceObject: {fileID: 3075443926583324366, guid: 332ecf6d81038f149b3267de2f549a21, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1095045928}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 6673901974885723949, guid: 332ecf6d81038f149b3267de2f549a21, type: 3}
       insertIndex: -1
@@ -126765,8 +126621,8 @@ MonoBehaviour:
   _unitName: RangedEnemy
   _health: 80
   _damage: 10
-  hitBoxPrefab: {fileID: 1306917755038486874, guid: 7c147a90d573073409ba9ca63e53018d, type: 3}
-  hitBoxPrefab2: {fileID: 1306917755038486874, guid: 2499a14b1010fa8428b612eac1309c9b, type: 3}
+  hitBoxPrefab: {fileID: 0}
+  hitBoxPrefab2: {fileID: 0}
   unitProjectilePool: {fileID: 0}
 --- !u!1001 &1890898219
 PrefabInstance:
@@ -127282,9 +127138,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3075443926583324366, guid: 332ecf6d81038f149b3267de2f549a21, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1590312360}
-    - targetCorrespondingSourceObject: {fileID: 3075443926583324366, guid: 332ecf6d81038f149b3267de2f549a21, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 916280972}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 6673901974885723949, guid: 332ecf6d81038f149b3267de2f549a21, type: 3}
       insertIndex: -1

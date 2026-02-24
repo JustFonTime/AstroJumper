@@ -22,6 +22,7 @@ public class EnemyProjectile : MonoBehaviour
     {
         if (other.CompareTag("Player") || other.CompareTag("Terrain"))
         {
+            // TEMP solution from Dylan, remove post Playtest. NOT PERMANENT
             if(other.TryGetComponent<Player>(out Player player)){
                 player.TakeDamage(projectileDamage);
             }
