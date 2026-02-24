@@ -69,7 +69,8 @@ public class Menu_Manager : MonoBehaviour
 
     public void StartGame()
     {
-        SceneManager.LoadScene("LoadingScreen");
+        SceneManager.LoadScene($"{SceneLoader.Instance.SceneToLoad}");
+        SceneLoader.Instance.SceneToLoad = "Tutorial Ground";
     }
 
     public void ShowOptionsMenu()

@@ -931,7 +931,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LoadingManager
   loadingText: {fileID: 1008476025}
-  sceneToLoad: Level Selector 2
+  sceneToLoad: 
 --- !u!4 &1852927517
 Transform:
   m_ObjectHideFlags: 0
