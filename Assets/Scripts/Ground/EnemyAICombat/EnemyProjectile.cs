@@ -3,6 +3,7 @@ using UnityEngine;
 public class EnemyProjectile : MonoBehaviour
 {
     [SerializeField] private float lifetime = 3f;
+    [SerializeField] private int projectileDamage = 10;
 
     private Rigidbody2D rb;
 
@@ -21,6 +22,9 @@ public class EnemyProjectile : MonoBehaviour
     {
         if (other.CompareTag("Player") || other.CompareTag("Terrain"))
         {
+            if(other.TryGetComponent<Player>(out Player player)){
+                player.TakeDamage(projectileDamage);
+            }
             Destroy(gameObject);
         }
     }
