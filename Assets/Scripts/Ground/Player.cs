@@ -18,8 +18,13 @@ public class Player : Unit
     public static event Action<Unit> onPlayerDeath;
     public static event Action<Unit> onPlayerDamaged;
     private bool isAttacking2 = false;
+
+    [Header("Projectile Variables")]
     [SerializeField] private int projectileCount = 0; 
     [SerializeField] private int maxProjectile = 3;
+
+    [Header("Player Spawnpoint")]
+    [SerializeField] private GameObject playerSpawn;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
@@ -131,7 +136,8 @@ public class Player : Unit
         Health -= amount;
         if (Health <= 0)
         {
-            Death();
+            //Death();
+            Reset();
         }
         SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
         if(!isDamageAnimation)
@@ -159,11 +165,11 @@ public class Player : Unit
         }
     }
 
-    // Update is called once per frame
-    void Update()
+    // This should NOT be final, it is only meant to be used for the playtest
+    private void Reset()
     {
-        
+        Health = 100;
+        transform.position = playerSpawn.transform.position;
+        GetComponent<SpriteRenderer>().flipX = false;
     }
-
-    
 }
