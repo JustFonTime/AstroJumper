@@ -14,9 +14,11 @@ public class DialogueTextManager : MonoBehaviour
     public DialougeContainerSO dialougeContainer;
     public DialougeSO currentDialouge;
     public TextMeshProUGUI dialogueText;
-    
+    [SerializeField] private GameObject nameTextGO;
+    private TextMeshProUGUI nameText;
+
     private void Awake() 
-{
+    {
         var map = actionsAsset.FindActionMap(actionMapName, true);
         clickAction = map.FindAction("Click", true);
     }
@@ -48,8 +50,11 @@ public class DialogueTextManager : MonoBehaviour
     }
     private void Start()
     {
-        dialogueText.text = currentDialouge.Text;
         dialogueText.enabled = false;
+
+        nameText = nameTextGO.GetComponentInChildren<TextMeshProUGUI>();
+        nameText.enabled = false;
+        
         DisableTextClick();
     }
 
@@ -61,6 +66,7 @@ public class DialogueTextManager : MonoBehaviour
     private void UpdateText()
     {
         dialogueText.text = currentDialouge.Text;
+        nameText.text = currentDialouge.CharacterName;
     }
 
     private void OnClick(InputAction.CallbackContext ctx)
@@ -73,6 +79,11 @@ public class DialogueTextManager : MonoBehaviour
     {
         // display anything related to dialouge here
         dialogueText.enabled = true;
+        dialogueText.text = currentDialouge.Text;
+        
+        nameText.enabled = true;
+        nameText.text = currentDialouge.CharacterName;
+        
         EnableTextClick();
     }
 

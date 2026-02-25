@@ -14,33 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp-Editor::DialougeGraphSavaDataSO
   <FileName>k__BackingField: DialougeFileName
   <Nodes>k__BackingField:
-  - <Name>k__BackingField: Branching OUt
+  - <Name>k__BackingField: DialougeName
+    <CharacterName>k__BackingField: '1233456789New '
+    <CharacterIcon>k__BackingField: insert file path here
     <Text>k__BackingField: New Text
-    <ID>k__BackingField: 13605601-8c37-42c7-9202-c7604a6d2ed8
-    <Choices>k__BackingField:
-    - <Text>k__BackingField: Choice 1
-      <NodeID>k__BackingField: 5cbdebad-7244-4e0a-9f9a-80538290ee50
-    - <Text>k__BackingField: Choice 2
-      <NodeID>k__BackingField: 633ee74d-f450-4d15-9f06-cde9a5cb48d5
-    <DialougeType>k__BackingField: 1
-    <Position>k__BackingField: {x: 67.333336, y: 224}
-  - <Name>k__BackingField: Choice1
-    <Text>k__BackingField: New Text
-    <ID>k__BackingField: 5cbdebad-7244-4e0a-9f9a-80538290ee50
+    <ID>k__BackingField: a73fbd9f-c2a2-4791-86cd-8dc0e92dedf2
     <Choices>k__BackingField:
     - <Text>k__BackingField: Next Dialouge
       <NodeID>k__BackingField: 
     <DialougeType>k__BackingField: 0
-    <Position>k__BackingField: {x: 434.66666, y: 125.33333}
-  - <Name>k__BackingField: Choice 2
-    <Text>k__BackingField: New Text
-    <ID>k__BackingField: 633ee74d-f450-4d15-9f06-cde9a5cb48d5
-    <Choices>k__BackingField:
-    - <Text>k__BackingField: Next Dialouge
-      <NodeID>k__BackingField: 
-    <DialougeType>k__BackingField: 0
-    <Position>k__BackingField: {x: 434.66666, y: 328.66666}
+    <Position>k__BackingField: {x: 294.66666, y: 319.33334}
   <OldUngroupedNodeNames>k__BackingField:
-  - Branching OUt
-  - Choice1
-  - Choice 2
+  - DialougeName
