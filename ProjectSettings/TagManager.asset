@@ -9,6 +9,7 @@ TagManager:
   - Planet
   - Projectile
   - Enemy
+  - Terrain
   - OptionButton
   layers:
   - Default

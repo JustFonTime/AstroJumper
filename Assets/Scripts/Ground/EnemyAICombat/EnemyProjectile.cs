@@ -3,6 +3,7 @@ using UnityEngine;
 public class EnemyProjectile : MonoBehaviour
 {
     [SerializeField] private float lifetime = 3f;
+    [SerializeField] private int projectileDamage = 10;
 
     private Rigidbody2D rb;
 
@@ -19,8 +20,13 @@ public class EnemyProjectile : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        // For now: just destroy on hitting anything that isn't the enemy itself.
-        // Later: check Player, apply damage, etc.
-        Destroy(gameObject);
+        if (other.CompareTag("Player") || other.CompareTag("Terrain"))
+        {
+            // TEMP solution from Dylan, remove post Playtest. NOT PERMANENT
+            if(other.TryGetComponent<Player>(out Player player)){
+                player.TakeDamage(projectileDamage);
+            }
+            Destroy(gameObject);
+        }
     }
 }
