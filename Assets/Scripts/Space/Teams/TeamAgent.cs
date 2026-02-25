@@ -16,6 +16,7 @@ public class TeamAgent : MonoBehaviour
     private void Awake()
     {
         Slots = GetComponent<TargetSlots>();
+        Slots.SetTeam(teamId);
     }
 
     private void OnEnable()

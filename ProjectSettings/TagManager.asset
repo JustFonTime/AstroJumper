@@ -8,6 +8,7 @@ TagManager:
   - Canvas
   - Planet
   - Projectile
+  - EnemySpawner
   layers:
   - Default
   - TransparentFX
@@ -40,7 +41,7 @@ TagManager:
   - 
   - 
   - 
-  - 
+  - Player
   m_SortingLayers:
   - name: Default
     uniqueID: 0

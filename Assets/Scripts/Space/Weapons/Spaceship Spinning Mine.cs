@@ -7,7 +7,6 @@ public class SpaceshipSpinningMine : MonoBehaviour
     [SerializeField] private float speed = 5;
     [SerializeField] private float maxSpeed = 20;
     [SerializeField] private float lifeTime = 10f;
-    [SerializeField] private int damage = 10;
     private bool hasExploded = false;
     private Vector3 moveDirection;
 

@@ -10,6 +10,7 @@ public class SpaceshipLaser : MonoBehaviour
     [SerializeField] private float lifeTime = 5f;
     [SerializeField] private int damage = 10;
     [SerializeField] private bool destroyOnHit = true;
+    [SerializeField] public int teamId = -1; //needs to to be set
 
     private void Awake()
     {
@@ -23,10 +24,23 @@ public class SpaceshipLaser : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        if (teamId != -1)
+        {
+            // check if the other collider is on a different team
+            var otherTeamAgent = other.GetComponentInParent<TeamAgent>();
+            if (otherTeamAgent != null && otherTeamAgent.TeamId == teamId)
+            {
+                // same team, ignore
+                if (destroyOnHit)
+                    Destroy(gameObject);
+                return;
+            }
+        }
+
         // if we hit a child collider, look up the hierarchy
         var damageable = other.GetComponentInParent<ISpaceDamagable>();
         if (damageable == null) return;
-        
+
         damageable.TakeDamage(damage);
 
         if (destroyOnHit)

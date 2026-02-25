@@ -33,6 +33,7 @@ public class PlayerSpaceshipCombat : MonoBehaviour
         if (!attack.canFire) return;
         if (attack.projectile == null || attack.firePoint == null) return;
         Instantiate(attack.projectile, attack.firePoint.position, attack.firePoint.rotation);
+        
         StartCoroutine(AttackCooldown(attack));
     }
 

@@ -57,3 +57,6 @@ MonoBehaviour:
   minFireRate: 0.3
   maxFireRate: 0.6
   maxHealth: 50
+  maxShields: 50
+  startingShields: 50
+  canSelfRechargeShields: 0

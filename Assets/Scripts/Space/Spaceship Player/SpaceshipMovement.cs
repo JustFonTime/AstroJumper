@@ -21,10 +21,8 @@ public class SpaceshipMovement : MonoBehaviour
     [Header("Brake (S key)")] [Tooltip("Extra damping force when braking (S). Higher = stops faster.")] [SerializeField]
     private float brakeStrength = 6f;
 
- 
-    [Header("Flight Assist")]
-    [Tooltip("Removes sideways drift")]
-    [SerializeField]
+
+    [Header("Flight Assist")] [Tooltip("Removes sideways drift")] [SerializeField]
     private float alignStrength = 6f;
 
     [Tooltip("damping if no input")] [SerializeField]
@@ -50,6 +48,9 @@ public class SpaceshipMovement : MonoBehaviour
     [SerializeField] private float maxBoost = 100f;
     [SerializeField] private float currentBoost = 100f;
 
+    public float CurrentBoost => currentBoost;
+    public float MaxBoost => maxBoost;
+
     [SerializeField] private KeyCode boostKey = KeyCode.LeftShift;
     [SerializeField] private float boostConsumptionRate = 30f; // per second
     [SerializeField] private float rechargeDelay = 1f;
@@ -59,8 +60,8 @@ public class SpaceshipMovement : MonoBehaviour
     private bool isRecharging = false;
 
     // Input
-    private float throttle01; 
-    private float brake01; 
+    private float throttle01;
+    private float brake01;
     private float targetAngle;
 
     [Header("Debug Gizmos")] [SerializeField]
@@ -88,11 +89,12 @@ public class SpaceshipMovement : MonoBehaviour
         rb.gravityScale = 0f;
         rb.linearDamping = 0f;
         rb.angularDamping = 0f;
+        
+        currentBoost= maxBoost;
     }
 
     private void Update()
     {
-     
         float v = Input.GetAxisRaw("Vertical");
         throttle01 = Mathf.Clamp01(v);
         brake01 = Mathf.Clamp01(-v);
@@ -173,8 +175,6 @@ public class SpaceshipMovement : MonoBehaviour
         }
 
         dbgDampForce = dampForce;
-
-
     }
 
     private void RotateShipPhysics()

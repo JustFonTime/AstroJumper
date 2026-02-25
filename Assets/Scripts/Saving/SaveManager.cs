@@ -77,7 +77,6 @@ public class SaveManager : MonoBehaviour
             //No file found, create new save data
             CurrentSaveData = SaveData.CreateDefualtSaveData(defualtGameSaveSO);
             WriteToDisk();
-            Debug.Log("No save file found. Created new save data at ^^^^^^");
             return;
         }
 
@@ -106,14 +105,12 @@ public class SaveManager : MonoBehaviour
         dirtyTimer = 0f;
 
         WriteToDisk();
-        Debug.Log($"Game Saved to {SaveFilePath} {CurrentSaveData.newMoney} ");
     }
 
     private void WriteToDisk()
     {
         string json = JsonUtility.ToJson(CurrentSaveData, true);
         File.WriteAllText(SaveFilePath, json);
-        Debug.Log("Game saved to: " + SaveFilePath);
     }
 
     private void OnApplicationQuit()

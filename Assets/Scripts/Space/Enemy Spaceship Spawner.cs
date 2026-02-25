@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,6 +7,13 @@ using Random = UnityEngine.Random;
 
 public class EnemySpaceshipSpawner : MonoBehaviour
 {
+    public static EnemySpaceshipSpawner Instance { get; private set; }
+
+    public event Action<int> OnAliveEnemiesChanged; // Pass the new alive enemies count
+    public event Action<int> OnWaveChanged; // Pass the new wave index (starting from 1 for better readability)
+
+    public event Action AllWavesCompleted; // Triggered when all waves are completed (only for SetWaves mode)
+
     public enum SpawnType
     {
         Infinite,
@@ -42,6 +50,31 @@ public class EnemySpaceshipSpawner : MonoBehaviour
     private readonly Dictionary<GameObject, ObjectPool<GameObject>> pools = new();
     private int aliveEnemies = 0;
 
+    public int AliveEnemies
+    {
+        get { return aliveEnemies; }
+    }
+
+    private int currentWave = 0;
+
+    public int CurrentWave
+    {
+        get { return currentWave; }
+    }
+
+    private void Awake()
+    {
+        if (Instance == null || Instance == this)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Debug.LogWarning("Multiple EnemySpaceshipSpawner instances found! Destroying duplicate.");
+            Destroy(gameObject);
+        }
+    }
+
     private void Start()
     {
         player = GameObject.FindWithTag("Player");
@@ -55,10 +88,10 @@ public class EnemySpaceshipSpawner : MonoBehaviour
         if (pooledRoot == null)
         {
             var go = new GameObject("Enemies_Pooled");
-            pooledRoot = go.transform; // IMPORTANT: set BEFORE prewarm/pool creation
+            pooledRoot = go.transform;
         }
 
-        // prewarm the actual enemy prefab pool (not the pooledRoot object)
+
         if (spawnerSettings != null && spawnerSettings.enemySpaceshipPrefab != null)
             Prewarm(spawnerSettings.enemySpaceshipPrefab, Mathf.Max(0, defaultPoolCapacity));
 
@@ -84,6 +117,11 @@ public class EnemySpaceshipSpawner : MonoBehaviour
 
     private IEnumerator RunSpawner()
     {
+        //Hard code wait so player has time to get ready and not get instantly overwhelmed by enemies as soon as the scene starts. Can be removed later if needed.
+        // and for the hud and anyhitng using events to bind before there called 
+        yield return new WaitForSeconds(3f);
+
+
         if (spawnType == SpawnType.Infinite)
         {
             while (true)
@@ -95,8 +133,13 @@ public class EnemySpaceshipSpawner : MonoBehaviour
         }
         else // SetWaves
         {
+            //Go through each wave in order
             for (int w = 0; w < waves.Count; w++)
             {
+                //Start the spawn process for this wave
+                currentWave++;
+                OnWaveChanged?.Invoke(currentWave);
+
                 foreach (var entry in waves[w].enemies)
                 {
                     if (entry.prefab == null || entry.count <= 0) continue;
@@ -109,11 +152,15 @@ public class EnemySpaceshipSpawner : MonoBehaviour
                     }
                 }
 
+                //Wait until all enemies from this wave are dead before starting the next one
                 while (aliveEnemies > 0)
                     yield return null;
 
                 yield return new WaitForSeconds(waves[w].timeToSpawnAfterFinalDeath);
             }
+
+            //All waves completed
+            AllWavesCompleted?.Invoke();
         }
     }
 
@@ -141,11 +188,13 @@ public class EnemySpaceshipSpawner : MonoBehaviour
             combat.ResetForSpawn();
 
         aliveEnemies++;
+        OnAliveEnemiesChanged?.Invoke(aliveEnemies);
     }
 
     public void NotifyEnemyGone()
     {
         aliveEnemies = Mathf.Max(0, aliveEnemies - 1);
+        OnAliveEnemiesChanged?.Invoke(aliveEnemies);
     }
 
     private ObjectPool<GameObject> GetPool(GameObject prefab)
