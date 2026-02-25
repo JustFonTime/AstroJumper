@@ -262,16 +262,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 2945056206609794311, guid: d6562edf502f3364589e55703c281cf7, type: 3}
   m_PrefabInstance: {fileID: 6429100523882950760}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &996887303 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5626896301787443470, guid: d6562edf502f3364589e55703c281cf7, type: 3}
-  m_PrefabInstance: {fileID: 6429100523882950760}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &997627772 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6225501570031321330, guid: d6562edf502f3364589e55703c281cf7, type: 3}
-  m_PrefabInstance: {fileID: 6429100523882950760}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1057504200
 GameObject:
   m_ObjectHideFlags: 0
@@ -935,7 +925,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2945056206609794311, guid: d6562edf502f3364589e55703c281cf7, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -302
+      value: -297
       objectReference: {fileID: 0}
     - target: {fileID: 2945056206609794311, guid: d6562edf502f3364589e55703c281cf7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -949,18 +939,42 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5300706800084046239, guid: d6562edf502f3364589e55703c281cf7, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
+      objectReference: {fileID: 0}
     - target: {fileID: 5626896301787443470, guid: d6562edf502f3364589e55703c281cf7, type: 3}
       propertyPath: m_Name
       value: DialougeContainer
       objectReference: {fileID: 0}
     - target: {fileID: 5873998244472221692, guid: d6562edf502f3364589e55703c281cf7, type: 3}
-      propertyPath: nameTextGO
-      value: 
-      objectReference: {fileID: 997627772}
+      propertyPath: onscreenPosition.x
+      value: 0.4618345
+      objectReference: {fileID: 0}
     - target: {fileID: 5873998244472221692, guid: d6562edf502f3364589e55703c281cf7, type: 3}
-      propertyPath: TextContainer
-      value: 
-      objectReference: {fileID: 996887303}
+      propertyPath: onscreenPosition.y
+      value: 0.84605515
+      objectReference: {fileID: 0}
+    - target: {fileID: 5873998244472221692, guid: d6562edf502f3364589e55703c281cf7, type: 3}
+      propertyPath: onscreenPosition.z
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 5873998244472221692, guid: d6562edf502f3364589e55703c281cf7, type: 3}
+      propertyPath: offscreenPosition.x
+      value: 0.4618345
+      objectReference: {fileID: 0}
+    - target: {fileID: 5873998244472221692, guid: d6562edf502f3364589e55703c281cf7, type: 3}
+      propertyPath: offscreenPosition.y
+      value: -4.715202
+      objectReference: {fileID: 0}
+    - target: {fileID: 5873998244472221692, guid: d6562edf502f3364589e55703c281cf7, type: 3}
+      propertyPath: offscreenPosition.z
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 7791238882762988774, guid: d6562edf502f3364589e55703c281cf7, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
