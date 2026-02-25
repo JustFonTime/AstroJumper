@@ -74,13 +74,11 @@ public class Player : Unit
 
     private void OnAttack(InputAction.CallbackContext context)
     {
-
-        //
         if (isAttacking)
             return;
 
         // check for projectile attack
-        if(unitProjectilePool && projectileCount < maxProjectile)
+        if(unitProjectilePool && projectileCount < maxProjectile && !hitBoxPrefab.GetComponent<HitBox>().GetIsMelee())
         {
             print("Projectile attack from pool");
             projectileCount++;
@@ -108,7 +106,7 @@ public class Player : Unit
             return;
 
         // check for projectile attack
-        if(unitProjectilePool && projectileCount < maxProjectile)
+        if(unitProjectilePool && projectileCount < maxProjectile && !hitBoxPrefab2.GetComponent<HitBox>().GetIsMelee())
         {
             print("Projectile attack from pool");
             projectileCount++;
