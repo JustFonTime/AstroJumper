@@ -80,7 +80,7 @@ public class Player : Unit
             return;
 
         // check for projectile attack
-        if(unitProjectilePool && projectileCount < maxProjectile)
+        if(unitProjectilePool && projectileCount < maxProjectile && !hitBoxPrefab.GetComponent<HitBox>().GetIsMelee())
         {
             print("Projectile attack from pool");
             projectileCount++;
@@ -107,14 +107,15 @@ public class Player : Unit
         if (isAttacking2)
             return;
 
-        // check for projectile attack
-        if(unitProjectilePool && projectileCount < maxProjectile)
+        // check for projectile attack with a pool
+        if(unitProjectilePool && projectileCount < maxProjectile && !hitBoxPrefab2.GetComponent<HitBox>().GetIsMelee())
         {
             print("Projectile attack from pool");
             projectileCount++;
             BeginAttack(hitBoxPrefab2);
             return;
         }
+        // check if its a melee attack
         else if(hitBoxPrefab2.GetComponent<HitBox>().GetIsMelee())
         {
             print("melee attack");
@@ -122,6 +123,7 @@ public class Player : Unit
             isAttacking2 = true;
             return;
         }
+        // else its a projectile attack but we dont have a pool
         else if(projectileCount < maxProjectile)
         {
             print("no projectile pool, creating projectile");
