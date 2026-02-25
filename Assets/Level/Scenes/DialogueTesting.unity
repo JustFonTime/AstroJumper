@@ -262,6 +262,11 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 2945056206609794311, guid: d6562edf502f3364589e55703c281cf7, type: 3}
   m_PrefabInstance: {fileID: 6429100523882950760}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &996887303 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5626896301787443470, guid: d6562edf502f3364589e55703c281cf7, type: 3}
+  m_PrefabInstance: {fileID: 6429100523882950760}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &997627772 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6225501570031321330, guid: d6562edf502f3364589e55703c281cf7, type: 3}
@@ -926,11 +931,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2945056206609794311, guid: d6562edf502f3364589e55703c281cf7, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 24
       objectReference: {fileID: 0}
     - target: {fileID: 2945056206609794311, guid: d6562edf502f3364589e55703c281cf7, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -302
       objectReference: {fileID: 0}
     - target: {fileID: 2945056206609794311, guid: d6562edf502f3364589e55703c281cf7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -952,6 +957,10 @@ PrefabInstance:
       propertyPath: nameTextGO
       value: 
       objectReference: {fileID: 997627772}
+    - target: {fileID: 5873998244472221692, guid: d6562edf502f3364589e55703c281cf7, type: 3}
+      propertyPath: TextContainer
+      value: 
+      objectReference: {fileID: 996887303}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
