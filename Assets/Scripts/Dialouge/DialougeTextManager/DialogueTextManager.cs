@@ -92,9 +92,10 @@ public class DialogueTextManager : MonoBehaviour
         nameText.enabled = true;
         nameText.text = currentDialouge.CharacterName;
         
-        EnableTextClick();
-
         StartCoroutine(moveDialogueBox());
+        
+        
+
     }
 
     private void NextDialouge()
@@ -172,6 +173,7 @@ public class DialogueTextManager : MonoBehaviour
         }
 
         TextContainer.GetComponent<RectTransform>().position = onscreenPosition; 
+        EnableTextClick();
     }
 }
 
