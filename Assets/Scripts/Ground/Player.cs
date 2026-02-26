@@ -4,6 +4,7 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Unity.VisualScripting;
+using UnityEngine.SceneManagement;
 
 public class Player : Unit
 {
@@ -134,8 +135,7 @@ public class Player : Unit
         Health -= amount;
         if (Health <= 0)
         {
-            //Death();
-            Reset();
+            SceneManager.LoadScene("GameOver");
         }
         SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
         if(!isDamageAnimation)
@@ -161,13 +161,5 @@ public class Player : Unit
                 projectileCount--;
             }
         }
-    }
-
-    // This should NOT be final, it is only meant to be used for the playtest
-    private void Reset()
-    {
-        Health = 100;
-        transform.position = playerSpawn.transform.position;
-        GetComponent<SpriteRenderer>().flipX = false;
     }
 }

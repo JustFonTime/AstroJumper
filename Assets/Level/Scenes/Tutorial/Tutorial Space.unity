@@ -758,6 +758,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1864589599444257544, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
+      propertyPath: deathSfx
+      value: 
+      objectReference: {fileID: 8300000, guid: fd9d2439687099945bd16cb5b176f80c, type: 3}
     - target: {fileID: 3350557924722327067, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
       propertyPath: m_Name
       value: Player Spaceship
