@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: Fifth
   m_EditorClassIdentifier: Assembly-CSharp::DialougeSO
   <DialougeName>k__BackingField: Fifth
+  <CharacterName>k__BackingField: Me
+  <CharacterIcon>k__BackingField: 
   <Text>k__BackingField: Sorry :)
   <Choices>k__BackingField:
   - <Name>k__BackingField: 

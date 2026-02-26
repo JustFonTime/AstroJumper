@@ -1,8 +1,12 @@
+using System.Collections;
 using TMPro;
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using UnityEditor.SceneManagement;
+
 
 [RequireComponent(typeof(TextMeshProUGUI))]
 public class DialogueTextManager : MonoBehaviour
@@ -14,9 +18,15 @@ public class DialogueTextManager : MonoBehaviour
     public DialougeContainerSO dialougeContainer;
     public DialougeSO currentDialouge;
     public TextMeshProUGUI dialogueText;
-    
+    [SerializeField] private GameObject nameTextGO;
+    private TextMeshProUGUI nameText;
+    [SerializeField] public Vector3 offscreenPosition;
+    [SerializeField] public Vector3 onscreenPosition;
+    [SerializeField] private float duration = 1f;
+    public GameObject TextContainer;
+
     private void Awake() 
-{
+    {
         var map = actionsAsset.FindActionMap(actionMapName, true);
         clickAction = map.FindAction("Click", true);
     }
@@ -25,7 +35,6 @@ public class DialogueTextManager : MonoBehaviour
     {
         clickAction.Enable();
         clickAction.performed += OnClick;
-        print($"Enabled click action: {clickAction.name}");    
     }
     private void OnDisable()
     {
@@ -48,8 +57,12 @@ public class DialogueTextManager : MonoBehaviour
     }
     private void Start()
     {
-        dialogueText.text = currentDialouge.Text;
+        TextContainer.GetComponent<RectTransform>().position = offscreenPosition;
         dialogueText.enabled = false;
+
+        nameText = nameTextGO.GetComponentInChildren<TextMeshProUGUI>();
+        nameText.enabled = false;
+        
         DisableTextClick();
     }
 
@@ -61,6 +74,7 @@ public class DialogueTextManager : MonoBehaviour
     private void UpdateText()
     {
         dialogueText.text = currentDialouge.Text;
+        nameText.text = currentDialouge.CharacterName;
     }
 
     private void OnClick(InputAction.CallbackContext ctx)
@@ -73,7 +87,15 @@ public class DialogueTextManager : MonoBehaviour
     {
         // display anything related to dialouge here
         dialogueText.enabled = true;
-        EnableTextClick();
+        dialogueText.text = currentDialouge.Text;
+        
+        nameText.enabled = true;
+        nameText.text = currentDialouge.CharacterName;
+        
+        StartCoroutine(moveDialogueBox());
+        
+        
+
     }
 
     private void NextDialouge()
@@ -92,18 +114,20 @@ public class DialogueTextManager : MonoBehaviour
         {
             //disable input outside of the button.
             OnDisable(); // proably change this later
+            GameObject optionButtonTransform = GameObject.Find("ChoiceTransform");
             for (int i = 0; i < currentDialouge.Choices.Count; i++)
             {
                 int index = i;
 
-                Vector2 buttonPos = new Vector2(0, -1 * (i + 1)); // Position buttons below the dialogue text
+
+                Button optionButton = Instantiate(optionButtonPrefab, new Vector2(0,0), Quaternion.identity, transform.parent);
+                RectTransform optionButtonRect = optionButtonTransform.GetComponent<RectTransform>();
+                Vector2 buttonPos = new Vector2(optionButtonRect.anchoredPosition.x, optionButtonRect.anchoredPosition.y - (i * optionButtonPrefab.GetComponent<RectTransform>().rect.height)); 
                 
-                Button optionButton = Instantiate(optionButtonPrefab, buttonPos, Quaternion.identity, transform.parent);
-                
+                optionButton.GetComponent<RectTransform>().anchoredPosition = buttonPos;
                 optionButton.GetComponentInChildren<TextMeshProUGUI>().text = currentDialouge.Choices[i].Text + " Button";
                 
                 AddChoiceListener(optionButton, index);
-                print(i + " index");
                 optionButton.tag = "OptionButton";
             }
         }
@@ -113,7 +137,6 @@ public class DialogueTextManager : MonoBehaviour
 
     private DialougeSO GetNextDialogue(DialougeSO dialougeSO, int choiceIndex)
     {
-        print("Getting next dialouge for choice index: " + choiceIndex);
         return dialougeSO.Choices[choiceIndex].NextDialouge;
     }
 
@@ -139,6 +162,48 @@ public class DialogueTextManager : MonoBehaviour
         button.onClick.AddListener(() => OnChoiceSelected(index));
     }
 
+    private IEnumerator moveDialogueBox()
+    {
+        float timeElapsed = 0f;
+        while (timeElapsed < duration)
+        {
+            TextContainer.GetComponent<RectTransform>().position = Vector3.Lerp(offscreenPosition, onscreenPosition, timeElapsed / duration);
+            timeElapsed += Time.deltaTime;
+            yield return null; 
+        }
 
-    
+        TextContainer.GetComponent<RectTransform>().position = onscreenPosition; 
+        EnableTextClick();
+    }
 }
+
+#if UNITY_EDITOR
+[CustomEditor(typeof(DialogueTextManager))]
+public class DialogueTextManagerInspector : Editor 
+{
+    public override void OnInspectorGUI()
+    {
+        base.OnInspectorGUI();
+        
+        if(GUILayout.Button("Set OffScreen Position"))
+        {
+            DialogueTextManager manager = (DialogueTextManager)target;
+            Undo.RecordObject(manager, "Set OffScreen Position");
+            manager.offscreenPosition = manager.TextContainer.GetComponent<RectTransform>().position;
+
+            EditorUtility.SetDirty(manager);
+            EditorSceneManager.MarkSceneDirty(manager.gameObject.scene);
+        }
+        if(GUILayout.Button("Set OnScreen Position"))
+        {
+            DialogueTextManager manager = (DialogueTextManager)target;
+            Undo.RecordObject(manager, "Set OnScreen Position");
+            manager.onscreenPosition = manager.TextContainer.GetComponent<RectTransform>().position;
+
+            EditorUtility.SetDirty(manager);
+            EditorSceneManager.MarkSceneDirty(manager.gameObject.scene);
+        }
+    }
+}
+
+#endif 
