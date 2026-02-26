@@ -15,15 +15,14 @@ public class SaveManager : MonoBehaviour
 
     public SaveData CurrentSaveData { get; private set; }
 
-    [Header("auto Save")] [SerializeField] private bool autoSave = true;
 
     [SerializeField] private float dirtyDelaySaveTime = 2.0f;
 
     private bool dirty;
     private float dirtyTimer;
 
-    [Header("AutoSave")] [SerializeField] private bool autoSaveAutoSave = true;
-    [SerializeField] private float autoSaveDelaySaveTime = 5.0f;
+    [Header("AutoSave")] [SerializeField] private bool autoSave = true;
+    [SerializeField] private float autoSaveDelaySaveTime = 10.0f;
 
 
     private void Awake()
@@ -39,8 +38,11 @@ public class SaveManager : MonoBehaviour
         DontDestroyOnLoad(this.gameObject);
 
         LoadGame();
+
+        StartCoroutine(AutoSave());
+
         AddNewMoney(100);
-        AddMoveForceLevel(1);
+ 
     }
 
     private IEnumerator AutoSave()
@@ -75,7 +77,6 @@ public class SaveManager : MonoBehaviour
             //No file found, create new save data
             CurrentSaveData = SaveData.CreateDefualtSaveData(defualtGameSaveSO);
             WriteToDisk();
-            Debug.Log("No save file found. Created new save data at ^^^^^^");
             return;
         }
 
@@ -104,14 +105,12 @@ public class SaveManager : MonoBehaviour
         dirtyTimer = 0f;
 
         WriteToDisk();
-        Debug.Log($"Game Saved to {SaveFilePath} {CurrentSaveData.newMoney} ");
     }
 
     private void WriteToDisk()
     {
         string json = JsonUtility.ToJson(CurrentSaveData, true);
         File.WriteAllText(SaveFilePath, json);
-        Debug.Log("Game saved to: " + SaveFilePath);
     }
 
     private void OnApplicationQuit()
@@ -131,11 +130,11 @@ public class SaveManager : MonoBehaviour
 
     #region Helper Functions
 
-    public int GetNewMoney() => (CurrentSaveData.newMoney != null) ? CurrentSaveData.newMoney : 0;
+    public int GetNewMoney() => (CurrentSaveData != null) ? CurrentSaveData.newMoney : 0;
 
     public void SetNewMoney(int newMoney)
     {
-        if (CurrentSaveData.newMoney != null)
+        if (CurrentSaveData != null)
             CurrentSaveData.newMoney = newMoney;
         else
             Debug.LogError("CurrentSaveData.newMoney is null!");
@@ -144,7 +143,7 @@ public class SaveManager : MonoBehaviour
 
     public void AddNewMoney(int amount)
     {
-        if (CurrentSaveData.newMoney != null)
+        if (CurrentSaveData != null)
             CurrentSaveData.newMoney += amount;
         else
             Debug.LogError("CurrentSaveData.newMoney is null!");
@@ -167,6 +166,11 @@ public class SaveManager : MonoBehaviour
                 return CurrentSaveData.spaceshipUpgradeData.barrelRollSpeedLevel;
             case PlayerUpgradeState.UpgradeType.FireRate:
                 return CurrentSaveData.spaceshipUpgradeData.fireRateLevel;
+            case PlayerUpgradeState.UpgradeType.MaxHealth:
+                return CurrentSaveData.spaceshipUpgradeData.maxHealthLevel;
+            case PlayerUpgradeState.UpgradeType.MaxShields:
+                return CurrentSaveData.spaceshipUpgradeData.maxShieldsLevel;
+            
         }
 
         return -1;
@@ -194,15 +198,13 @@ public class SaveManager : MonoBehaviour
             case PlayerUpgradeState.UpgradeType.FireRate:
                 CurrentSaveData.spaceshipUpgradeData.fireRateLevel++;
                 break;
+            case PlayerUpgradeState.UpgradeType.MaxHealth:
+                CurrentSaveData.spaceshipUpgradeData.maxHealthLevel++;
+                break;
+            case PlayerUpgradeState.UpgradeType.MaxShields:
+                CurrentSaveData.spaceshipUpgradeData.maxShieldsLevel++;
+                break;
         }
-    }
-
-    public int GetMoveForceLevel() => CurrentSaveData != null ? CurrentSaveData.spaceshipUpgradeData.moveForceLevel : 0;
-
-    public void AddMoveForceLevel(int amt)
-    {
-        MakeDirty();
-        CurrentSaveData.spaceshipUpgradeData.moveForceLevel += amt;
     }
 
     #endregion
