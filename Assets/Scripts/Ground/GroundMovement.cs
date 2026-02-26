@@ -49,6 +49,7 @@ public class GroundMovement : MonoBehaviour
 
     private bool isGrounded;
     private bool isDropping;
+    public bool isFacingRight = true; 
 
     private void Awake()
     {
@@ -139,6 +140,16 @@ public class GroundMovement : MonoBehaviour
 
         float clampedX = Mathf.Clamp(rb.linearVelocity.x, -moveSpeed, moveSpeed);
         rb.linearVelocity = new Vector2(clampedX, rb.linearVelocity.y);
+        if (xInput > 0.01f)
+        {
+            isFacingRight = true;
+            this.gameObject.GetComponent<SpriteRenderer>().flipX = false;
+        }
+        else if (xInput < -0.01f)
+        {
+            isFacingRight = false;
+            this.gameObject.GetComponent<SpriteRenderer>().flipX = true;
+        }
     }
 
     private void HandleJumpBuffered()

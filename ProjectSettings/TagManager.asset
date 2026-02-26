@@ -9,6 +9,9 @@ TagManager:
   - Planet
   - Projectile
   - EnemySpawner
+  - Enemy
+  - Terrain
+  - OptionButton
   layers:
   - Default
   - TransparentFX
@@ -26,6 +29,10 @@ TagManager:
   - 
   - 
   - 
+  - Player
+  - Enemy
+  - Ground
+  - OneWayPlat
   - 
   - 
   - 

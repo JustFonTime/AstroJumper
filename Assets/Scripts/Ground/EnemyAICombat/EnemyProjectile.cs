@@ -1,0 +1,32 @@
+using UnityEngine;
+
+public class EnemyProjectile : MonoBehaviour
+{
+    [SerializeField] private float lifetime = 3f;
+    [SerializeField] private int projectileDamage = 10;
+
+    private Rigidbody2D rb;
+
+    private void Awake()
+    {
+        rb = GetComponent<Rigidbody2D>();
+    }
+
+    public void Fire(Vector2 velocity)
+    {
+        rb.linearVelocity = velocity;
+        Destroy(gameObject, lifetime);
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Player") || other.CompareTag("Terrain"))
+        {
+            // TEMP solution from Dylan, remove post Playtest. NOT PERMANENT
+            if(other.TryGetComponent<Player>(out Player player)){
+                player.TakeDamage(projectileDamage);
+            }
+            Destroy(gameObject);
+        }
+    }
+}
