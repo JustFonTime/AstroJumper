@@ -199,7 +199,7 @@ PrefabInstance:
     - target: {fileID: 4141914376404912875, guid: e5dc360da6c157940a327e3bdc1adb5b, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 723ff58b39b10414ebad82a0ad835370, type: 2}
+      objectReference: {fileID: 2100000, guid: 6955e6b5cdcdf204382ddfd035e45ff2, type: 2}
     - target: {fileID: 4994097748692252975, guid: e5dc360da6c157940a327e3bdc1adb5b, type: 3}
       propertyPath: m_Name
       value: SpaceBackground
@@ -981,6 +981,14 @@ PrefabInstance:
     - target: {fileID: 1029587659160723094, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
       propertyPath: m_Name
       value: Spaceship Player HUD
+      objectReference: {fileID: 0}
+    - target: {fileID: 1548926147540261882, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1548926147540261882, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2295874869269274131, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
       propertyPath: m_Pivot.x
