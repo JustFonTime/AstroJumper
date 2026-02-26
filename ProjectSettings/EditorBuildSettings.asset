@@ -15,11 +15,11 @@ EditorBuildSettings:
     path: Assets/Level/Scenes/Tutorial/Tutorial Ground.unity
     guid: d96961fbd627a584ebdea0993b68c5c6
   - enabled: 1
-    path: Assets/Level/Scenes/Space/tESTING.unity
-    guid: 8c9cfa26abfee488c85f1582747f6a02
+    path: Assets/Level/Scenes/Tutorial/Tutorial Space.unity
+    guid: 0d1a6170d45014642acec9ac34f9dc57
   - enabled: 0
-    path: Assets/Level/Scenes/Level Selector/Level Selector 2.unity
-    guid: a4059f98cd74408498e8e16692840e3b
+    path: Assets/Level/Scenes/PauseMenu/PauseMenu.unity
+    guid: bfc273e08ec8949db93ada19b15b5e1f
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
