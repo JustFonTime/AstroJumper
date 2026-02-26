@@ -1,5 +1,8 @@
 using UnityEngine;
 
+
+//This needs to be renamed, its really just getting the level and ettings for what each level means and defiening the upgrades we have
+//More like a PlayerUpgradeStatsInfo
 public class PlayerUpgradeState : MonoBehaviour
 {
     public enum UpgradeType
@@ -9,7 +12,9 @@ public class PlayerUpgradeState : MonoBehaviour
         BoostForce,
         BarrelRollDistance,
         BarrelRollSpeed,
-        FireRate
+        FireRate,
+        MaxHealth,
+        MaxShields,
     }
 
     [SerializeField] private PlayerSpaceshipUpgradesSO upgradesSO;
@@ -17,7 +22,11 @@ public class PlayerUpgradeState : MonoBehaviour
 
     public PlayerSpaceshipUpgradesSO Defs => upgradesSO;
 
-
+    /// <summary>
+    /// Uses the upgrade type to get the players level form save manager and the player upgrade so to find the correct boost amount
+    /// </summary>
+    /// <param name="upgradeType"></param>
+    /// <returns></returns>
     public float GetUpgradeBoost(UpgradeType upgradeType)
     {
         var u = SaveManager.instance.CurrentSaveData.spaceshipUpgradeData;
@@ -35,6 +44,10 @@ public class PlayerUpgradeState : MonoBehaviour
                 return u.barrelRollSpeedLevel * upgradesSO.barrelRollSpeedUpgradePerLevel;
             case UpgradeType.FireRate:
                 return u.fireRateLevel * upgradesSO.fireRateUpgradePerLevel;
+            case UpgradeType.MaxHealth:
+                return u.maxHealthLevel * upgradesSO.maxHealthUpgradePerLevel;
+            case UpgradeType.MaxShields:
+                return u.maxShieldsLevel * upgradesSO.maxShieldsPerLevel;
         }
 
         return 0f;

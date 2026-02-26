@@ -8,6 +8,7 @@ TagManager:
   - Canvas
   - Planet
   - Projectile
+  - EnemySpawner
   - Enemy
   - Terrain
   - OptionButton
@@ -20,6 +21,11 @@ TagManager:
   - UI
   - 
   - 
+  - 
+  - 
+  - 
+  - 
+  - Enemy
   - 
   - 
   - 
@@ -42,8 +48,7 @@ TagManager:
   - 
   - 
   - 
-  - 
-  - 
+  - Player
   m_SortingLayers:
   - name: Default
     uniqueID: 0
