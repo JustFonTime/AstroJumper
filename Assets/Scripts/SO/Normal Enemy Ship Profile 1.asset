@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Normal Enemy Ship Profile 1
   m_EditorClassIdentifier: Assembly-CSharp::EnemyShipProfileSO
   forwardThrust: 9
-  maxSpeed: 60
+  maxSpeed: 40
   rotationOffset: -90
   minTurnDegPerSec: 30
   maxTurnDegPerSec: 180
