@@ -119,11 +119,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &177837229 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3350557924722327067, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
-  m_PrefabInstance: {fileID: 2006749524}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &245580821
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -134,15 +129,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1412570048484421713, guid: e5dc360da6c157940a327e3bdc1adb5b, type: 3}
       propertyPath: m_LocalScale.x
-      value: 116.67423
+      value: 215.35442
       objectReference: {fileID: 0}
     - target: {fileID: 1412570048484421713, guid: e5dc360da6c157940a327e3bdc1adb5b, type: 3}
       propertyPath: m_LocalScale.y
-      value: 83.2604
+      value: 153.67998
       objectReference: {fileID: 0}
     - target: {fileID: 1412570048484421713, guid: e5dc360da6c157940a327e3bdc1adb5b, type: 3}
       propertyPath: m_LocalScale.z
-      value: 1.0707
+      value: 1.9762716
       objectReference: {fileID: 0}
     - target: {fileID: 1412570048484421713, guid: e5dc360da6c157940a327e3bdc1adb5b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -336,7 +331,7 @@ MonoBehaviour:
     CustomLookAtTarget: 0
   Lens:
     FieldOfView: 34
-    OrthographicSize: 30
+    OrthographicSize: 40
     NearClipPlane: 0.3
     FarClipPlane: 1000
     Dutch: 0
@@ -484,33 +479,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7670360865814592282, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
   m_PrefabInstance: {fileID: 2006749524}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1020784291
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 177837229}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ca1f604d46837b24198020f96b937bcf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TargetSlots
-  teamId: 0
-  maxAttackers: 3
---- !u!114 &1020784292
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 177837229}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f45735e77e5d6bd41807ace5c099a2f7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TeamAgent
-  teamId: 0
 --- !u!1 &1055831337
 GameObject:
   m_ObjectHideFlags: 0
@@ -545,17 +513,17 @@ MonoBehaviour:
   waves:
   - enemies:
     - prefab: {fileID: 5549628142487207619, guid: 66b35331de539834f819bbbac8b67800, type: 3}
-      count: 3
+      count: 1
     spawnSpacing: 0.5
     timeToSpawnAfterFinalDeath: 4
   - enemies:
     - prefab: {fileID: 5549628142487207619, guid: 66b35331de539834f819bbbac8b67800, type: 3}
-      count: 5
+      count: 3
     spawnSpacing: 1
     timeToSpawnAfterFinalDeath: 4
   - enemies:
     - prefab: {fileID: 5549628142487207619, guid: 66b35331de539834f819bbbac8b67800, type: 3}
-      count: 7
+      count: 5
     spawnSpacing: 1
     timeToSpawnAfterFinalDeath: 4
   assignTeams: 1
@@ -719,7 +687,7 @@ Camera:
   far clip plane: 1000
   field of view: 34
   orthographic: 1
-  orthographic size: 30
+  orthographic size: 40
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -762,29 +730,29 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player Spaceship
       objectReference: {fileID: 0}
-    - target: {fileID: 3350557924722327067, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
-      propertyPath: m_IsActive
-      value: 1
+    - target: {fileID: 7396577382986853205, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
+      propertyPath: maxSpeed
+      value: 60
       objectReference: {fileID: 0}
     - target: {fileID: 7396577382986853205, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
       propertyPath: drawDebug
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7396577382986853205, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
+      propertyPath: rotationLerp
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7396577382986853205, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
       propertyPath: alignStrength
-      value: 0
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 7396577382986853205, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
+      propertyPath: forwardThrust
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 7396577382986853205, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
       propertyPath: coastDampStrength
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7396577382986853205, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
-      propertyPath: drawOnlyWhenSelected
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7396577382986853205, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
-      propertyPath: preventBackwardVelocity
-      value: 0
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7670360865814592282, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
       propertyPath: m_LocalPosition.x
@@ -829,13 +797,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 3350557924722327067, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1020784292}
-    - targetCorrespondingSourceObject: {fileID: 3350557924722327067, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1020784291}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
 --- !u!1001 &7134732040576683442
 PrefabInstance:
