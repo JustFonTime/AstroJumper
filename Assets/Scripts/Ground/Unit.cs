@@ -27,8 +27,12 @@ public class Unit : MonoBehaviour
 
     protected bool isDamageAnimation = false;
     protected bool isAttacking = false;
-    [SerializeField] protected GameObject hitBoxPrefab;
-    [SerializeField] protected GameObject hitBoxPrefab2; 
+    //[SerializeField] protected GameObject hitBoxPrefab;
+    //[SerializeField] protected GameObject hitBoxPrefab2; 
+
+    public GameObject hitBoxPrefab;
+    public GameObject hitBoxPrefab2;
+
     public ProjectilePool unitProjectilePool;
     private bool useProjectilePool = true;
 
@@ -51,6 +55,17 @@ public class Unit : MonoBehaviour
             
         }
         
+    }
+
+    protected virtual bool IsFacingRight()
+    {
+        var gm = GetComponent<GroundMovement>();
+        if (gm != null) return gm.isFacingRight;
+
+        var motor = GetComponent<EnemyMotor>();
+        if (motor != null) return motor.FacingDir == 1;
+
+        return true; // fallback
     }
 
     public virtual void TakeDamage(int amount)
@@ -100,10 +115,10 @@ public class Unit : MonoBehaviour
         if(!hitBoxInfo.GetIsMelee() && unitProjectilePool != null)
         {
             GameObject projectile = unitProjectilePool.GetProjectile();
-            Vector3 offsetDirection = GetComponent<GroundMovement>().isFacingRight ? Vector3.right : Vector3.left;
+            Vector3 offsetDirection = IsFacingRight() ? Vector3.right : Vector3.left;
             Vector3 offset = new Vector3(hitBoxInfo.GetOffset().x * offsetDirection.x, hitBoxInfo.GetOffset().y, hitBoxInfo.GetOffset().z);
             projectile.transform.position = transform.position + offset;
-            projectile.GetComponent<Projectile>().SetDirection(GetComponent<GroundMovement>().isFacingRight ? 1 : -1);
+            projectile.GetComponent<Projectile>().SetDirection(IsFacingRight() ? 1 : -1);
             projectile.GetComponent<Projectile>().SetYValue(transform.position.y);
             projectile.GetComponent<Projectile>().SetSpeed(hitBoxInfo.GetProjectileSpeed());
             return projectile;
@@ -128,9 +143,15 @@ public class Unit : MonoBehaviour
         GameObject attackSprite = new GameObject("AttackSprite");
 
         HitBox hitBoxInfo = hitBoxPrefab.GetComponent<HitBox>();
-        GroundMovement groundMovement = GetComponent<GroundMovement>();
-        Vector3 offsetDirection = groundMovement.isFacingRight ? Vector3.right : Vector3.left;
+
+        //GroundMovement groundMovement = GetComponent<GroundMovement>();
+        //Vector3 offsetDirection = groundMovement.isFacingRight ? Vector3.right : Vector3.left;
+        //Vector3 offset = new Vector3(hitBoxInfo.GetOffset().x * offsetDirection.x, hitBoxInfo.GetOffset().y, hitBoxInfo.GetOffset().z);
+
+        // Use IsFacingRight() instead of GroundMovement
+        Vector3 offsetDirection = IsFacingRight() ? Vector3.right : Vector3.left;
         Vector3 offset = new Vector3(hitBoxInfo.GetOffset().x * offsetDirection.x, hitBoxInfo.GetOffset().y, hitBoxInfo.GetOffset().z);
+       
         
         SpriteRenderer spriteRenderer = attackSprite.AddComponent<SpriteRenderer>();
         spriteRenderer.sprite = hitBoxInfo.GetSprite();
@@ -143,7 +164,7 @@ public class Unit : MonoBehaviour
         else
         {
             Projectile projectile = attackSprite.AddComponent<Projectile>();
-            projectile.SetDirection(GetComponent<GroundMovement>().isFacingRight ? 1 : -1);
+            projectile.SetDirection(IsFacingRight() ? 1 : -1);
             projectile.SetYValue(transform.position.y);
         }
 
@@ -182,3 +203,7 @@ public class Unit : MonoBehaviour
         }
     }
 }
+
+
+
+

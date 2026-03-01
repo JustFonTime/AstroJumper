@@ -63,6 +63,14 @@ public class EnemyAI : MonoBehaviour
     private float lastLOSTime = -999f;
 
 
+    private Unit unit;
+
+
+    private void Awake()
+    {
+        unit = GetComponent<Unit>();
+    }
+
     private void Reset()
     {
         sensors = GetComponentInChildren<EnemySensors>();
@@ -114,7 +122,7 @@ public class EnemyAI : MonoBehaviour
 
         //Check for Player
         Transform seen = sensors.DetectPlayer();
-        if (seen && Mathf.Abs(seen.position.x - transform.position.x) <= chaseRange)
+        if (seen) //&& Mathf.Abs(seen.position.x - transform.position.x) <= chaseRange)
         {
             player = seen;
             lastSeenPos = player.position;
@@ -352,8 +360,11 @@ public class EnemyAI : MonoBehaviour
 
     private void DoMeleeAttack()
     {
-        // Placeholder
-        Debug.Log($"{name} performs MELEE attack");
+        if (unit != null && unit.hitBoxPrefab != null)
+            unit.BeginAttack(unit.hitBoxPrefab);
+        else
+            Debug.LogWarning($"{name}: No Unit or hitBoxPrefab assigned for melee attack");
+        //Debug.Log($"{name} performs MELEE attack");
     }
 
     private void DoRangedAttack()
