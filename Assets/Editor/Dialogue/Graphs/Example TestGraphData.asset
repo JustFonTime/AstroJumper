@@ -16,63 +16,70 @@ MonoBehaviour:
   <Nodes>k__BackingField:
   - <Name>k__BackingField: Fifth
     <CharacterName>k__BackingField: Me
-    <CharacterIcon>k__BackingField: 
+    <CharacterIcon>k__BackingField: {fileID: 21300000, guid: f0ac408f34ad0c0419aca771715a18a7, type: 3}
     <Text>k__BackingField: Sorry :)
     <ID>k__BackingField: 85995ee2-2e92-4000-a4b8-3afae99efb9b
     <Choices>k__BackingField:
     - <Text>k__BackingField: Next Dialouge
+      <Requirements>k__BackingField: 
       <NodeID>k__BackingField: 
     <DialougeType>k__BackingField: 0
-    <Position>k__BackingField: {x: 1251.3334, y: 185.33333}
+    <Position>k__BackingField: {x: 1251.3333, y: 185.33333}
   - <Name>k__BackingField: First
     <CharacterName>k__BackingField: Me
-    <CharacterIcon>k__BackingField: 
+    <CharacterIcon>k__BackingField: {fileID: 21300000, guid: f0ac408f34ad0c0419aca771715a18a7, type: 3}
     <Text>k__BackingField: This is a dialogue system
     <ID>k__BackingField: 11cd6f62-b7ab-479a-b831-d083fba52671
     <Choices>k__BackingField:
     - <Text>k__BackingField: Next Dialouge
+      <Requirements>k__BackingField: 
       <NodeID>k__BackingField: 95a0561d-9ef6-4006-b057-0606282922c8
     <DialougeType>k__BackingField: 0
     <Position>k__BackingField: {x: -52, y: 185.33333}
   - <Name>k__BackingField: Third
     <CharacterName>k__BackingField: Me
-    <CharacterIcon>k__BackingField: 
+    <CharacterIcon>k__BackingField: {fileID: 21300000, guid: d37ebee00e5d62b47976156bbd171b8c, type: 3}
     <Text>k__BackingField: It is very bad atm
     <ID>k__BackingField: c69b9813-948b-454a-be80-76a9273fd853
     <Choices>k__BackingField:
     - <Text>k__BackingField: Next Dialouge
+      <Requirements>k__BackingField: 
       <NodeID>k__BackingField: d978ab80-31b7-4558-ab39-c5e6d4bbb775
     <DialougeType>k__BackingField: 0
-    <Position>k__BackingField: {x: 865.3333, y: 126}
+    <Position>k__BackingField: {x: 865.3334, y: 126}
   - <Name>k__BackingField: Second
     <CharacterName>k__BackingField: Me
-    <CharacterIcon>k__BackingField: 
+    <CharacterIcon>k__BackingField: {fileID: 21300000, guid: 7950ddc3d08a95949b73408118e6376c, type: 3}
     <Text>k__BackingField: Multiple Choices!!!!
     <ID>k__BackingField: 70c078ff-80ec-4716-97c5-6792bb95892d
     <Choices>k__BackingField:
     - <Text>k__BackingField: Third
+      <Requirements>k__BackingField: 
       <NodeID>k__BackingField: c69b9813-948b-454a-be80-76a9273fd853
     - <Text>k__BackingField: Fourth
+      <Requirements>k__BackingField: 
       <NodeID>k__BackingField: d978ab80-31b7-4558-ab39-c5e6d4bbb775
     <DialougeType>k__BackingField: 1
     <Position>k__BackingField: {x: 558.6667, y: 185.33333}
   - <Name>k__BackingField: DialougeName
     <CharacterName>k__BackingField: Me
-    <CharacterIcon>k__BackingField: 
+    <CharacterIcon>k__BackingField: {fileID: 21300000, guid: 3df763bb22251d740b97a1774ded0098, type: 3}
     <Text>k__BackingField: Hopefully it will get better over time
     <ID>k__BackingField: 95a0561d-9ef6-4006-b057-0606282922c8
     <Choices>k__BackingField:
     - <Text>k__BackingField: Next Dialouge
+      <Requirements>k__BackingField: 
       <NodeID>k__BackingField: 70c078ff-80ec-4716-97c5-6792bb95892d
     <DialougeType>k__BackingField: 0
     <Position>k__BackingField: {x: 250, y: 185.33333}
   - <Name>k__BackingField: Fourth
     <CharacterName>k__BackingField: Me
-    <CharacterIcon>k__BackingField: 
+    <CharacterIcon>k__BackingField: {fileID: 0}
     <Text>k__BackingField: I also spelled Dialogue Wrong EVERYWHERE
     <ID>k__BackingField: d978ab80-31b7-4558-ab39-c5e6d4bbb775
     <Choices>k__BackingField:
     - <Text>k__BackingField: Next Dialouge
+      <Requirements>k__BackingField: 
       <NodeID>k__BackingField: 85995ee2-2e92-4000-a4b8-3afae99efb9b
     <DialougeType>k__BackingField: 0
     <Position>k__BackingField: {x: 850, y: 360}

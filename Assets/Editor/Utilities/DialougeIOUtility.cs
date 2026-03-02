@@ -264,6 +264,7 @@ public static class DialougeIOUtility
             DialougeChoiceData choiceData = new DialougeChoiceData()
             {
                 Text = nodeChoice.Text,
+                Requirements = nodeChoice.Requirements,
             };
         
             dialougeChoices.Add(choiceData);
@@ -280,6 +281,7 @@ public static class DialougeIOUtility
             DialougeChoiceSavaData choiceData = new DialougeChoiceSavaData()
             {
                 Text = choice.Text,
+                Requirements = choice.Requirements,
                 NodeID = choice.NodeID,
             };
 

@@ -5,5 +5,6 @@ using UnityEngine;
 public class DialougeChoiceSavaData 
 {
     [field: SerializeField] public string Text { get; set; }
+    [field: SerializeField] public string Requirements { get; set; }
     [field: SerializeField] public string NodeID { get; set; }
 }

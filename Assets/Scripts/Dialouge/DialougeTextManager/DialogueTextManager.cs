@@ -6,11 +6,16 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using UnityEditor.SceneManagement;
+using System;
+using System.Collections.Generic;
+using NUnit.Framework;
+using System.Linq;
 
 
 [RequireComponent(typeof(TextMeshProUGUI))]
 public class DialogueTextManager : MonoBehaviour
 {
+    public static DialogueTextManager Instance { get; private set; }
     [SerializeField] private Button optionButtonPrefab;
     [SerializeField] private InputActionAsset actionsAsset; 
     [SerializeField] private string actionMapName = "UI";
@@ -19,16 +24,32 @@ public class DialogueTextManager : MonoBehaviour
     public DialougeSO currentDialouge;
     public TextMeshProUGUI dialogueText;
     [SerializeField] private GameObject nameTextGO;
-    private TextMeshProUGUI nameText;
+    [SerializeField] private TextMeshProUGUI nameText;
+    [SerializeField] private SpriteRenderer characterIconSpriteRenderer;
     [SerializeField] public Vector3 offscreenPosition;
     [SerializeField] public Vector3 onscreenPosition;
     [SerializeField] private float duration = 1f;
     public GameObject TextContainer;
+    public bool isInDialouge;
+    
+    public static event Action onDialogueStart;
+    public static event Action onDialogueEnd;
+    public Player player;
 
     private void Awake() 
     {
         var map = actionsAsset.FindActionMap(actionMapName, true);
         clickAction = map.FindAction("Click", true);
+
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
     private void OnEnable()
@@ -60,8 +81,10 @@ public class DialogueTextManager : MonoBehaviour
         TextContainer.GetComponent<RectTransform>().position = offscreenPosition;
         dialogueText.enabled = false;
 
-        nameText = nameTextGO.GetComponentInChildren<TextMeshProUGUI>();
+        //nameText = nameTextGO.GetComponent<TextMeshProUGUI>();
+        nameTextGO.SetActive(true);
         nameText.enabled = false;
+
         
         DisableTextClick();
     }
@@ -75,12 +98,13 @@ public class DialogueTextManager : MonoBehaviour
     {
         dialogueText.text = currentDialouge.Text;
         nameText.text = currentDialouge.CharacterName;
+        characterIconSpriteRenderer.sprite = currentDialouge.CharacterIcon;
     }
 
     private void OnClick(InputAction.CallbackContext ctx)
     {
         NextDialouge();
-        print($"going to dialouge: {currentDialouge.DialougeName}");
+        //print($"going to dialouge: {currentDialouge.DialougeName}");
     }
 
     public void StartDialouge()
@@ -92,10 +116,18 @@ public class DialogueTextManager : MonoBehaviour
         nameText.enabled = true;
         nameText.text = currentDialouge.CharacterName;
         
-        StartCoroutine(moveDialogueBox());
-        
-        
+        characterIconSpriteRenderer.sprite = currentDialouge.CharacterIcon;
 
+        isInDialouge = true;
+        
+        onDialogueStart?.Invoke();
+        StartCoroutine(moveDialogueBox());
+    }
+
+    public void StartDialouge(DialougeSO dialouge)
+    {
+        currentDialouge = dialouge;
+        StartDialouge();
     }
 
     private void NextDialouge()
@@ -114,18 +146,22 @@ public class DialogueTextManager : MonoBehaviour
         {
             //disable input outside of the button.
             OnDisable(); // proably change this later
+
             GameObject optionButtonTransform = GameObject.Find("ChoiceTransform");
             for (int i = 0; i < currentDialouge.Choices.Count; i++)
             {
                 int index = i;
 
-
                 Button optionButton = Instantiate(optionButtonPrefab, new Vector2(0,0), Quaternion.identity, transform.parent);
+                optionButton.transform.SetParent(GameObject.Find("Canvas").transform, false);
                 RectTransform optionButtonRect = optionButtonTransform.GetComponent<RectTransform>();
                 Vector2 buttonPos = new Vector2(optionButtonRect.anchoredPosition.x, optionButtonRect.anchoredPosition.y - (i * optionButtonPrefab.GetComponent<RectTransform>().rect.height)); 
                 
                 optionButton.GetComponent<RectTransform>().anchoredPosition = buttonPos;
                 optionButton.GetComponentInChildren<TextMeshProUGUI>().text = currentDialouge.Choices[i].Text + " Button";
+
+                // Check if player has stats for option 
+                
                 
                 AddChoiceListener(optionButton, index);
                 optionButton.tag = "OptionButton";
@@ -142,12 +178,17 @@ public class DialogueTextManager : MonoBehaviour
 
     private void EndDialogue()
     {
-        dialogueText.enabled = false;
+        
+        print("Dialogue ended" + isInDialouge);
+        StartCoroutine(moveDialogueBox());
+        onDialogueEnd?.Invoke();
+        
     }
 
     private void OnChoiceSelected(int choiceIndex)
     {
         print("Choice " + choiceIndex + " selected");
+        
         currentDialouge = GetNextDialogue(currentDialouge, choiceIndex);
         UpdateText();
         foreach (GameObject child in GameObject.FindGameObjectsWithTag("OptionButton"))
@@ -165,16 +206,37 @@ public class DialogueTextManager : MonoBehaviour
     private IEnumerator moveDialogueBox()
     {
         float timeElapsed = 0f;
-        while (timeElapsed < duration)
+        if (TextContainer.GetComponent<RectTransform>().position == offscreenPosition)
         {
-            TextContainer.GetComponent<RectTransform>().position = Vector3.Lerp(offscreenPosition, onscreenPosition, timeElapsed / duration);
-            timeElapsed += Time.deltaTime;
-            yield return null; 
-        }
+            // move it on screen
+            timeElapsed = 0f;
+            while (timeElapsed < duration)
+            {
+                TextContainer.GetComponent<RectTransform>().position = Vector3.Lerp(offscreenPosition, onscreenPosition, timeElapsed / duration);
+                timeElapsed += Time.deltaTime;
+                yield return null; 
+            }
 
-        TextContainer.GetComponent<RectTransform>().position = onscreenPosition; 
-        EnableTextClick();
+            TextContainer.GetComponent<RectTransform>().position = onscreenPosition; 
+            EnableTextClick();
+        }
+        else
+        {
+            // move it off screen
+             timeElapsed = 0f;
+            while (timeElapsed < duration)
+            {
+                TextContainer.GetComponent<RectTransform>().position = Vector3.Lerp(onscreenPosition, offscreenPosition, timeElapsed / duration);
+                timeElapsed += Time.deltaTime;
+                yield return null; 
+            }
+            isInDialouge = false;
+            TextContainer.GetComponent<RectTransform>().position = offscreenPosition; 
+            DisableTextClick();
+        }
     }
+
+    
 }
 
 #if UNITY_EDITOR

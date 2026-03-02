@@ -8,7 +8,7 @@ public class DialougeNodeSavaData
 {
     [field: SerializeField] public string Name { get; set; }
     [field: SerializeField] public string CharacterName { get; set; }
-    [field: SerializeField] public string CharacterIcon { get; set; }
+    [field: SerializeField] public Sprite CharacterIcon { get; set; }
     [field: SerializeField] public string Text { get; set; }
     [field: SerializeField] public string ID { get; set; }
     [field: SerializeField] public List<DialougeChoiceSavaData> Choices { get; set; }

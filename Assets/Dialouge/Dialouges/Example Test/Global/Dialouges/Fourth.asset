@@ -14,11 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DialougeSO
   <DialougeName>k__BackingField: Fourth
   <CharacterName>k__BackingField: Me
-  <CharacterIcon>k__BackingField: 
+  <CharacterIcon>k__BackingField: {fileID: 0}
   <Text>k__BackingField: I also spelled Dialogue Wrong EVERYWHERE
   <Choices>k__BackingField:
   - <Name>k__BackingField: 
     <Text>k__BackingField: Next Dialouge
+    <Requirements>k__BackingField: 
     <NextDialouge>k__BackingField: {fileID: 11400000, guid: 75cfdf0d1775de04f8c525dcf816d6d6, type: 2}
   <DialougeTypes>k__BackingField: 0
   <IsStartingDialouge>k__BackingField: 0

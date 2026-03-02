@@ -5,13 +5,14 @@ using UnityEngine;
 using System.Xml.Serialization;
 using System;
 using System.Linq;
+using UnityEditor.Search;
 
 public class DialougeNode : Node
 {
     public string ID { get; set; }
     public string DialougeName {get; set;}
     public string CharacterName { get; set; }
-    public string CharacterIcon { get; set; }
+    public Sprite CharacterIcon { get; set; }
     public List<DialougeChoiceSavaData> Choices { get; set; }
     public string Text { get; set; }
     public DialougeTypes DialougeType { get; set; }
@@ -25,7 +26,7 @@ public class DialougeNode : Node
         this.graphView = graphView;
         DialougeName = nodeName;
         CharacterName = "New Character";
-        CharacterIcon = "insert file path here";
+        CharacterIcon = null;
         Choices = new List<DialougeChoiceSavaData>();
         Text = "New Text";
         SetPosition(new Rect(position, Vector2.zero));
@@ -82,7 +83,22 @@ public class DialougeNode : Node
             Text = callback.newValue;
         });
         textFoldout.Add(textTextField);
+        
+
+        ObjectField characterIcon = new ObjectField("Character Icon")
+        {
+            objectType = typeof(Sprite),
+            value = CharacterIcon
+        };
+
+        characterIcon.RegisterValueChangedCallback(evt =>
+        {
+            CharacterIcon = evt.newValue as Sprite;
+        });
+
+        textFoldout.Add(characterIcon);
         customDataContainer.Add(textFoldout);
+
 
     }
 
