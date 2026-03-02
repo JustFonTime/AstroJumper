@@ -35,6 +35,86 @@ MonoBehaviour:
     m_Key: Credits_Button
     m_Metadata:
       m_Items: []
+  - m_Id: 68927618015232
+    m_Key: Volume_Label
+    m_Metadata:
+      m_Items: []
+  - m_Id: 69388324560896
+    m_Key: BUTTON_BACK
+    m_Metadata:
+      m_Items: []
+  - m_Id: 69610987577344
+    m_Key: Eng_Button
+    m_Metadata:
+      m_Items: []
+  - m_Id: 69666528550912
+    m_Key: Kor_Button
+    m_Metadata:
+      m_Items: []
+  - m_Id: 69687340687360
+    m_Key: Chi_Button
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72731797217280
+    m_Key: Role_Assignments
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72999418978304
+    m_Key: Tasks
+    m_Metadata:
+      m_Items: []
+  - m_Id: 74495699181568
+    m_Key: Engine_Tool
+    m_Metadata:
+      m_Items: []
+  - m_Id: 74701605953536
+    m_Key: Unity
+    m_Metadata:
+      m_Items: []
+  - m_Id: 74788893614080
+    m_Key: Controls
+    m_Metadata:
+      m_Items: []
+  - m_Id: 75106947686400
+    m_Key: Control_Text
+    m_Metadata:
+      m_Items: []
+  - m_Id: 76130387222528
+    m_Key: Space_Controls
+    m_Metadata:
+      m_Items: []
+  - m_Id: 76492049473536
+    m_Key: Space_Controls_Text
+    m_Metadata:
+      m_Items: []
+  - m_Id: 79132233818112
+    m_Key: LOADING
+    m_Metadata:
+      m_Items: []
+  - m_Id: 81504070787072
+    m_Key: PAUSED
+    m_Metadata:
+      m_Items: []
+  - m_Id: 81797474934784
+    m_Key: Quit_Button
+    m_Metadata:
+      m_Items: []
+  - m_Id: 82810206412800
+    m_Key: YOUWIN_TITLE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 82931316940800
+    m_Key: Retry_Ground
+    m_Metadata:
+      m_Items: []
+  - m_Id: 82990527930368
+    m_Key: Retry_Space
+    m_Metadata:
+      m_Items: []
+  - m_Id: 83368539578368
+    m_Key: GAMEOVER_TITLE
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

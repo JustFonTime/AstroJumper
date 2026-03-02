@@ -38,6 +38,123 @@ MonoBehaviour:
     m_Localized: By the Galactic Goons
     m_Metadata:
       m_Items: []
+  - m_Id: 68927618015232
+    m_Localized: Volume Master
+    m_Metadata:
+      m_Items: []
+  - m_Id: 69388324560896
+    m_Localized: Back to Menu
+    m_Metadata:
+      m_Items: []
+  - m_Id: 69610987577344
+    m_Localized: Eng
+    m_Metadata:
+      m_Items: []
+  - m_Id: 69666528550912
+    m_Localized: Kor
+    m_Metadata:
+      m_Items: []
+  - m_Id: 69687340687360
+    m_Localized: Chi
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72731797217280
+    m_Localized: Role Assignments
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72999418978304
+    m_Localized: 'Programming: Jonathan Ng, William Wu, Cody Karigaca, Justin Fong
+
+      UI:
+      Hojoun Yoon, William Wu
+
+      Audio: Hojoun Yoon, Alfredo Barragan
+
+      Art:
+      Hojoun Yoon, Alfredo Barragan, Justin Fong
+
+      Design: Nikolas Makranyi,
+      Cody Karigaca, Justin Fong
+
+      Writing: Nikolas Makranyi, Alfredo Barragan
+
+      Managing:
+      Dylan Paras
+
+
+      External: Denis & Char'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 74495699181568
+    m_Localized: Engine Tool
+    m_Metadata:
+      m_Items: []
+  - m_Id: 74701605953536
+    m_Localized: Unity 6.3
+    m_Metadata:
+      m_Items: []
+  - m_Id: 74788893614080
+    m_Localized: Controls
+    m_Metadata:
+      m_Items: []
+  - m_Id: 75106947686400
+    m_Localized: 'A or D to move
+
+      S to fall-through
+
+      SPACE to jump
+
+      LMB
+      to shoot
+
+      RMB to melee'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 76130387222528
+    m_Localized: Space Controls
+    m_Metadata:
+      m_Items: []
+  - m_Id: 76492049473536
+    m_Localized: 'W to accelerate
+
+      S to brake
+
+      SHIFT to dash
+
+      LMB
+      to main fire
+
+      RMB to alt fire'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 79132233818112
+    m_Localized: Loading
+    m_Metadata:
+      m_Items: []
+  - m_Id: 81504070787072
+    m_Localized: Paused
+    m_Metadata:
+      m_Items: []
+  - m_Id: 81797474934784
+    m_Localized: Quit to Menu
+    m_Metadata:
+      m_Items: []
+  - m_Id: 82810206412800
+    m_Localized: You Win!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 82931316940800
+    m_Localized: Retry Ground
+    m_Metadata:
+      m_Items: []
+  - m_Id: 82990527930368
+    m_Localized: Retry Space
+    m_Metadata:
+      m_Items: []
+  - m_Id: 83368539578368
+    m_Localized: Game Over
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

@@ -38,6 +38,93 @@ MonoBehaviour:
     m_Localized: "\uD06C\uB808\uB527 & \uCEE8\uD2B8\uB864"
     m_Metadata:
       m_Items: []
+  - m_Id: 68927618015232
+    m_Localized: "\uBCFC\uB968 \uB9C8\uC2A4\uD130"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 69388324560896
+    m_Localized: "\uBA54\uB274\uB85C \uB3CC\uC544\uAC00\uAE30"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 69610987577344
+    m_Localized: ENG
+    m_Metadata:
+      m_Items: []
+  - m_Id: 69666528550912
+    m_Localized: KOR
+    m_Metadata:
+      m_Items: []
+  - m_Id: 69687340687360
+    m_Localized: CHI
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72731797217280
+    m_Localized: "\uC5ED\uD560 \uBD84\uB2F4"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72999418978304
+    m_Localized: "\uD504\uB85C\uADF8\uB798\uBC0D: Jonathan Ng, William Wu, Cody Karigaca,
+      Justin Fong\nUI: Hojoun Yoon, William Wu\n\uC624\uB514\uC624: Hojoun Yoon,
+      Alfredo Barragan\n\uC544\uD2B8: Hojoun Yoon, Alfredo Barragan, Justin Fong\n\uB514\uC790\uC778:
+      Nikolas Makranyi, Cody Karigaca, Justin Fong\n\uC791\uBB38: Nikolas Makranyi,
+      Alfredo Barragan\n\uAD00\uB9AC: Dylan Paras\n\n\uC678\uBD80: Denis & Char"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 74495699181568
+    m_Localized: "\uC5D4\uC9C4 \uB3C4\uAD6C"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 74701605953536
+    m_Localized: "\uC720\uB2C8\uD2F0 6.3"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 74788893614080
+    m_Localized: "\uCEE8\uD2B8\uB864"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 75106947686400
+    m_Localized: "A \uB610\uB294 D\uB85C \uC774\uB3D9\nS\uB85C \uC544\uB798\uB85C
+      \uD1B5\uACFC\nSPACE\uB85C \uC810\uD504\nLMB\uB85C \uBC1C\uC0AC\nRMB\uB85C \uADFC\uC811
+      \uACF5\uACA9"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 76130387222528
+    m_Localized: "\uC6B0\uC8FC \uCEE8\uD2B8\uB864"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 76492049473536
+    m_Localized: "W\uB85C \uAC00\uC18D\nS\uB85C \uAC10\uC18D\nSHIFT\uB85C \uB300\uC2DC\t\nLMB\uB85C
+      \uC8FC\uBB34\uAE30 \uBC1C\uC0AC\nRMB\uB85C \uBCF4\uC870\uBB34\uAE30 \uBC1C\uC0AC"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 79132233818112
+    m_Localized: "\uB85C\uB529 \uC911"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 81504070787072
+    m_Localized: "\uC77C\uC2DC \uC815\uC9C0"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 81797474934784
+    m_Localized: "\uBA54\uB274\uB85C \uB098\uAC00\uAE30"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 82810206412800
+    m_Localized: "\uC2B9\uB9AC!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 82931316940800
+    m_Localized: "\uC9C0\uC0C1 \uC7AC\uC2DC\uB3C4\t"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 82990527930368
+    m_Localized: "\uC6B0\uC8FC \uC7AC\uC2DC\uB3C4"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 83368539578368
+    m_Localized: "\uAC8C\uC784 \uC624\uBC84"
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []
