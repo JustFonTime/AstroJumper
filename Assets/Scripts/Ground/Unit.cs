@@ -24,9 +24,11 @@ public class Unit : MonoBehaviour
     }
     public static event Action<Unit> onDeath;
     public static event Action<Unit> onDamaged;
+    public static event Action<Unit, Vector2> onKnockedBack;
 
     protected bool isDamageAnimation = false;
     protected bool isAttacking = false;
+
     //[SerializeField] protected GameObject hitBoxPrefab;
     //[SerializeField] protected GameObject hitBoxPrefab2; 
 
@@ -68,18 +70,30 @@ public class Unit : MonoBehaviour
         return true; // fallback
     }
 
-    public virtual void TakeDamage(int amount)
+    public virtual void TakeDamage(int amount, float knockbackForce, float knockbackVerticalForce, Vector2 sourcePosition)
     {
         print("Taking damage");
         Health -= amount;
         if (Health <= 0)
         {
             Death();
+            return;
         }
+        Vector2 knockbackDir = ((Vector2)transform.position - sourcePosition).normalized;
+        Vector2 knockbackVector = new Vector2(knockbackDir.x * knockbackForce, knockbackVerticalForce);
+        onKnockedBack?.Invoke(this, knockbackVector);
+
         SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
         if(!isDamageAnimation)
             StartCoroutine(DamageEffect(spriteRenderer));
         onDamaged?.Invoke(this);
+    }
+    
+
+    //other case of TakeDmg in case there are attacks that don't have knockback
+    public virtual void TakeDamage(int amount)
+    {
+        TakeDamage(amount, 0f, 0f, transform.position);
     }
 
     public void Death()

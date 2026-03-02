@@ -13,7 +13,10 @@ public class HitBox : MonoBehaviour
     [SerializeField] private int damage = 10;
     [SerializeField] private bool isPermanent = false; // for hitboxes you attach to the enemy itself
     [SerializeField] private float duration = 1f;
+
     [SerializeField] private float knockbackForce = 5f;
+    [SerializeField] private float knockbackVerticalForce = 3f;
+
     [SerializeField] private bool isMelee = true; 
     [SerializeField] private float projectileSpeed = 5f;
     [SerializeField] private LayerMask targetLayer; // which layer the hitbox should interact with (player, enemy, etc.)
@@ -83,8 +86,8 @@ public class HitBox : MonoBehaviour
         Unit unit = other.GetComponent<Unit>();
         if (unit != null)
         {
-            unit.TakeDamage(damage);
-            if(!isMelee)
+            unit.TakeDamage(damage, knockbackForce, knockbackVerticalForce, transform.position);
+            if (!isMelee)
             {
                 DestroyAttack();
 
@@ -106,6 +109,9 @@ public class HitBox : MonoBehaviour
     {
         return sprite;
     }
+
+    public float GetKnockbackForce() => knockbackForce;
+    public float GetKnockbackVerticalForce() => knockbackVerticalForce;
 
     private void DestroyAttack()
     {

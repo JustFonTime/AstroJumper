@@ -45,6 +45,9 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] private float projectileSpeed = 8f;
     [SerializeField] private float minShootRange = 0.0f;
 
+    [Header("Knockback")]
+    [SerializeField] private float knockbackDuration = 0.2f;
+
     //leash distance that makes the enemy give up and return back to home point
     [Header("Return")]
     [SerializeField] private Transform homePoint;
@@ -69,6 +72,23 @@ public class EnemyAI : MonoBehaviour
     private void Awake()
     {
         unit = GetComponent<Unit>();
+        lastSeenTime = Time.time;
+        lastLOSTime = Time.time;
+
+        // knockback event and only react if it's own unit
+        Unit.onKnockedBack += OnKnockedBack;
+    }
+
+    private void OnDestroy()
+    {
+        Unit.onKnockedBack -= OnKnockedBack;
+    }
+
+    private void OnKnockedBack(Unit damagedUnit, Vector2 force)
+    {
+        // Filter - only respond if this is our own unit
+        if (damagedUnit != unit) return;
+        EnterKnockback(force, knockbackDuration);
     }
 
     private void Reset()
@@ -163,6 +183,7 @@ public class EnemyAI : MonoBehaviour
             {
                 // Grace window expired drop the target and investigate last seen pos
                 player = null;
+                lastSeenTime = Time.time;
             }
         }
         //if we have the player (seen or cached)
@@ -425,11 +446,11 @@ public class EnemyAI : MonoBehaviour
     }
 
     // Call this from dmg system
-    public void EnterKnockback(Vector2 force, float knockbackTime = 0.2f)
+    public void EnterKnockback(Vector2 force, float duration)
     {
         ChangeState(State.Knockback, "Entered knockback");
         motor.ApplyKnockback(force);
-        Invoke(nameof(ExitKnockback), knockbackTime);
+        Invoke(nameof(ExitKnockback), duration);
     }
 
     private void ExitKnockback()
