@@ -20,6 +20,10 @@ public class EnemySpaceshipSpawner : MonoBehaviour
         SetWaves
     }
 
+    [SerializeField]
+    private float
+        initialSpawnDelay = 5f; // Time to wait before starting the first spawn, giving player time to get ready
+
     [Header("Mode")] [SerializeField] private SpawnType spawnType = SpawnType.Infinite;
 
     [Header("Infinite Settings")] [SerializeField]
@@ -79,6 +83,7 @@ public class EnemySpaceshipSpawner : MonoBehaviour
     {
         player = GameObject.FindWithTag("Player");
 
+
         if (activeEnemiesRoot == null)
         {
             var go = new GameObject("Enemies_Active");
@@ -119,7 +124,7 @@ public class EnemySpaceshipSpawner : MonoBehaviour
     {
         //Hard code wait so player has time to get ready and not get instantly overwhelmed by enemies as soon as the scene starts. Can be removed later if needed.
         // and for the hud and anyhitng using events to bind before there called 
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(initialSpawnDelay);
 
 
         if (spawnType == SpawnType.Infinite)

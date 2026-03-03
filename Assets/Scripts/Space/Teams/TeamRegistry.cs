@@ -60,6 +60,14 @@ public class TeamRegistry : MonoBehaviour
         return nearest;
     }
 
+    
+    /// <summary>
+    ///  Finds nearest hostile target and tries to claim a slot if it has them, returns null if no valid targets or if claim failed
+    /// </summary>
+    /// <param name="attacker">  </param> 
+    /// <param name="attackerPos"></param>
+    /// <param name="radius"></param>
+    /// <returns></returns>
     public static TeamAgent FindAndClaim(TeamAgent attacker, Vector2 attackerPos, float radius)
     {
         if (attacker == null) return null;
@@ -97,4 +105,6 @@ public class TeamRegistry : MonoBehaviour
 
         return best;
     }
+    
+
 }

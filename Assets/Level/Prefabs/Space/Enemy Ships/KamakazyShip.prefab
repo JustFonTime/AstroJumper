@@ -227,7 +227,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f45735e77e5d6bd41807ace5c099a2f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamAgent
-  teamId: 1
+  teamId: -1
 --- !u!114 &7849794099789389228
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -289,6 +289,7 @@ MonoBehaviour:
   returnToCenterRadius: 25
   hardReturnRadius: 80
   returnForceMultiplier: 1.25
+  stopDistance: 1.75
   drawDebug: 0
   drawOnlyWhenSelected: 0
   drawTargetLine: 0

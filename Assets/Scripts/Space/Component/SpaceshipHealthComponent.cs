@@ -169,10 +169,15 @@ public class SpaceshipHealthComponent : MonoBehaviour, ISpaceDamagable
         if (deathSfx != null)
             AudioSource.PlayClipAtPoint(deathSfx, transform.position, deathVolume);
 
-        var pooled = this.GetComponent<PooledEnemy>();
+        var pooled = this.GetComponent<PooledEnemy>(); //check if were enemu
+        var pooledTeamate = this.GetComponent<PooledTeamate>();
         if (pooled != null)
         {
             pooled.Despawn();
+        }
+        else if (pooledTeamate != null)
+        {
+            pooledTeamate.Despawn();
         }
         else
         {

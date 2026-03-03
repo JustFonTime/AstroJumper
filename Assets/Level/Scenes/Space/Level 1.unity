@@ -129,23 +129,23 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1412570048484421713, guid: e5dc360da6c157940a327e3bdc1adb5b, type: 3}
       propertyPath: m_LocalScale.x
-      value: 215.35442
+      value: 293.38925
       objectReference: {fileID: 0}
     - target: {fileID: 1412570048484421713, guid: e5dc360da6c157940a327e3bdc1adb5b, type: 3}
       propertyPath: m_LocalScale.y
-      value: 153.67998
+      value: 162.99849
       objectReference: {fileID: 0}
     - target: {fileID: 1412570048484421713, guid: e5dc360da6c157940a327e3bdc1adb5b, type: 3}
       propertyPath: m_LocalScale.z
-      value: 1.9762716
+      value: 2.0098808
       objectReference: {fileID: 0}
     - target: {fileID: 1412570048484421713, guid: e5dc360da6c157940a327e3bdc1adb5b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 4.4088
       objectReference: {fileID: 0}
     - target: {fileID: 1412570048484421713, guid: e5dc360da6c157940a327e3bdc1adb5b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.6478
       objectReference: {fileID: 0}
     - target: {fileID: 1412570048484421713, guid: e5dc360da6c157940a327e3bdc1adb5b, type: 3}
       propertyPath: m_LocalPosition.z
@@ -188,13 +188,21 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1020784283}
     - target: {fileID: 2986369485186554745, guid: e5dc360da6c157940a327e3bdc1adb5b, type: 3}
+      propertyPath: parallax
+      value: 0.037
+      objectReference: {fileID: 0}
+    - target: {fileID: 2986369485186554745, guid: e5dc360da6c157940a327e3bdc1adb5b, type: 3}
+      propertyPath: extraScale
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2986369485186554745, guid: e5dc360da6c157940a327e3bdc1adb5b, type: 3}
       propertyPath: scrollTarget
       value: 
       objectReference: {fileID: 1020784283}
     - target: {fileID: 4141914376404912875, guid: e5dc360da6c157940a327e3bdc1adb5b, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 723ff58b39b10414ebad82a0ad835370, type: 2}
+      objectReference: {fileID: 2100000, guid: 35df61baad803c64681b6bf03486c569, type: 2}
     - target: {fileID: 4994097748692252975, guid: e5dc360da6c157940a327e3bdc1adb5b, type: 3}
       propertyPath: m_Name
       value: SpaceBackground
@@ -299,6 +307,7 @@ GameObject:
   - component: {fileID: 835516083}
   - component: {fileID: 835516082}
   - component: {fileID: 835516084}
+  - component: {fileID: 835516085}
   m_Layer: 0
   m_Name: CinemachineCamera
   m_TagString: Untagged
@@ -330,8 +339,8 @@ MonoBehaviour:
     LookAtTarget: {fileID: 0}
     CustomLookAtTarget: 0
   Lens:
-    FieldOfView: 34
-    OrthographicSize: 50
+    FieldOfView: 50.77384
+    OrthographicSize: 70
     NearClipPlane: 0.3
     FarClipPlane: 1000
     Dutch: 0
@@ -395,6 +404,22 @@ MonoBehaviour:
     Time: 0.2
     Smoothing: 5
     IgnoreY: 0
+--- !u!114 &835516085
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 835516080}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de5edbefa74008c498ae0b7d1ade1938, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpaceCameraZoom
+  minZoom: 10
+  maxZoom: 150
+  zoomSpeed: 15
+  virtualCamera: {fileID: 835516082}
 --- !u!1 &888911766
 GameObject:
   m_ObjectHideFlags: 0
@@ -508,12 +533,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b0f199f077509c47bad15ab404b6ffb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpaceshipSpawner
+  initialSpawnDelay: 5
   spawnType: 1
   spawnerSettings: {fileID: 11400000, guid: 3e818ecb229b1c84f9565281337883cc, type: 2}
   waves:
   - enemies:
     - prefab: {fileID: 5549628142487207619, guid: 66b35331de539834f819bbbac8b67800, type: 3}
-      count: 1
+      count: 20
     spawnSpacing: 0.5
     timeToSpawnAfterFinalDeath: 4
   - enemies:
@@ -685,9 +711,9 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 34
+  field of view: 50.77384
   orthographic: 1
-  orthographic size: 50
+  orthographic size: 70
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -718,6 +744,60 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1941959782
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1941959784}
+  - component: {fileID: 1941959783}
+  m_Layer: 0
+  m_Name: Friendly Spawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1941959783
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1941959782}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70771d833acc89a4d881e025dffd6df4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FriendlySpaceshipSpawner
+  teamPrefabs:
+  - {fileID: 5549628142487207619, guid: 6d86112d450eb3e49aa0ded401048f30, type: 3}
+  teamSpawnWeights: 05000000
+  minSpawnRadius: 300
+  maxSpawnRadius: 450
+  initialSpawnDelay: 5
+  defaultPoolCapacity: 30
+  maxPoolSize: 70
+  activeTeamatesRoot: {fileID: 0}
+  pooledRoot: {fileID: 0}
+--- !u!4 &1941959784
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1941959782}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.20572, y: 7.24701, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &2006749524
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -729,30 +809,6 @@ PrefabInstance:
     - target: {fileID: 3350557924722327067, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
       propertyPath: m_Name
       value: Player Spaceship
-      objectReference: {fileID: 0}
-    - target: {fileID: 7396577382986853205, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
-      propertyPath: maxSpeed
-      value: 60
-      objectReference: {fileID: 0}
-    - target: {fileID: 7396577382986853205, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
-      propertyPath: drawDebug
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7396577382986853205, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
-      propertyPath: rotationLerp
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 7396577382986853205, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
-      propertyPath: alignStrength
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 7396577382986853205, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
-      propertyPath: forwardThrust
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 7396577382986853205, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
-      propertyPath: coastDampStrength
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7670360865814592282, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
       propertyPath: m_LocalPosition.x
@@ -810,6 +866,14 @@ PrefabInstance:
     - target: {fileID: 1029587659160723094, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
       propertyPath: m_Name
       value: Spaceship Player HUD
+      objectReference: {fileID: 0}
+    - target: {fileID: 1548926147540261882, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1548926147540261882, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2295874869269274131, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
       propertyPath: m_Pivot.x
@@ -994,3 +1058,4 @@ SceneRoots:
   - {fileID: 835516083}
   - {fileID: 1354088538}
   - {fileID: 245580821}
+  - {fileID: 1941959784}

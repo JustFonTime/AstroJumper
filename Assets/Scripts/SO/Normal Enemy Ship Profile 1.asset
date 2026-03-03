@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 248b8a0131e4c5e429b42dd520b481b1, type: 3}
   m_Name: Normal Enemy Ship Profile 1
   m_EditorClassIdentifier: Assembly-CSharp::EnemyShipProfileSO
-  forwardThrust: 9
-  maxSpeed: 40
+  forwardThrust: 12
+  maxSpeed: 60
   rotationOffset: -90
-  minTurnDegPerSec: 30
+  minTurnDegPerSec: 90
   maxTurnDegPerSec: 180
   turnAuthorityBySpeed:
     serializedVersion: 2
@@ -29,15 +29,6 @@ MonoBehaviour:
       weightedMode: 0
       inWeight: 0
       outWeight: 0
-    - serializedVersion: 3
-      time: 0.482462
-      value: 0.6909201
-      inSlope: 2.0702276
-      outSlope: 2.0702276
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.42424938
-      outWeight: 0.0929277
     - serializedVersion: 3
       time: 1
       value: 1
@@ -68,4 +59,4 @@ MonoBehaviour:
   maxHealth: 50
   maxShields: 25
   startingShields: 25
-  canSelfRechargeShields: 1
+  canSelfRechargeShields: 0

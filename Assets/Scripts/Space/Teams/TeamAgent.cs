@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 
 
 /// <summary>
@@ -21,11 +22,14 @@ public class TeamAgent : MonoBehaviour
 
     private void OnEnable()
     {
+        //Debug.Log($"TeamAgent OnEnable team={TeamId}\n{Environment.StackTrace}");
         TeamRegistry.Register(this);
     }
 
     private void OnDisable()
     {
+        //Debug.Log($"TeamAgent OnDisable team={TeamId}\n{Environment.StackTrace}");
+
         TeamRegistry.Unregister(this);
     }
 

@@ -16,7 +16,6 @@ public class SpaceshipPlayerHUD : MonoBehaviour
     {
         player = GameObject.FindGameObjectWithTag("Player");
 
-        Debug.Log(EnemySpaceshipSpawner.Instance);
         EnemySpaceshipSpawner.Instance.OnWaveChanged += SetWave;
         EnemySpaceshipSpawner.Instance.OnAliveEnemiesChanged += SetAliveEnemies;
         EnemySpaceshipSpawner.Instance.AllWavesCompleted += () =>
