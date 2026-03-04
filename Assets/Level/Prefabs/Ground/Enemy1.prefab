@@ -318,7 +318,7 @@ MonoBehaviour:
   loseSightGrace: 0.5
   investigateDuration: 2
   investigateTolerance: 0.15
-  attackTypes: 0
+  attackTypes: 1
   meleeEnterBuffer: 0.7
   meleeRange: 2
   rangedRange: 5
