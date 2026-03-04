@@ -200,6 +200,7 @@ GameObject:
   - component: {fileID: 8752505658889036815}
   - component: {fileID: 8187129136833211444}
   - component: {fileID: 6569328820202535863}
+  - component: {fileID: 6100491850485219385}
   m_Layer: 0
   m_Name: Enemy 2
   m_TagString: Untagged
@@ -371,9 +372,10 @@ MonoBehaviour:
   meleeRange: 2
   rangedRange: 12
   firePoint: {fileID: 2958658368263112852}
-  projectilePrefab: {fileID: 8161714451627024827, guid: f46646881042575428aea186ba5920dd, type: 3}
+  projectilePool: {fileID: 0}
   projectileSpeed: 8
   minShootRange: 0
+  knockbackDuration: 0.2
   homePoint: {fileID: 0}
   homeTolerance: 0.2
   maxLeashDistance: 15
@@ -390,3 +392,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyMotor
   moveSpeed: 3
+--- !u!114 &6100491850485219385
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6673901974885723949}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30a09174064c39a4fbb1e7abef973cdb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyProjectilePool
+  projectilePrefab: {fileID: 9182795490261890898, guid: f46646881042575428aea186ba5920dd, type: 3}
+  initialPoolSize: 8

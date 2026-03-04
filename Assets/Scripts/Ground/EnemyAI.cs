@@ -41,9 +41,10 @@ public class EnemyAI : MonoBehaviour
 
     [Header("Ranged Attack")]
     [SerializeField] private Transform firePoint;
-    [SerializeField] private EnemyProjectile projectilePrefab;
+    [SerializeField] private EnemyProjectilePool projectilePool;
     [SerializeField] private float projectileSpeed = 8f;
     [SerializeField] private float minShootRange = 0.0f;
+
 
     [Header("Knockback")]
     [SerializeField] private float knockbackDuration = 0.2f;
@@ -390,11 +391,11 @@ public class EnemyAI : MonoBehaviour
 
     private void DoRangedAttack()
     {
-        if (!projectilePrefab || !firePoint) return;
+        //changed to use pooling instead 
+        if (!firePoint || projectilePool == null) return;
 
-        Vector2 dir = (player.position - firePoint.position).normalized;
-        EnemyProjectile proj = Instantiate(projectilePrefab, firePoint.position, Quaternion.identity);
-        proj.Fire(dir * projectileSpeed);
+        Vector2 dir = ((Vector2)player.position - (Vector2)firePoint.position).normalized;
+        projectilePool.Fire(firePoint.position, dir * projectileSpeed);
     }
 
 
