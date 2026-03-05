@@ -201,6 +201,10 @@ public class Unit : MonoBehaviour
     #endregion
 
 
+    protected void InvokeKnockback(Unit unit, Vector2 knockbackVector)
+    {
+        onKnockedBack?.Invoke(unit, knockbackVector);
+    }
     public GameObject GetProjectilePrefab()
     {
         if(!hitBoxPrefab.GetComponent<HitBox>().GetIsMelee())

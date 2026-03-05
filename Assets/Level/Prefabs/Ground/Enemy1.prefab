@@ -323,9 +323,10 @@ MonoBehaviour:
   meleeRange: 2
   rangedRange: 5
   firePoint: {fileID: 4124021642724615479}
-  projectilePrefab: {fileID: 8161714451627024827, guid: f46646881042575428aea186ba5920dd, type: 3}
+  projectilePool: {fileID: 0}
   projectileSpeed: 8
   minShootRange: 0
+  knockbackDuration: 0.2
   homePoint: {fileID: 0}
   homeTolerance: 10
   maxLeashDistance: 15
@@ -483,12 +484,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6577929641708287723, guid: 0386b52ded88e344d8bdb8cb69e044e7, type: 3}
       propertyPath: targetLayer.m_Bits
-      value: 2048
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8477802174989769030, guid: 0386b52ded88e344d8bdb8cb69e044e7, type: 3}
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 3df763bb22251d740b97a1774ded0098, type: 3}
+    - target: {fileID: 8477802174989769030, guid: 0386b52ded88e344d8bdb8cb69e044e7, type: 3}
+      propertyPath: m_Color.a
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8477802174989769030, guid: 0386b52ded88e344d8bdb8cb69e044e7, type: 3}
       propertyPath: m_Enabled
       value: 1

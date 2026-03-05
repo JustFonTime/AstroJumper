@@ -25,7 +25,11 @@ public class Player : Unit
 
     [Header("Player Spawnpoint")]
     [SerializeField] private GameObject playerSpawn;
-    
+
+    [Header("Damage Settings")]
+    [SerializeField] private float damageCooldown = 0.5f;
+    private float lastDamageTime = -999f;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
@@ -128,18 +132,31 @@ public class Player : Unit
         }
     }
 
-    public override void TakeDamage(int amount)
+    public override void TakeDamage(int amount, float knockbackForce, float knockbackVerticalForce, Vector2 sourcePosition)
     {
+        // Ignore hits that happen too close together
+        if (Time.time - lastDamageTime < damageCooldown)
+            return;
+        lastDamageTime = Time.time;
+
         print("Taking damage");
         Health -= amount;
+
         if (Health <= 0)
         {
-            //Death();
             Reset();
+            return;
         }
+
+        Vector2 knockbackDir = ((Vector2)transform.position - sourcePosition).normalized;
+        Vector2 knockbackVector = new Vector2(knockbackDir.x * knockbackForce, knockbackVerticalForce);
+        InvokeKnockback(this, knockbackVector);
+
         SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
-        if(!isDamageAnimation)
-            StartCoroutine(DamageEffect(spriteRenderer));
+        if (!isDamageAnimation)
+            StartCoroutine(DamageEffect(spriteRenderer)); //Im not sure why it plays twice after taking dmg once It was like this before and flashes twice im not sure where it is, 
+        Debug.Log("Invoking onPlayerDamaged animation");// the animation plays an extra time after taking dmg like a second later, but this isn't being called twice so its most likely a sprite issue
+
         onPlayerDamaged?.Invoke(this);
     }
 
