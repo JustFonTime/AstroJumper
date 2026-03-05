@@ -115,6 +115,14 @@ MonoBehaviour:
     m_Key: GAMEOVER_TITLE
     m_Metadata:
       m_Items: []
+  - m_Id: 1399805396901888
+    m_Key: HUD_WAVE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1399807582134272
+    m_Key: HUD_ENEMIES_LEFT
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

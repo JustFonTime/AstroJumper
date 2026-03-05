@@ -60,11 +60,11 @@ public class SpaceshipPlayerHUD : MonoBehaviour
 
     public void SetWave(int wave)
     {
-        waveText.text = "Wave: " + wave.ToString();
+        waveText.text = wave.ToString();
     }
 
     public void SetAliveEnemies(int aliveEnemies)
     {
-        aliveEnemiesText.text = "Enemies Left: " + aliveEnemies.ToString();
+        aliveEnemiesText.text = aliveEnemies.ToString();
     }
 }

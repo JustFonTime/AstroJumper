@@ -125,6 +125,14 @@ MonoBehaviour:
     m_Localized: "\uAC8C\uC784 \uC624\uBC84"
     m_Metadata:
       m_Items: []
+  - m_Id: 1399805396901888
+    m_Localized: "\uC6E8\uC774\uBE0C:"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1399807582134272
+    m_Localized: "\uB0A8\uC740 \uC801:"
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []
