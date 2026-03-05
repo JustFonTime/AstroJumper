@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 
 [RequireComponent(typeof(Collider2D))]
@@ -169,8 +170,15 @@ public class SpaceshipHealthComponent : MonoBehaviour, ISpaceDamagable
             AudioSource.PlayClipAtPoint(deathSfx, transform.position, deathVolume);
 
         var pooled = this.GetComponent<PooledEnemy>();
-        if (pooled != null) pooled.Despawn();
-        else Destroy(this.gameObject);
+        if (pooled != null)
+        {
+            pooled.Despawn();
+        }
+        else
+        {
+            SceneManager.LoadScene("GameOver");
+            //Destroy(this.gameObject);
+        }
     }
 
 

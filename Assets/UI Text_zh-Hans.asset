@@ -1,0 +1,135 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: UI Text_zh-Hans
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: zh-Hans
+  m_SharedData: {fileID: 11400000, guid: d5792df4c40ed488aa6ec3741a76b0d7, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 45033185280
+    m_Localized: "\u661F\u9645\u8DF3\u8DC3\u8005"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 736925573120
+    m_Localized: "\u5F00\u59CB"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 863258009600
+    m_Localized: "\u9009\u9879"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 608785391616
+    m_Localized: "\u7531Galactic Goons\u5236\u4F5C"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 866911248384
+    m_Localized: "\u5236\u4F5C\u4EBA\u5458&\u64CD\u4F5C"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 68927618015232
+    m_Localized: "\u4E3B\u97F3\u91CF"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 69388324560896
+    m_Localized: "\u8FD4\u56DE\u4E3B\u83DC\u5355"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 69610987577344
+    m_Localized: "\u82F1"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 69666528550912
+    m_Localized: "\u97E9"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 69687340687360
+    m_Localized: "\u4E2D"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72731797217280
+    m_Localized: "\u89D2\u8272\u5206\u914D"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 72999418978304
+    m_Localized: "\u7F16\u7A0B: Jonathan Ng, William Wu, Cody Karigaca, Justin Fong\n\u754C\u9762:
+      Hojoun Yoon, William Wu\n\u97F3\u9891: Hojoun Yoon, Alfredo Barragan\n\u7F8E\u672F:
+      Hojoun Yoon, Alfredo Barragan, Justin Fong\n\u8BBE\u8BA1: Nikolas Makranyi,
+      Cody Karigaca, Justin Fong\n\u7F16\u5267: Nikolas Makranyi, Alfredo Barragan\n\u7BA1\u7406:
+      Dylan Paras\n\n\u5916\u90E8: Denis & Char"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 74495699181568
+    m_Localized: "\u5F15\u64CE\u5DE5\u5177"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 74701605953536
+    m_Localized: Unity 6.3
+    m_Metadata:
+      m_Items: []
+  - m_Id: 74788893614080
+    m_Localized: "\u64CD\u4F5C\u8BF4\u660E"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 75106947686400
+    m_Localized: "A\u6216D\u79FB\u52A8\nS\u4E0B\u843D\u7A7F\u8FC7\n\u7A7A\u683C\u8DF3\u8DC3\n\u9F20\u6807\u5DE6\u952E\u5C04\u51FB\n\u9F20\u6807\u53F3\u952E\u8FD1\u6218"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 76130387222528
+    m_Localized: "\u592A\u7A7A\u64CD\u4F5C"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 76492049473536
+    m_Localized: "W\u52A0\u901F\nS\u51CF\u901F\nShift\u51B2\u523A\n\u9F20\u6807\u5DE6\u952E\u4E3B\u6B66\u5668\n\u9F20\u6807\u53F3\u952E\u526F\u6B66\u5668"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 79132233818112
+    m_Localized: "\u52A0\u8F7D\u4E2D"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 81504070787072
+    m_Localized: "\u6682\u505C"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 81797474934784
+    m_Localized: "\u9000\u51FA\u5230\u83DC\u5355"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 82810206412800
+    m_Localized: "\u80DC\u5229\uFF01"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 82931316940800
+    m_Localized: "\u91CD\u8BD5\u5730\u9762"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 82990527930368
+    m_Localized: "\u91CD\u8BD5\u592A\u7A7A"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 83368539578368
+    m_Localized: "\u6E38\u620F\u7ED3\u675F"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1399805396901888
+    m_Localized: "\u6CE2\u6B21:"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1399807582134272
+    m_Localized: "\u5269\u4F59\u654C\u4EBA:"
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []
