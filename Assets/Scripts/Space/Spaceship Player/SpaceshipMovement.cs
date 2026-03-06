@@ -135,6 +135,11 @@ public class SpaceshipMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (!rb) return;
+
+        if (!isBarrellRolling)
+            rb.angularVelocity = 0f;
+
         if (isBarrellRolling) return;
 
         ApplyForwardThrust();
@@ -381,3 +386,4 @@ public class SpaceshipMovement : MonoBehaviour
         Gizmos.DrawLine(pos + vec, pos + vec + l * headLen);
     }
 }
+

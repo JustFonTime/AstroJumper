@@ -10,112 +10,80 @@ using UnityEditor;
 [RequireComponent(typeof(TargetingComponent))]
 public class EnemySpaceshipAI : MonoBehaviour
 {
+    private enum DogfightPhase
+    {
+        Approach,
+        Orbit,
+        AttackRun,
+        PeelOff,
+        Retreat
+    }
+
     private Rigidbody2D rb;
     private TeamAgent self;
     private TargetingComponent targeting;
     private ShipOrderController orders;
+    private SpaceshipHealthComponent health;
 
     [Header("Refs (fallback only)")] [SerializeField]
-    private GameObject player; // fallback if targeting has nobody
+    private GameObject player;
 
     [SerializeField] private EnemyShipProfileSO shipProfile;
-
 
     [Header("Runtime")] [SerializeField] private bool isBarrellRolling = false;
     [SerializeField] private float currentSpeedMultiplier = 1f;
 
     private Coroutine barrelCo;
+    private DogfightPhase phase = DogfightPhase.Approach;
+    private float phaseTimer;
+    private float attackRunCooldownTimer;
+    private Vector2 phaseDirection;
 
     [Header("Arena / Return (no navmesh needed)")]
-    [Tooltip("If no target, and farther than this from center, will thrust toward center. 0 disables return.")]
-    [SerializeField]
-    private float returnToCenterRadius = 25f;
-
-    [Tooltip("If *very* far from center, thrust harder to get back.")] [SerializeField]
-    private float hardReturnRadius = 80f;
-
+    [SerializeField] private float returnToCenterRadius = 25f;
+    [SerializeField] private float hardReturnRadius = 80f;
     [SerializeField] private float returnForceMultiplier = 1.25f;
 
-    // ============================================================
-    // DOGFIGHT MOVEMENT
-    // ============================================================
-    [Header("Dogfight Movement (New)")]
-    [Tooltip("If 0, will derive from shipProfile.combatRange * preferredRangeFromCombatRange.")]
-    [SerializeField]
-    private float preferredRange = 0f;
+    [Header("Dogfight Movement")]
+    [SerializeField] private float preferredRange = 0f;
+    [Range(0.1f, 1.25f)] [SerializeField] private float preferredRangeFromCombatRange = 0.75f;
+    [SerializeField] private float rangeTolerance = 10f;
+    [SerializeField] private bool enableOrbit = true;
+    [SerializeField] private float orbitAngularSpeedDeg = 180f;
+    [SerializeField] private float orbitTangentOffset = 12f;
+    [Range(0f, 1f)] [SerializeField] private float orbitThrottle = 0.85f;
+    [SerializeField] private bool randomizeDogfightSeedOnSpawn = true;
 
-    [Tooltip("If preferredRange=0, use combatRange * this value.")] [Range(0.1f, 1.25f)] [SerializeField]
-    private float preferredRangeFromCombatRange = 0.75f;
+    private float orbitSign = 1f;
+    private float slotBaseAngleRad = 0f;
+    private float orbitPhaseRad = 0f;
 
-    [Tooltip("How much wiggle room around preferredRange counts as 'in range'.")] [SerializeField]
-    private float rangeTolerance = 10f;
-
-    [Tooltip("When in range, AI orbits instead of ramming straight in.")] [SerializeField]
-    private bool enableOrbit = true;
-
-    [Tooltip("How fast the orbit point moves around the target (deg/sec).")] [SerializeField]
-    private float orbitAngularSpeedDeg = 180f;
-
-    [Tooltip("Extra tangential offset (distance) to help create nice arcs while orbiting.")] [SerializeField]
-    private float orbitTangentOffset = 12f;
-
-    [Tooltip("Throttle while in-range orbiting (0..1). Keeps it moving instead of freezing).")]
-    [Range(0f, 1f)]
-    [SerializeField]
-    private float orbitThrottle = 0.85f;
-
-    [Tooltip("If true, each spawn randomizes its orbit direction/slot angle for variety.")] [SerializeField]
-    private bool randomizeDogfightSeedOnSpawn = true;
-
-    // internal “style” seeds (per ship instance/spawn)
-    private float orbitSign = 1f; // +1 or -1
-    private float slotBaseAngleRad = 0f; // where this attacker “likes” to be around the target
-    private float orbitPhaseRad = 0f; // extra phase so not all ships sync
-
-    // ============================================================
-    // SEPARATION / AVOID CLUMPING 
-    // ============================================================
-    [Header("Separation (New)")] [SerializeField]
-    private bool enableSeparation = true;
-
-    [Tooltip("How far to look for nearby ships to avoid.")] [SerializeField]
-    private float separationRadius = 10f;
-
-    [Tooltip("How strongly we push away from nearby ships.")] [SerializeField]
-    private float separationStrength = 5f;
-
-    [Tooltip(
-        "Optional: limit hits to certain layers. Default Everything is usually fine because we filter by TeamAgent.")]
-    [SerializeField]
-    private LayerMask separationMask = ~0;
-
-    [Tooltip("Ignore trigger colliders for separation.")] [SerializeField]
-    private bool separationIgnoreTriggers = true;
+    [Header("Separation")]
+    [SerializeField] private bool enableSeparation = true;
+    [SerializeField] private float separationRadius = 10f;
+    [SerializeField] private float separationStrength = 5f;
+    [SerializeField] private LayerMask separationMask = ~0;
+    [SerializeField] private bool separationIgnoreTriggers = true;
 
     private readonly Collider2D[] separationHits = new Collider2D[24];
+    private readonly Collider2D[] forwardAvoidanceHits = new Collider2D[24];
 
-    // -----------------------
-    // Debug Gizmos / Lines
-    // -----------------------
     [Header("Debug")] [SerializeField] private bool drawDebug = true;
     [SerializeField] private bool drawOnlyWhenSelected = true;
-
     [SerializeField] private bool drawTargetLine = true;
     [SerializeField] private Color hasTargetColor = Color.green;
     [SerializeField] private Color noTargetColor = Color.red;
-
     [SerializeField] private float velocityGizmoScale = 0.25f;
     [SerializeField] private float forceGizmoScale = 0.05f;
     [SerializeField] private float maxVelocityGizmoLength = 8f;
     [SerializeField] private float maxForceGizmoLength = 6f;
 
-    // cached debug
     private Vector2 dbgDesiredDir;
     private Vector2 dbgThrustForce;
     private Vector2 dbgAlignForce;
     private Vector2 dbgDampForce;
     private Vector2 dbgSeparation;
-
+    private Vector2 dbgAvoidance;
     private float dbgForwardSpeed;
     private float dbgTurnRate;
     private float dbgDeltaAngle;
@@ -127,6 +95,7 @@ public class EnemySpaceshipAI : MonoBehaviour
         self = GetComponent<TeamAgent>();
         targeting = GetComponent<TargetingComponent>();
         orders = GetComponent<ShipOrderController>();
+        health = GetComponent<SpaceshipHealthComponent>();
 
         rb.gravityScale = 0f;
         rb.linearDamping = 0f;
@@ -138,7 +107,6 @@ public class EnemySpaceshipAI : MonoBehaviour
         ResetForSpawn(player != null ? player : GameObject.FindGameObjectWithTag("Player"));
     }
 
-    // Pool-safe: call every time reused
     public void ResetForSpawn(GameObject playerTarget)
     {
         if (shipProfile == null)
@@ -150,12 +118,15 @@ public class EnemySpaceshipAI : MonoBehaviour
 
         enabled = true;
 
-        // fallback only
         if (player == null)
             player = playerTarget != null ? playerTarget : GameObject.FindGameObjectWithTag("Player");
 
         isBarrellRolling = false;
         currentSpeedMultiplier = 1f;
+        phase = DogfightPhase.Approach;
+        phaseTimer = 0f;
+        attackRunCooldownTimer = Random.Range(shipProfile.minAttackRunCooldown, shipProfile.maxAttackRunCooldown);
+        phaseDirection = Vector2.zero;
 
         rb.linearVelocity = Vector2.zero;
         rb.angularVelocity = 0f;
@@ -169,7 +140,6 @@ public class EnemySpaceshipAI : MonoBehaviour
         if (shipProfile.useRandomBarrelRoll)
             barrelCo = StartCoroutine(RandomBarrellRoll());
 
-        // dogfight seeds
         if (randomizeDogfightSeedOnSpawn)
         {
             orbitSign = Random.value > 0.5f ? 1f : -1f;
@@ -178,7 +148,6 @@ public class EnemySpaceshipAI : MonoBehaviour
         }
         else
         {
-            // stable-ish distribution using instance id (good if you want consistent patterns)
             float t = Mathf.Abs(GetInstanceID() * 0.6180339f);
             t = t - Mathf.Floor(t);
             orbitSign = (GetInstanceID() & 1) == 0 ? 1f : -1f;
@@ -186,12 +155,12 @@ public class EnemySpaceshipAI : MonoBehaviour
             orbitPhaseRad = (1f - t) * Mathf.PI * 2f;
         }
 
-        // reset debug
         dbgDesiredDir = Vector2.zero;
         dbgThrustForce = Vector2.zero;
         dbgAlignForce = Vector2.zero;
         dbgDampForce = Vector2.zero;
         dbgSeparation = Vector2.zero;
+        dbgAvoidance = Vector2.zero;
         dbgForwardSpeed = 0f;
         dbgTurnRate = 0f;
         dbgDeltaAngle = 0f;
@@ -207,9 +176,15 @@ public class EnemySpaceshipAI : MonoBehaviour
     private void FixedUpdate()
     {
         if (!enabled || shipProfile == null) return;
+
+        if (!isBarrellRolling)
+            rb.angularVelocity = 0f;
+
         if (isBarrellRolling) return;
 
         UpdateSpeedMultiplier();
+        if (attackRunCooldownTimer > 0f)
+            attackRunCooldownTimer -= Time.fixedDeltaTime;
 
         Transform targetTf = GetTargetTransform();
         bool hasTarget = targetTf != null;
@@ -221,93 +196,90 @@ public class EnemySpaceshipAI : MonoBehaviour
         if (hasTarget)
         {
             desiredDir = ComputeDogfightDesiredDir(targetTf, out throttle01);
-            dbgState = throttle01 >= 0.9f ? "dogfight-commit" : "dogfight-orbit";
+            dbgState = phase.ToString();
         }
         else
         {
-            // if no target, check if we have an order-provided goal; if not, default to arena center
-
-            Vector2 desiredPos = GetArenaCenter();
-
-            bool orderProvidedGoal = false;
-            if (orders != null && orders.TryGetMovementGoal(rb.position, out var goalPos, out var orderThrottle))
-            {
-                desiredPos = goalPos;
-                throttle01 = Mathf.Clamp01(orderThrottle);
-                hardReturn = false;
-                orderProvidedGoal = true;
-                dbgState = "order-move";
-            }
-
-            Vector2 toDesired = desiredPos - rb.position;
-            float dist = toDesired.magnitude;
-
-            if (toDesired.sqrMagnitude < 0.0001f)
-            {
-                dbgDesiredDir = Vector2.zero;
-                dbgThrustForce = Vector2.zero;
-                dbgAlignForce = Vector2.zero;
-                dbgDampForce = Vector2.zero;
-                dbgSeparation = Vector2.zero;
-                dbgState = orderProvidedGoal ? "order-arrived" : "idle";
-                return;
-            }
-
-            desiredDir = toDesired / Mathf.Max(0.0001f, dist);
-
-            // If we DIDN'T get an order goal, then use your original return-to-center throttle rules.
-            if (!orderProvidedGoal)
-            {
-                if (returnToCenterRadius <= 0f)
-                {
-                    throttle01 = 0f;
-                    dbgState = "idle";
-                }
-                else
-                {
-                    throttle01 = dist > returnToCenterRadius ? 1f : 0f;
-                    hardReturn = dist > hardReturnRadius;
-                    dbgState = throttle01 > 0f ? "return" : "idle";
-                }
-            }
+            phase = DogfightPhase.Approach;
+            desiredDir = ComputeIdleDesiredDir(out throttle01, out hardReturn);
         }
 
-        // Separation steering (repel from nearby ships)
         dbgSeparation = Vector2.zero;
         if (enableSeparation)
         {
             Vector2 sep = ComputeSeparation();
             dbgSeparation = sep;
-
-            // Blend: separation is more important when close to others
             Vector2 blended = desiredDir + sep * separationStrength;
+            if (blended.sqrMagnitude > 0.0001f)
+                desiredDir = blended.normalized;
+        }
+
+        dbgAvoidance = Vector2.zero;
+        if (shipProfile.useForwardAvoidance)
+        {
+            Vector2 avoidance = ComputeForwardAvoidance();
+            dbgAvoidance = avoidance;
+            Vector2 blended = desiredDir + avoidance * shipProfile.forwardAvoidanceStrength;
             if (blended.sqrMagnitude > 0.0001f)
                 desiredDir = blended.normalized;
         }
 
         dbgDesiredDir = desiredDir;
 
-        // Turn to face movement direction (thrusters)
         SteerToward(desiredDir);
-
-        // Forward thrust
         ApplyForwardThrust(throttle01, hardReturn);
-
-        // Flight assist (same concept as player)
         ApplyFlightAssist(throttle01 > 0.05f);
-
-        // Clamp
         ClampSpeed();
 
-        // debug line
         if (drawTargetLine)
         {
             if (hasTarget)
                 Debug.DrawLine(transform.position, targetTf.position, hasTargetColor, 0f, false);
             else
-                Debug.DrawLine(transform.position, transform.position + (Vector3)desiredDir * 3f, noTargetColor, 0f,
-                    false);
+                Debug.DrawLine(transform.position, transform.position + (Vector3)desiredDir * 3f, noTargetColor, 0f, false);
         }
+    }
+
+    private Vector2 ComputeIdleDesiredDir(out float throttle01, out bool hardReturn)
+    {
+        Vector2 desiredPos = GetArenaCenter();
+        throttle01 = 0f;
+        hardReturn = false;
+
+        bool orderProvidedGoal = false;
+        if (orders != null && orders.TryGetMovementGoal(rb.position, out var goalPos, out var orderThrottle))
+        {
+            desiredPos = goalPos;
+            throttle01 = Mathf.Clamp01(orderThrottle);
+            orderProvidedGoal = true;
+            dbgState = "order-move";
+        }
+
+        Vector2 toDesired = desiredPos - rb.position;
+        float dist = toDesired.magnitude;
+        if (toDesired.sqrMagnitude < 0.0001f)
+        {
+            dbgState = orderProvidedGoal ? "order-arrived" : "idle";
+            return Vector2.zero;
+        }
+
+        Vector2 desiredDir = toDesired / Mathf.Max(0.0001f, dist);
+        if (!orderProvidedGoal)
+        {
+            if (returnToCenterRadius <= 0f)
+            {
+                throttle01 = 0f;
+                dbgState = "idle";
+            }
+            else
+            {
+                throttle01 = dist > returnToCenterRadius ? 1f : 0f;
+                hardReturn = dist > hardReturnRadius;
+                dbgState = throttle01 > 0f ? "return" : "idle";
+            }
+        }
+
+        return desiredDir;
     }
 
     private Vector2 ComputeDogfightDesiredDir(Transform targetTf, out float throttle01)
@@ -315,45 +287,80 @@ public class EnemySpaceshipAI : MonoBehaviour
         Vector2 targetPos = targetTf.position;
         Vector2 toTarget = targetPos - rb.position;
         float dist = toTarget.magnitude;
+        float desiredRange = GetPreferredRange();
+        float tooFar = desiredRange + rangeTolerance;
+        float tooClose = Mathf.Max(0.05f, desiredRange - rangeTolerance);
 
         if (dist < 0.0001f)
         {
-            // If literally overlapping, pick a random direction
             throttle01 = 1f;
             return Random.insideUnitCircle.normalized;
         }
 
-        float desiredRange = GetPreferredRange();
+        if (ShouldRetreat(targetPos))
+            StartRetreat(targetPos);
 
-        // Range bands
-        float tooFar = desiredRange + rangeTolerance;
-        float tooClose = Mathf.Max(0.05f, desiredRange - rangeTolerance);
+        switch (phase)
+        {
+            case DogfightPhase.Retreat:
+                phaseTimer -= Time.fixedDeltaTime;
+                if (phaseTimer <= 0f || !ShouldKeepRetreating())
+                    phase = DogfightPhase.Approach;
+                else
+                {
+                    throttle01 = 1f;
+                    return phaseDirection;
+                }
+                break;
 
-        // If too far: approach the ring point on the line to target (prevents overshoot + ramming)
+            case DogfightPhase.AttackRun:
+                phaseTimer -= Time.fixedDeltaTime;
+                if (phaseTimer <= 0f)
+                    StartPeelOff(targetPos);
+                else
+                {
+                    throttle01 = 1f;
+                    return ComputeAttackRunDirection(targetPos);
+                }
+                break;
+
+            case DogfightPhase.PeelOff:
+                phaseTimer -= Time.fixedDeltaTime;
+                if (phaseTimer <= 0f)
+                    phase = DogfightPhase.Approach;
+                else
+                {
+                    throttle01 = 1f;
+                    return phaseDirection;
+                }
+                break;
+        }
+
+        bool canAttackRun = shipProfile.useAttackRuns && attackRunCooldownTimer <= 0f && dist <= desiredRange * shipProfile.attackRunStartDistanceMultiplier;
+        if (canAttackRun && dist >= tooClose * 0.8f)
+        {
+            StartAttackRun(targetPos);
+            throttle01 = 1f;
+            return ComputeAttackRunDirection(targetPos);
+        }
+
         if (dist > tooFar)
         {
+            phase = DogfightPhase.Approach;
             Vector2 dirToTarget = toTarget / dist;
             Vector2 ringPoint = targetPos - dirToTarget * desiredRange;
             throttle01 = 1f;
             return (ringPoint - rb.position).normalized;
         }
 
-        // If in/near range: orbit around target
         if (enableOrbit)
         {
-            float orbitAngleRad = slotBaseAngleRad + orbitPhaseRad +
-                                  orbitSign * Mathf.Deg2Rad * (orbitAngularSpeedDeg * Time.time);
-
-            Vector2 radial = DirFromAngleRad(orbitAngleRad); // where we want to be around the target
+            phase = DogfightPhase.Orbit;
+            float orbitAngleRad = slotBaseAngleRad + orbitPhaseRad + orbitSign * Mathf.Deg2Rad * (orbitAngularSpeedDeg * Time.time);
+            Vector2 radial = DirFromAngleRad(orbitAngleRad);
             Vector2 tangent = Perp(radial) * orbitSign;
+            Vector2 orbitPoint = targetPos + radial * desiredRange + tangent * orbitTangentOffset;
 
-            // Base orbit point on the ring
-            Vector2 orbitPoint = targetPos + radial * desiredRange;
-
-            // Add tangent offset so it moves in arcs and doesn't "park"
-            orbitPoint += tangent * orbitTangentOffset;
-
-            // If too close, bias outward a bit harder (prevents nose-to-nose)
             if (dist < tooClose)
             {
                 Vector2 away = (rb.position - targetPos).normalized;
@@ -366,17 +373,67 @@ public class EnemySpaceshipAI : MonoBehaviour
             return (orbitPoint - rb.position).normalized;
         }
 
-        // Orbit disabled but still don't ram: hold roughly at range by aiming for a ring point
+        phase = DogfightPhase.Approach;
         {
             Vector2 dirToTarget = toTarget / dist;
             Vector2 ringPoint = targetPos - dirToTarget * desiredRange;
-
-            // throttle small-ish if already close to ring
             float err = Mathf.Abs(dist - desiredRange);
             throttle01 = err > rangeTolerance ? 1f : 0.6f;
-
             return (ringPoint - rb.position).normalized;
         }
+    }
+
+    private bool ShouldRetreat(Vector2 targetPos)
+    {
+        if (!shipProfile.retreatWhenLow || health == null) return false;
+        if (orders != null && orders.CurrentOrder != ShipOrderController.OrderKind.Skirmish) return false;
+        if (phase == DogfightPhase.Retreat) return true;
+
+        float shieldRatio = health.MaxShield <= 0 ? 0f : (float)health.Shield / Mathf.Max(1f, health.MaxShield);
+        float hullRatio = health.MaxHealth <= 0 ? 0f : (float)health.Health / Mathf.Max(1f, health.MaxHealth);
+        return shieldRatio <= shipProfile.retreatShieldRatioThreshold || hullRatio <= shipProfile.retreatHullRatioThreshold;
+    }
+
+    private bool ShouldKeepRetreating()
+    {
+        if (!shipProfile.retreatWhenLow || health == null) return false;
+        float shieldRatio = health.MaxShield <= 0 ? 0f : (float)health.Shield / Mathf.Max(1f, health.MaxShield);
+        float hullRatio = health.MaxHealth <= 0 ? 0f : (float)health.Health / Mathf.Max(1f, health.MaxHealth);
+        return shieldRatio <= shipProfile.retreatShieldRatioThreshold || hullRatio <= shipProfile.retreatHullRatioThreshold;
+    }
+
+    private void StartRetreat(Vector2 targetPos)
+    {
+        phase = DogfightPhase.Retreat;
+        phaseTimer = shipProfile.retreatDuration;
+        Vector2 away = ((Vector2)rb.position - targetPos).normalized;
+        Vector2 side = Perp(away) * orbitSign * shipProfile.retreatSideOffset;
+        phaseDirection = (away + side).normalized;
+    }
+
+    private void StartAttackRun(Vector2 targetPos)
+    {
+        phase = DogfightPhase.AttackRun;
+        phaseTimer = Random.Range(shipProfile.minAttackRunDuration, shipProfile.maxAttackRunDuration);
+        attackRunCooldownTimer = Random.Range(shipProfile.minAttackRunCooldown, shipProfile.maxAttackRunCooldown);
+        orbitSign = Random.value > 0.5f ? 1f : -1f;
+    }
+
+    private void StartPeelOff(Vector2 targetPos)
+    {
+        phase = DogfightPhase.PeelOff;
+        phaseTimer = Random.Range(shipProfile.minPeelOffDuration, shipProfile.maxPeelOffDuration);
+        Vector2 away = ((Vector2)rb.position - targetPos).normalized;
+        Vector2 side = Perp(away) * orbitSign * shipProfile.peelOffDistance;
+        phaseDirection = (away + side).normalized;
+    }
+
+    private Vector2 ComputeAttackRunDirection(Vector2 targetPos)
+    {
+        Vector2 toTarget = (targetPos - rb.position).normalized;
+        Vector2 strafe = Perp(toTarget) * orbitSign * shipProfile.attackRunStrafeOffset;
+        Vector2 aimPoint = targetPos + (Vector2)strafe + toTarget * shipProfile.attackRunOvershootDistance;
+        return (aimPoint - rb.position).normalized;
     }
 
     private float GetPreferredRange()
@@ -389,7 +446,6 @@ public class EnemySpaceshipAI : MonoBehaviour
     private Vector2 ComputeSeparation()
     {
         int count = Physics2D.OverlapCircleNonAlloc(rb.position, separationRadius, separationHits, separationMask);
-
         if (count <= 0) return Vector2.zero;
 
         Vector2 repel = Vector2.zero;
@@ -399,13 +455,10 @@ public class EnemySpaceshipAI : MonoBehaviour
         {
             var col = separationHits[i];
             if (col == null) continue;
-
             if (separationIgnoreTriggers && col.isTrigger) continue;
 
-            // Get the other ship by TeamAgent (filters bullets/props)
             TeamAgent otherTeam = col.GetComponentInParent<TeamAgent>();
-            if (otherTeam == null) continue;
-            if (otherTeam == self) continue;
+            if (otherTeam == null || otherTeam == self) continue;
 
             Rigidbody2D otherRb = col.attachedRigidbody;
             if (otherRb == null) continue;
@@ -414,22 +467,58 @@ public class EnemySpaceshipAI : MonoBehaviour
             float d2 = delta.sqrMagnitude;
             if (d2 < 0.0001f) continue;
 
-            // Stronger when closer: 1/d (ish)
             float d = Mathf.Sqrt(d2);
             float w = Mathf.Clamp01(1f - (d / Mathf.Max(0.01f, separationRadius)));
             repel += (delta / d) * w;
-
             used++;
         }
 
         if (used == 0) return Vector2.zero;
-
         Vector2 outDir = repel / used;
         return outDir.sqrMagnitude > 0.0001f ? outDir.normalized : Vector2.zero;
     }
 
-    private static Vector2 Perp(Vector2 v) => new Vector2(-v.y, v.x);
+    private Vector2 ComputeForwardAvoidance()
+    {
+        int count = Physics2D.OverlapCircleNonAlloc(
+            rb.position + (Vector2)transform.up * (shipProfile.forwardAvoidanceDistance * 0.5f),
+            shipProfile.forwardAvoidanceRadius,
+            forwardAvoidanceHits,
+            separationMask);
 
+        if (count <= 0) return Vector2.zero;
+
+        Vector2 avoid = Vector2.zero;
+        int used = 0;
+        Vector2 forward = transform.up;
+
+        for (int i = 0; i < count; i++)
+        {
+            var col = forwardAvoidanceHits[i];
+            if (col == null) continue;
+            if (separationIgnoreTriggers && col.isTrigger) continue;
+
+            TeamAgent other = col.GetComponentInParent<TeamAgent>();
+            if (other == null || other == self) continue;
+
+            Vector2 toOther = (Vector2)other.transform.position - rb.position;
+            float distance = toOther.magnitude;
+            if (distance < 0.001f) continue;
+
+            Vector2 dirToOther = toOther / distance;
+            float aheadness = Vector2.Dot(forward, dirToOther);
+            if (aheadness < shipProfile.forwardAvoidanceDotThreshold) continue;
+
+            float closeness = 1f - Mathf.Clamp01(distance / Mathf.Max(0.01f, shipProfile.forwardAvoidanceDistance));
+            avoid += ((Vector2)rb.position - (Vector2)other.transform.position).normalized * aheadness * closeness;
+            used++;
+        }
+
+        if (used == 0) return Vector2.zero;
+        return (avoid / used).normalized;
+    }
+
+    private static Vector2 Perp(Vector2 v) => new Vector2(-v.y, v.x);
     private static Vector2 DirFromAngleRad(float rad) => new Vector2(Mathf.Cos(rad), Mathf.Sin(rad));
 
     private Transform GetTargetTransform()
@@ -440,35 +529,30 @@ public class EnemySpaceshipAI : MonoBehaviour
         var t = targeting.CurrentTarget;
         if (t != null) return t.transform;
 
-        // quick reacquire
         targeting.RetargetNow();
         t = targeting.CurrentTarget;
         if (t != null) return t.transform;
 
-        // fallback
         return player != null ? player.transform : null;
     }
 
     private Vector2 GetArenaCenter()
     {
-        // if player exists, use them as “center” of the action; otherwise world origin
         return player != null ? (Vector2)player.transform.position : Vector2.zero;
     }
 
-    // TURNING: same style as your player turning
     private void SteerToward(Vector2 desiredDir)
     {
-        float desiredAngle = Mathf.Atan2(desiredDir.y, desiredDir.x) * Mathf.Rad2Deg + shipProfile.rotationOffset;
+        if (desiredDir.sqrMagnitude < 0.0001f) return;
 
+        float desiredAngle = Mathf.Atan2(desiredDir.y, desiredDir.x) * Mathf.Rad2Deg + shipProfile.rotationOffset;
         float delta = Mathf.DeltaAngle(rb.rotation, desiredAngle);
         dbgDeltaAngle = delta;
 
-        // forward-speed-based authority
         float forwardSpeed = Mathf.Max(0f, Vector2.Dot(rb.linearVelocity, transform.up));
         dbgForwardSpeed = forwardSpeed;
 
         float speed01 = Mathf.Clamp01(forwardSpeed / Mathf.Max(0.01f, shipProfile.maxSpeed));
-
         float authority = shipProfile.turnAuthorityBySpeed != null
             ? shipProfile.turnAuthorityBySpeed.Evaluate(speed01)
             : speed01;
@@ -487,20 +571,17 @@ public class EnemySpaceshipAI : MonoBehaviour
         if (throttle01 <= 0.001f) return;
 
         float speedMul = shipProfile.useRandomSpeed ? currentSpeedMultiplier : 1f;
-
         float thrust = shipProfile.forwardThrust * speedMul;
         if (hardReturn) thrust *= returnForceMultiplier;
 
         Vector2 f = (Vector2)transform.up * (throttle01 * thrust);
         rb.AddForce(f, ForceMode2D.Force);
-
         dbgThrustForce = f;
     }
 
     private void ApplyFlightAssist(bool isThrusting)
     {
         Vector2 v = rb.linearVelocity;
-
         if (v.sqrMagnitude < 0.0001f)
         {
             dbgAlignForce = Vector2.zero;
@@ -509,8 +590,6 @@ public class EnemySpaceshipAI : MonoBehaviour
         }
 
         float speedMul = shipProfile.useRandomSpeed ? currentSpeedMultiplier : 1f;
-
-        // Align: kill sideways drift (keep forward component)
         Vector2 forward = transform.up;
         float fwdSpeed = Vector2.Dot(v, forward);
         Vector2 desiredVel = forward * fwdSpeed;
@@ -519,7 +598,6 @@ public class EnemySpaceshipAI : MonoBehaviour
         rb.AddForce(alignForce, ForceMode2D.Force);
         dbgAlignForce = alignForce;
 
-        // Damping when not thrusting (coast)
         Vector2 dampForce = Vector2.zero;
         if (!isThrusting && shipProfile.dampStrength > 0f)
         {
@@ -554,7 +632,6 @@ public class EnemySpaceshipAI : MonoBehaviour
 
     private IEnumerator RandomBarrellRoll()
     {
-        // desync so not all ships roll at same time right after spawn
         yield return new WaitForSeconds(Random.Range(0f, 1.5f));
 
         while (shipProfile.useRandomBarrelRoll)
@@ -571,13 +648,10 @@ public class EnemySpaceshipAI : MonoBehaviour
     {
         isBarrellRolling = true;
 
-        // Dodge sideways relative to ship
         Vector2 rollDir = (Vector2)transform.right * (Random.value > 0.5f ? 1f : -1f);
-
         float duration = Mathf.Max(0.01f, shipProfile.barrelRollDuration);
         float desiredDeltaV = shipProfile.barrelRollDistance / duration;
         float impulse = rb.mass * desiredDeltaV;
-
         rb.AddForce(rollDir * impulse, ForceMode2D.Impulse);
 
         float elapsed = 0f;
@@ -587,7 +661,6 @@ public class EnemySpaceshipAI : MonoBehaviour
         {
             float newAngle = rb.rotation + spinPerSecond * Time.fixedDeltaTime;
             rb.MoveRotation(newAngle);
-
             elapsed += Time.fixedDeltaTime;
             yield return new WaitForFixedUpdate();
         }
@@ -595,9 +668,6 @@ public class EnemySpaceshipAI : MonoBehaviour
         isBarrellRolling = false;
     }
 
-    // -----------------------
-    // Gizmos / Debug Drawing
-    // -----------------------
     private void OnDrawGizmos()
     {
         if (!drawDebug) return;
@@ -614,21 +684,24 @@ public class EnemySpaceshipAI : MonoBehaviour
     private void DrawDebugGizmos()
     {
         if (!Application.isPlaying) return;
-
         if (!rb) rb = GetComponent<Rigidbody2D>();
         if (!rb) return;
 
         Vector3 pos = transform.position;
         Vector2 v = rb.linearVelocity;
 
-        DrawArrow(pos, ClampVec3(v * velocityGizmoScale, maxVelocityGizmoLength), Color.cyan); // velocity
-        DrawArrow(pos, ClampVec3(dbgDesiredDir * 2.5f, maxVelocityGizmoLength), Color.yellow); // desired dir
-        DrawArrow(pos, ClampVec3(dbgSeparation * 2.0f, maxVelocityGizmoLength), Color.magenta); // separation
-        DrawArrow(pos, ClampVec3(dbgThrustForce * forceGizmoScale, maxForceGizmoLength), Color.white); // thrust
-        DrawArrow(pos, ClampVec3(dbgAlignForce * forceGizmoScale, maxForceGizmoLength),
-            new Color(1f, 0.6f, 0f)); // align
-        DrawArrow(pos, ClampVec3(dbgDampForce * forceGizmoScale, maxForceGizmoLength), Color.red); // damp
-        DrawArrow(pos, (Vector3)(transform.up * 2f), Color.green); // facing
+        DrawArrow(pos, ClampVec3(v * velocityGizmoScale, maxVelocityGizmoLength), Color.cyan);
+        DrawArrow(pos, ClampVec3(dbgDesiredDir * 2.5f, maxVelocityGizmoLength), Color.yellow);
+        DrawArrow(pos, ClampVec3(dbgSeparation * 2.0f, maxVelocityGizmoLength), Color.magenta);
+        DrawArrow(pos, ClampVec3(dbgAvoidance * 2.0f, maxVelocityGizmoLength), Color.blue);
+        DrawArrow(pos, ClampVec3(dbgThrustForce * forceGizmoScale, maxForceGizmoLength), Color.white);
+        DrawArrow(pos, ClampVec3(dbgAlignForce * forceGizmoScale, maxForceGizmoLength), new Color(1f, 0.6f, 0f));
+        DrawArrow(pos, ClampVec3(dbgDampForce * forceGizmoScale, maxForceGizmoLength), Color.red);
+        DrawArrow(pos, (Vector3)(transform.up * 2f), Color.green);
+
+#if UNITY_EDITOR
+        Handles.Label(pos + Vector3.up * 1.2f, $"{dbgState} v={v.magnitude:0.0}");
+#endif
     }
 
     private static Vector3 ClampVec3(Vector2 v, float maxLen)

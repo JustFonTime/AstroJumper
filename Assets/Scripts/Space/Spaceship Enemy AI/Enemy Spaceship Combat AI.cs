@@ -5,8 +5,8 @@ using UnityEngine;
 [RequireComponent(typeof(TargetingComponent))]
 public class EnemySpaceshipCombatAI : MonoBehaviour
 {
-    private TargetingComponent targeting; //get the target from here
-    private TeamAgent team; //get our team from here 
+    private TargetingComponent targeting;
+    private TeamAgent team;
 
     private Coroutine fireCo;
     private float spawnRadius = 1f;
@@ -18,7 +18,6 @@ public class EnemySpaceshipCombatAI : MonoBehaviour
 
     public Vector3 AimDirectionWorld { get; private set; }
 
-
     private void Awake()
     {
         targeting = GetComponent<TargetingComponent>();
@@ -26,7 +25,6 @@ public class EnemySpaceshipCombatAI : MonoBehaviour
 
         if (firePoint != null)
         {
-            // keep the prefab distacne
             spawnRadius = firePoint.localPosition.magnitude;
             if (spawnRadius < 0.001f) spawnRadius = 1f;
         }
@@ -43,12 +41,10 @@ public class EnemySpaceshipCombatAI : MonoBehaviour
         fireCo = null;
     }
 
-    // Pool-safe
     public void ResetForSpawn()
     {
         if (shipProfile == null || laserPrefab == null || firePoint == null)
             return;
-
 
         if (fireCo != null) StopCoroutine(fireCo);
         fireCo = StartCoroutine(FireLoop());
@@ -72,10 +68,7 @@ public class EnemySpaceshipCombatAI : MonoBehaviour
         }
 
         Vector3 targetPos = targeting.CurrentTarget.transform.position;
-
-        // Aim from the firePoint position, not the ship center, so it lines up better with the projectiles
         Vector3 fromPos = firePoint != null ? firePoint.position : transform.position;
-
         AimDirectionWorld = (targetPos - fromPos).normalized;
     }
 
@@ -87,20 +80,13 @@ public class EnemySpaceshipCombatAI : MonoBehaviour
         if (aimDir.sqrMagnitude < 0.0001f)
             aimDir = transform.up;
 
-        // Put the spawn point on a circle around the ship, toward aim direction
         Vector2 localAimDir = transform.InverseTransformDirection(aimDir).normalized;
-        // Use LOCAL position so it stays attached to the ship nicely
-
         firePoint.localPosition = (Vector3)(localAimDir * spawnRadius);
-
-        // Rotate the spawn point to face the aim direction, so projectiles shoot toward the mouse even if the ship is turning
         firePoint.up = aimDir;
     }
 
-
     private IEnumerator FireLoop()
     {
-        // desync so not all enemies fire same frame
         yield return new WaitForSeconds(Random.Range(0f, 0.4f));
 
         while (true)
@@ -117,24 +103,29 @@ public class EnemySpaceshipCombatAI : MonoBehaviour
             float dist = Vector2.Distance(transform.position, t.transform.position);
             if (dist > shipProfile.combatRange) continue;
 
-            // Ensure firePoint is aimed properly right before firing
             UpdateAimDirection();
 
+            Vector3 shotDirection = ApplySpread(AimDirectionWorld);
+            Quaternion shotRotation = Quaternion.FromToRotation(Vector3.up, shotDirection);
+            GameObject proj = Instantiate(laserPrefab, firePoint.position, shotRotation);
 
-            GameObject proj = Instantiate(laserPrefab, firePoint.position, firePoint.rotation);
-
-            // Team tag the projectile if it supports it
             if (proj.TryGetComponent<SpaceshipLaser>(out var laser))
                 laser.teamId = team != null ? team.TeamId : 0;
         }
     }
 
+    private Vector3 ApplySpread(Vector3 baseDirection)
+    {
+        if (shipProfile == null || !shipProfile.useWeaponSpread)
+            return baseDirection;
+
+        float angle = Random.Range(shipProfile.minSpreadAngle, shipProfile.maxSpreadAngle);
+        return Quaternion.Euler(0f, 0f, angle) * baseDirection;
+    }
 
     private void DrawDebug()
     {
         if (firePoint != null)
-        {
             Debug.DrawLine(transform.position, firePoint.position, firePointLineColor, 0f, false);
-        }
     }
 }

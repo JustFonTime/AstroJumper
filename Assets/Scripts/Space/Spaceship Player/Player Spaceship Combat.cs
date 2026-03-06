@@ -16,7 +16,6 @@ public class PlayerSpaceshipCombat : MonoBehaviour
 
     public Vector3 AimDirectionWorld { get; private set; }
 
-    //store the radius later on
     private float spawnRadius = 1f;
 
     private void Awake()
@@ -25,7 +24,6 @@ public class PlayerSpaceshipCombat : MonoBehaviour
 
         if (projectileSpawn != null)
         {
-            // get the distance from the ship center to the spawn point, so we can keep it consistent as we rotate it around the ship
             spawnRadius = projectileSpawn.localPosition.magnitude;
             if (spawnRadius < 0.001f) spawnRadius = 1f;
         }
@@ -67,8 +65,6 @@ public class PlayerSpaceshipCombat : MonoBehaviour
         }
 
         Vector3 mouse = Input.mousePosition;
-
-        // Set the mouse z to be the distance from the camera to the player, so that ScreenToWorldPoint gives us a point in the world that lines up with the player's position on the Z axis
         float zDist = Mathf.Abs(transform.position.z - cam.transform.position.z);
         mouse.z = zDist;
 
@@ -88,11 +84,8 @@ public class PlayerSpaceshipCombat : MonoBehaviour
         if (aimDir.sqrMagnitude < 0.0001f)
             aimDir = transform.up;
 
-        // Put the spawn point on a circle around the ship, toward aim direction
         Vector2 localAimDir = transform.InverseTransformDirection(aimDir).normalized;
-        // Use LOCAL position so it stays attached to the ship nicely
         projectileSpawn.localPosition = (Vector3)(localAimDir * spawnRadius);
-        // Rotate the spawn point to face the aim direction, so projectiles shoot toward the mouse even if the ship is turning
         projectileSpawn.up = aimDir;
     }
 
@@ -102,12 +95,11 @@ public class PlayerSpaceshipCombat : MonoBehaviour
         if (!attack.canFire) return;
         if (attack.projectile == null) return;
 
-        // Use the firePoint on the attack if it has one, otherwise use the default projectile spawn point on the ship
         Transform firePoint = attack.firePoint != null ? attack.firePoint : projectileSpawn;
         if (firePoint == null) return;
 
-        // Spawn projectile facing aim direction (so it shoots toward the mouse even if ship is turning)
-        Quaternion rot = Quaternion.FromToRotation(Vector3.up, AimDirectionWorld);
+        Vector3 shotDirection = ApplySpread(AimDirectionWorld, attack.useSpread, attack.minSpreadAngle, attack.maxSpreadAngle);
+        Quaternion rot = Quaternion.FromToRotation(Vector3.up, shotDirection);
         Instantiate(attack.projectile, firePoint.position, rot);
 
         StartCoroutine(AttackCooldown(attack));
@@ -125,5 +117,14 @@ public class PlayerSpaceshipCombat : MonoBehaviour
 
         yield return new WaitForSeconds(upgradedRate);
         attack.canFire = true;
+    }
+
+    private static Vector3 ApplySpread(Vector3 baseDirection, bool useSpread, float minSpreadAngle, float maxSpreadAngle)
+    {
+        if (!useSpread)
+            return baseDirection;
+
+        float angle = Random.Range(minSpreadAngle, maxSpreadAngle);
+        return Quaternion.Euler(0f, 0f, angle) * baseDirection;
     }
 }
