@@ -11,24 +11,39 @@ public class SpaceshipPlayerHUD : MonoBehaviour
     [SerializeField] private TextMeshProUGUI aliveEnemiesText;
 
     private GameObject player;
+    private SpaceshipHealthComponent playerHealth;
+    private SpaceshipMovement playerMovement;
 
     private void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
-
-        EnemySpaceshipSpawner.Instance.OnWaveChanged += SetWave;
-        EnemySpaceshipSpawner.Instance.OnAliveEnemiesChanged += SetAliveEnemies;
-        EnemySpaceshipSpawner.Instance.AllWavesCompleted += () =>
+        if (player != null)
         {
-            waveText.text = "All Waves Completed!";
-            aliveEnemiesText.text = "";
-        };
+            playerHealth = player.GetComponent<SpaceshipHealthComponent>();
+            playerMovement = player.GetComponent<SpaceshipMovement>();
+        }
+
+        if (EnemySpaceshipSpawner.Instance != null)
+        {
+            EnemySpaceshipSpawner.Instance.OnWaveChanged += SetWave;
+            EnemySpaceshipSpawner.Instance.OnAliveEnemiesChanged += SetAliveEnemies;
+            EnemySpaceshipSpawner.Instance.AllWavesCompleted += HandleAllWavesCompleted;
+        }
     }
 
+    private void OnDestroy()
+    {
+        if (EnemySpaceshipSpawner.Instance != null)
+        {
+            EnemySpaceshipSpawner.Instance.OnWaveChanged -= SetWave;
+            EnemySpaceshipSpawner.Instance.OnAliveEnemiesChanged -= SetAliveEnemies;
+            EnemySpaceshipSpawner.Instance.AllWavesCompleted -= HandleAllWavesCompleted;
+        }
+    }
 
     private void Update()
     {
-        if (player != null)
+        if (playerHealth != null && playerMovement != null)
         {
             SetHealth();
             SetBoost();
@@ -38,22 +53,22 @@ public class SpaceshipPlayerHUD : MonoBehaviour
 
     public void SetHealth()
     {
-        float health = player.GetComponent<SpaceshipHealthComponent>().Health;
-        float maxHealth = player.GetComponent<SpaceshipHealthComponent>().MaxHealth;
+        float health = playerHealth.Health;
+        float maxHealth = Mathf.Max(1f, playerHealth.MaxHealth);
         healthSlider.value = health / maxHealth;
     }
 
     public void SetBoost()
     {
-        float boost = player.GetComponent<SpaceshipMovement>().CurrentBoost;
-        float maxBoost = player.GetComponent<SpaceshipMovement>().MaxBoost;
+        float boost = playerMovement.CurrentBoost;
+        float maxBoost = Mathf.Max(1f, playerMovement.MaxBoost);
         boostSlider.value = boost / maxBoost;
     }
 
     public void SetShield()
     {
-        float shield = player.GetComponent<SpaceshipHealthComponent>().Shield;
-        float maxShield = player.GetComponent<SpaceshipHealthComponent>().MaxShield;
+        float shield = playerHealth.Shield;
+        float maxShield = Mathf.Max(1f, playerHealth.MaxShield);
         shieldSlider.value = shield / maxShield;
     }
 
@@ -65,5 +80,11 @@ public class SpaceshipPlayerHUD : MonoBehaviour
     public void SetAliveEnemies(int aliveEnemies)
     {
         aliveEnemiesText.text = "Enemies Left: " + aliveEnemies.ToString();
+    }
+
+    private void HandleAllWavesCompleted()
+    {
+        waveText.text = "All Waves Completed!";
+        aliveEnemiesText.text = "";
     }
 }

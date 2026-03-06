@@ -8,8 +8,13 @@ using UnityEngine.SceneManagement;
 public class SpaceshipHealthComponent : MonoBehaviour, ISpaceDamagable
 {
     public event Action<int, int> HealthChanged; // current health, max health
+    public event Action<float, float> ShieldChanged; // current shields, max shields
 
     private Collider2D _collider2D;
+    private Coroutine shieldRechargeDelayCoroutine;
+    private Coroutine shieldRechargeCoroutine;
+    private int baseMaxHealth;
+    private float baseMaxShields;
 
     [SerializeField] private bool isPlayer;
     [Header("Refs")] [SerializeField] private PlayerUpgradeState playerUpgradeState;
@@ -36,57 +41,63 @@ public class SpaceshipHealthComponent : MonoBehaviour, ISpaceDamagable
 
     [Header("Effects")] public bool IsBuffedByShieldEnemy = false;
 
-    //For the player hud
-    public int Health
-    {
-        get { return currentHealth; }
-    }
-
-    public int MaxHealth
-    {
-        get { return maxHealth; }
-    }
-
-    public int Shield
-    {
-        get { return (int)currentShields; }
-    }
-
-    public int MaxShield
-    {
-        get { return (int)maxShileds; }
-    }
-
+    public int Health => currentHealth;
+    public int MaxHealth => maxHealth;
+    public int Shield => Mathf.RoundToInt(currentShields);
+    public int MaxShield => Mathf.RoundToInt(maxShileds);
+    public bool HasShields => currentShields > 0.01f;
+    public float ShieldRatio => maxShileds <= 0.01f ? 0f : Mathf.Clamp01(currentShields / maxShileds);
 
     void Awake()
     {
         _collider2D = GetComponent<Collider2D>();
+        baseMaxHealth = maxHealth;
+        baseMaxShields = maxShileds;
     }
 
     private void OnEnable()
     {
+        StopShieldRechargeCoroutines();
+        canRechargeShield = false;
+
         if (isPlayer)
         {
-            maxShileds += playerUpgradeState.GetUpgradeBoost(PlayerUpgradeState.UpgradeType.MaxShields);
-            maxHealth += (int)(playerUpgradeState.GetUpgradeBoost(PlayerUpgradeState.UpgradeType.MaxHealth));
+            float healthUpgrade = playerUpgradeState != null
+                ? playerUpgradeState.GetUpgradeBoost(PlayerUpgradeState.UpgradeType.MaxHealth)
+                : 0f;
+            float shieldUpgrade = playerUpgradeState != null
+                ? playerUpgradeState.GetUpgradeBoost(PlayerUpgradeState.UpgradeType.MaxShields)
+                : 0f;
+
+            maxHealth = baseMaxHealth + (int)healthUpgrade;
+            maxShileds = baseMaxShields + shieldUpgrade;
             currentHealth = maxHealth;
             currentShields = maxShileds;
         }
-        else
+        else if (shipProfile != null)
         {
             maxHealth = shipProfile.maxHealth;
             maxShileds = shipProfile.maxShields;
             currentHealth = maxHealth;
             currentShields = shipProfile.startingShields;
-            if (shieldVFX != null)
-            {
-                shieldVFX.SetActive(currentShields > 0);
-            }
+        }
+        else
+        {
+            maxHealth = baseMaxHealth;
+            maxShileds = baseMaxShields;
+            currentHealth = maxHealth;
+            currentShields = maxShileds;
         }
 
+        UpdateShieldVfx();
         HealthChanged?.Invoke(currentHealth, maxHealth);
+        ShieldChanged?.Invoke(currentShields, maxShileds);
     }
 
+    private void OnDisable()
+    {
+        StopShieldRechargeCoroutines();
+    }
 
     public void Heal(int amount)
     {
@@ -100,34 +111,48 @@ public class SpaceshipHealthComponent : MonoBehaviour, ISpaceDamagable
         ShieldDamage(damage);
     }
 
+    public void DrainShields(float amount)
+    {
+        if (amount <= 0f || currentShields <= 0f) return;
+
+        currentShields = Mathf.Clamp(currentShields - amount, 0f, maxShileds);
+        UpdateShieldVfx();
+        ShieldChanged?.Invoke(currentShields, maxShileds);
+    }
+
+    public void DrainShieldPercent(float percent)
+    {
+        if (percent <= 0f || maxShileds <= 0f) return;
+        DrainShields(maxShileds * Mathf.Clamp01(percent));
+    }
+
     private void ShieldDamage(int damage)
     {
-        //furst check if we have shields
         if (currentShields > 0)
         {
             currentShields -= damage;
-            currentShields = Mathf.Clamp(currentShields, 0, MaxHealth);
-            if (currentShields <= 0 && shieldVFX != null)
-            {
-                shieldVFX.SetActive(false);
-            }
-            else if (currentShields > 0 && shieldVFX != null)
-            {
-                shieldVFX.SetActive(true);
-            }
+            currentShields = Mathf.Clamp(currentShields, 0, maxShileds);
+            UpdateShieldVfx();
+            ShieldChanged?.Invoke(currentShields, maxShileds);
         }
         else
         {
             RawDamage(damage);
         }
 
-        if ((isPlayer) || shipProfile.canSelfRechargeShields || IsBuffedByShieldEnemy)
+        bool canAutoRecharge = isPlayer || IsBuffedByShieldEnemy || (shipProfile != null && shipProfile.canSelfRechargeShields);
+        if (canAutoRecharge)
         {
-            //Stop it cause we took damage and needa reset the timer 
-            StopCoroutine(ShieldRechargeCheck());
+            if (shieldRechargeDelayCoroutine != null)
+                StopCoroutine(shieldRechargeDelayCoroutine);
 
-            //But then start the countdown from the top
-            StartCoroutine(ShieldRechargeCheck());
+            if (shieldRechargeCoroutine != null)
+            {
+                StopCoroutine(shieldRechargeCoroutine);
+                shieldRechargeCoroutine = null;
+            }
+
+            shieldRechargeDelayCoroutine = StartCoroutine(ShieldRechargeCheck());
         }
     }
 
@@ -145,23 +170,26 @@ public class SpaceshipHealthComponent : MonoBehaviour, ISpaceDamagable
     IEnumerator ShieldRechargeCheck()
     {
         canRechargeShield = false;
-        StopCoroutine(RechargeShield());
         yield return new WaitForSeconds(rechargeShieldDelay);
         canRechargeShield = true;
-        StartCoroutine(RechargeShield());
+        shieldRechargeCoroutine = StartCoroutine(RechargeShield());
+        shieldRechargeDelayCoroutine = null;
     }
 
     IEnumerator RechargeShield()
     {
-        if (shieldVFX != null)
-            shieldVFX.SetActive(true);
+        UpdateShieldVfx();
 
-        while (canRechargeShield)
+        while (canRechargeShield && currentShields < maxShileds)
         {
             currentShields += rechargeShieldRatePerHalfSecond;
             currentShields = Mathf.Clamp(currentShields, 0, maxShileds);
+            ShieldChanged?.Invoke(currentShields, maxShileds);
             yield return new WaitForSeconds(0.5f);
         }
+
+        UpdateShieldVfx();
+        shieldRechargeCoroutine = null;
     }
 
     private void Die()
@@ -169,8 +197,8 @@ public class SpaceshipHealthComponent : MonoBehaviour, ISpaceDamagable
         if (deathSfx != null)
             AudioSource.PlayClipAtPoint(deathSfx, transform.position, deathVolume);
 
-        var pooled = this.GetComponent<PooledEnemy>(); //check if were enemu
-        var pooledTeamate = this.GetComponent<PooledTeamate>();
+        var pooled = GetComponent<PooledEnemy>();
+        var pooledTeamate = GetComponent<PooledTeamate>();
         if (pooled != null)
         {
             pooled.Despawn();
@@ -179,22 +207,42 @@ public class SpaceshipHealthComponent : MonoBehaviour, ISpaceDamagable
         {
             pooledTeamate.Despawn();
         }
-        else
+        else if (isPlayer)
         {
             SceneManager.LoadScene("GameOver");
-            //Destroy(this.gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
         }
     }
 
-
-    // This is for the shield giver to heal the enemy without worrying about messing with the shield recharge logic, since it only calls Heal() and doesn't directly modify currentHealth or currentShields, it won't interfere with the recharge timers or logic at all
     public void HealShields(float amount)
     {
         currentShields += amount;
         currentShields = Mathf.Clamp(currentShields, 0, maxShileds);
-        if (currentShields > 0 && shieldVFX != null)
+        UpdateShieldVfx();
+        ShieldChanged?.Invoke(currentShields, maxShileds);
+    }
+
+    private void StopShieldRechargeCoroutines()
+    {
+        if (shieldRechargeDelayCoroutine != null)
         {
-            shieldVFX.SetActive(true);
+            StopCoroutine(shieldRechargeDelayCoroutine);
+            shieldRechargeDelayCoroutine = null;
         }
+
+        if (shieldRechargeCoroutine != null)
+        {
+            StopCoroutine(shieldRechargeCoroutine);
+            shieldRechargeCoroutine = null;
+        }
+    }
+
+    private void UpdateShieldVfx()
+    {
+        if (shieldVFX == null) return;
+        shieldVFX.SetActive(currentShields > 0f);
     }
 }

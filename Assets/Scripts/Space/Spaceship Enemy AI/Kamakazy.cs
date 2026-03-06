@@ -23,6 +23,7 @@ public class Kamakazy : MonoBehaviour
 
     void OnEnable()
     {
+        startedExplosionSequence = false;
         triggerRelay.Enter += OnTetherRangeTriggerEnter2D;
     }
 

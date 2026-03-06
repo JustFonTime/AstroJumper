@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using NUnit.Framework;
 using UnityEngine;
 
 public class TeamRegistry : MonoBehaviour
@@ -39,7 +38,7 @@ public class TeamRegistry : MonoBehaviour
             if (!IsHostile(seeker.TeamId, agent.TeamId)) continue; //skip if not hositle
 
             Vector2 p = agent.transform.position;
-            float d2 = (p - seekerPos).magnitude;
+            float d2 = (p - seekerPos).sqrMagnitude;
 
             if (d2 > r2) continue; //skip if outside range
 
