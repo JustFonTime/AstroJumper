@@ -9,10 +9,9 @@ public class EnemySpaceshipSpawner : MonoBehaviour
 {
     public static EnemySpaceshipSpawner Instance { get; private set; }
 
-    public event Action<int> OnAliveEnemiesChanged; // Pass the new alive enemies count
-    public event Action<int> OnWaveChanged; // Pass the new wave index (starting from 1 for better readability)
-
-    public event Action AllWavesCompleted; // Triggered when all waves are completed (only for SetWaves mode)
+    public event Action<int> OnAliveEnemiesChanged;
+    public event Action<int> OnWaveChanged;
+    public event Action AllWavesCompleted;
 
     public enum SpawnType
     {
@@ -21,8 +20,7 @@ public class EnemySpaceshipSpawner : MonoBehaviour
     }
 
     [SerializeField]
-    private float
-        initialSpawnDelay = 5f; // Time to wait before starting the first spawn, giving player time to get ready
+    private float initialSpawnDelay = 5f;
 
     [Header("Mode")] [SerializeField] private SpawnType spawnType = SpawnType.Infinite;
 
@@ -41,6 +39,9 @@ public class EnemySpaceshipSpawner : MonoBehaviour
 
     [SerializeField] private int fallbackEnemyTeamId = 1;
 
+    [Header("Fallback Spawn Area")] [SerializeField] private Vector2 fallbackMinSpawnAreaSize = new Vector2(40f, 40f);
+    [SerializeField] private Vector2 fallbackMaxSpawnAreaSize = new Vector2(80f, 80f);
+
     [Header("Pooling")] [SerializeField] private int defaultPoolCapacity = 50;
     [SerializeField] private int maxPoolSize = 200;
 
@@ -50,21 +51,12 @@ public class EnemySpaceshipSpawner : MonoBehaviour
     [SerializeField] private Transform pooledRoot;
 
     private GameObject player;
-
     private readonly Dictionary<GameObject, ObjectPool<GameObject>> pools = new();
     private int aliveEnemies = 0;
-
-    public int AliveEnemies
-    {
-        get { return aliveEnemies; }
-    }
-
     private int currentWave = 0;
 
-    public int CurrentWave
-    {
-        get { return currentWave; }
-    }
+    public int AliveEnemies => aliveEnemies;
+    public int CurrentWave => currentWave;
 
     private void Awake()
     {
@@ -83,7 +75,6 @@ public class EnemySpaceshipSpawner : MonoBehaviour
     {
         player = GameObject.FindWithTag("Player");
 
-
         if (activeEnemiesRoot == null)
         {
             var go = new GameObject("Enemies_Active");
@@ -96,11 +87,31 @@ public class EnemySpaceshipSpawner : MonoBehaviour
             pooledRoot = go.transform;
         }
 
+        PrewarmConfiguredPrefabs();
+        StartCoroutine(RunSpawner());
+    }
+
+    private void PrewarmConfiguredPrefabs()
+    {
+        HashSet<GameObject> prefabs = new HashSet<GameObject>();
 
         if (spawnerSettings != null && spawnerSettings.enemySpaceshipPrefab != null)
-            Prewarm(spawnerSettings.enemySpaceshipPrefab, Mathf.Max(0, defaultPoolCapacity));
+            prefabs.Add(spawnerSettings.enemySpaceshipPrefab);
 
-        StartCoroutine(RunSpawner());
+        foreach (var wave in waves)
+        {
+            if (wave == null || wave.enemies == null)
+                continue;
+
+            foreach (var entry in wave.enemies)
+            {
+                if (entry != null && entry.prefab != null)
+                    prefabs.Add(entry.prefab);
+            }
+        }
+
+        foreach (var prefab in prefabs)
+            Prewarm(prefab, Mathf.Max(0, defaultPoolCapacity));
     }
 
     private int PickEnemyTeamId()
@@ -122,10 +133,7 @@ public class EnemySpaceshipSpawner : MonoBehaviour
 
     private IEnumerator RunSpawner()
     {
-        //Hard code wait so player has time to get ready and not get instantly overwhelmed by enemies as soon as the scene starts. Can be removed later if needed.
-        // and for the hud and anyhitng using events to bind before there called 
         yield return new WaitForSeconds(initialSpawnDelay);
-
 
         if (spawnType == SpawnType.Infinite)
         {
@@ -133,47 +141,121 @@ public class EnemySpaceshipSpawner : MonoBehaviour
             {
                 yield return new WaitForSeconds(spawnerSettings.spawnInterval);
                 for (int i = 0; i < spawnerSettings.enemiesPerSpawn; i++)
-                    Spawn(spawnerSettings.enemySpaceshipPrefab);
+                    SpawnSingle(spawnerSettings.enemySpaceshipPrefab, GetRandomSpawnPosition(), PickEnemyTeamId());
             }
         }
-        else // SetWaves
+        else
         {
-            //Go through each wave in order
             for (int w = 0; w < waves.Count; w++)
             {
-                //Start the spawn process for this wave
                 currentWave++;
                 OnWaveChanged?.Invoke(currentWave);
 
                 foreach (var entry in waves[w].enemies)
                 {
-                    if (entry.prefab == null || entry.count <= 0) continue;
+                    if (entry == null || entry.prefab == null || entry.count <= 0)
+                        continue;
 
-                    for (int i = 0; i < entry.count; i++)
+                    if (entry.spawnAsSquad)
                     {
-                        Spawn(entry.prefab);
-                        if (waves[w].spawnSpacing > 0f)
-                            yield return new WaitForSeconds(waves[w].spawnSpacing);
+                        int remaining = entry.count;
+                        while (remaining > 0)
+                        {
+                            int squadSize = PickSquadSize(entry, remaining);
+                            SpawnSquad(entry, squadSize);
+                            remaining -= squadSize;
+
+                            if (waves[w].spawnSpacing > 0f)
+                                yield return new WaitForSeconds(waves[w].spawnSpacing);
+                        }
+                    }
+                    else
+                    {
+                        for (int i = 0; i < entry.count; i++)
+                        {
+                            SpawnSingle(entry.prefab, GetRandomSpawnPosition(), PickEnemyTeamId());
+                            if (waves[w].spawnSpacing > 0f)
+                                yield return new WaitForSeconds(waves[w].spawnSpacing);
+                        }
                     }
                 }
 
-                //Wait until all enemies from this wave are dead before starting the next one
                 while (aliveEnemies > 0)
                     yield return null;
 
                 yield return new WaitForSeconds(waves[w].timeToSpawnAfterFinalDeath);
             }
 
-            //All waves completed
             AllWavesCompleted?.Invoke();
         }
     }
 
-    private void Spawn(GameObject prefab)
+    private int PickSquadSize(WaveEnemyEntry entry, int remaining)
     {
-        if (prefab == null) return;
+        int minSize = Mathf.Clamp(entry.minSquadSize, 2, 5);
+        int maxSize = Mathf.Clamp(entry.maxSquadSize, minSize, 5);
+        int requested = Random.Range(minSize, maxSize + 1);
+
+        if (remaining >= 2)
+            return Mathf.Min(requested, remaining);
+
+        return 1;
+    }
+
+    private void SpawnSquad(WaveEnemyEntry entry, int squadSize)
+    {
+        if (entry == null || entry.prefab == null || squadSize <= 0)
+            return;
 
         Vector3 spawnPosition = GetRandomSpawnPosition();
+        int teamId = PickEnemyTeamId();
+
+        GameObject squadObject = new GameObject($"{entry.prefab.name}_Squad");
+        squadObject.transform.SetParent(activeEnemiesRoot, true);
+        squadObject.transform.position = spawnPosition;
+
+        var squad = squadObject.AddComponent<EnemySquadController>();
+        squad.Initialize(
+            player != null ? player.transform : null,
+            entry.formationType,
+            entry.squadSpacing,
+            entry.initialSquadState,
+            entry.squadEngageDistance,
+            entry.squadAnchorMoveSpeed);
+
+        for (int i = 0; i < squadSize; i++)
+        {
+            Vector3 memberSpawnPos = squad.GetPreviewSlotWorldPosition(i);
+            GameObject go = SpawnSingle(entry.prefab, memberSpawnPos, teamId);
+            if (go == null)
+                continue;
+
+            var member = go.GetComponent<EnemySquadMember>();
+            if (member == null)
+                member = go.AddComponent<EnemySquadMember>();
+
+            squad.RegisterMember(member, ResolveRole(go, i));
+        }
+    }
+
+    private EnemySquadRole ResolveRole(GameObject ship, int slotIndex)
+    {
+        if (ship == null)
+            return slotIndex == 0 ? EnemySquadRole.Leader : EnemySquadRole.Wingman;
+
+        if (ship.GetComponent<ShieldGiver>() != null)
+            return EnemySquadRole.ShieldSupport;
+
+        if (ship.GetComponent<Kamakazy>() != null)
+            return EnemySquadRole.Kamikaze;
+
+        return slotIndex == 0 ? EnemySquadRole.Leader : EnemySquadRole.Wingman;
+    }
+
+    private GameObject SpawnSingle(GameObject prefab, Vector3 spawnPosition, int teamId)
+    {
+        if (prefab == null) return null;
+
         var pool = GetPool(prefab);
         var go = pool.Get();
 
@@ -181,11 +263,9 @@ public class EnemySpaceshipSpawner : MonoBehaviour
         go.transform.position = spawnPosition;
         go.transform.rotation = Quaternion.identity;
 
-        // Assign a team (so enemies can fight each other)
         if (go.TryGetComponent<TeamAgent>(out var agent))
-            agent.SetTeam(PickEnemyTeamId());
+            agent.SetTeam(teamId);
 
-        // Re-init AI every spawn (pool-safe)
         if (go.TryGetComponent<EnemySpaceshipAI>(out var ai))
             ai.ResetForSpawn(player);
 
@@ -194,6 +274,7 @@ public class EnemySpaceshipSpawner : MonoBehaviour
 
         aliveEnemies++;
         OnAliveEnemiesChanged?.Invoke(aliveEnemies);
+        return go;
     }
 
     public void NotifyEnemyGone()
@@ -248,15 +329,15 @@ public class EnemySpaceshipSpawner : MonoBehaviour
 
     private Vector3 GetRandomSpawnPosition()
     {
-        float spawnAreaWidth = Random.Range(spawnerSettings.minSpawnAreaSize.x, spawnerSettings.maxSpawnAreaSize.x);
-        float spawnAreaHeight = Random.Range(spawnerSettings.minSpawnAreaSize.y, spawnerSettings.maxSpawnAreaSize.y);
+        Vector2 minSpawnArea = spawnerSettings != null ? spawnerSettings.minSpawnAreaSize : fallbackMinSpawnAreaSize;
+        Vector2 maxSpawnArea = spawnerSettings != null ? spawnerSettings.maxSpawnAreaSize : fallbackMaxSpawnAreaSize;
+        float spawnAreaWidth = Random.Range(minSpawnArea.x, maxSpawnArea.x);
+        float spawnAreaHeight = Random.Range(minSpawnArea.y, maxSpawnArea.y);
 
         float randomX = Random.Range(-spawnAreaWidth / 2f, spawnAreaWidth / 2f);
         float randomY = Random.Range(-spawnAreaHeight / 2f, spawnAreaHeight / 2f);
         if (player == null)
-        {
             return new Vector3(randomX, randomY, 0);
-        }
 
         return new Vector3(
             randomX + player.transform.position.x,
@@ -265,3 +346,7 @@ public class EnemySpaceshipSpawner : MonoBehaviour
         );
     }
 }
+
+
+
+

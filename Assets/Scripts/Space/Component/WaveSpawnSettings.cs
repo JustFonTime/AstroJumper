@@ -15,4 +15,14 @@ public class WaveEnemyEntry
 {
     public GameObject prefab;
     public int count = 5;
+
+    [Header("Squad Spawning")]
+    public bool spawnAsSquad = false;
+    [Range(2, 5)] public int minSquadSize = 2;
+    [Range(2, 5)] public int maxSquadSize = 4;
+    public EnemySquadFormationType formationType = EnemySquadFormationType.Vee;
+    public EnemySquadState initialSquadState = EnemySquadState.Engage;
+    public float squadSpacing = 4f;
+    public float squadEngageDistance = 18f;
+    public float squadAnchorMoveSpeed = 12f;
 }

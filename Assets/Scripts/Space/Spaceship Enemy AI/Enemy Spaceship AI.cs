@@ -291,10 +291,19 @@ public class EnemySpaceshipAI : MonoBehaviour
         float tooFar = desiredRange + rangeTolerance;
         float tooClose = Mathf.Max(0.05f, desiredRange - rangeTolerance);
 
+        Vector2 squadGoalPos = Vector2.zero;
+        float squadThrottle = 0f;
+        float squadBlendWeight = 0f;
+        bool suppressAttackRuns = false;
+        bool hasSquadGoal = orders != null &&
+                            orders.TryGetCombatGoal(rb.position, targetPos, out squadGoalPos, out squadThrottle,
+                                out squadBlendWeight, out suppressAttackRuns);
+
         if (dist < 0.0001f)
         {
             throttle01 = 1f;
-            return Random.insideUnitCircle.normalized;
+            return ApplySquadGoal(Random.insideUnitCircle.normalized, ref throttle01, hasSquadGoal, squadGoalPos,
+                squadThrottle, squadBlendWeight);
         }
 
         if (ShouldRetreat(targetPos))
@@ -309,7 +318,8 @@ public class EnemySpaceshipAI : MonoBehaviour
                 else
                 {
                     throttle01 = 1f;
-                    return phaseDirection;
+                    return ApplySquadGoal(phaseDirection, ref throttle01, hasSquadGoal, squadGoalPos, squadThrottle,
+                        squadBlendWeight);
                 }
                 break;
 
@@ -320,7 +330,8 @@ public class EnemySpaceshipAI : MonoBehaviour
                 else
                 {
                     throttle01 = 1f;
-                    return ComputeAttackRunDirection(targetPos);
+                    return ApplySquadGoal(ComputeAttackRunDirection(targetPos), ref throttle01, hasSquadGoal,
+                        squadGoalPos, squadThrottle, squadBlendWeight);
                 }
                 break;
 
@@ -331,17 +342,20 @@ public class EnemySpaceshipAI : MonoBehaviour
                 else
                 {
                     throttle01 = 1f;
-                    return phaseDirection;
+                    return ApplySquadGoal(phaseDirection, ref throttle01, hasSquadGoal, squadGoalPos, squadThrottle,
+                        squadBlendWeight);
                 }
                 break;
         }
 
-        bool canAttackRun = shipProfile.useAttackRuns && attackRunCooldownTimer <= 0f && dist <= desiredRange * shipProfile.attackRunStartDistanceMultiplier;
+        bool canAttackRun = shipProfile.useAttackRuns && !suppressAttackRuns && attackRunCooldownTimer <= 0f &&
+                            dist <= desiredRange * shipProfile.attackRunStartDistanceMultiplier;
         if (canAttackRun && dist >= tooClose * 0.8f)
         {
             StartAttackRun(targetPos);
             throttle01 = 1f;
-            return ComputeAttackRunDirection(targetPos);
+            return ApplySquadGoal(ComputeAttackRunDirection(targetPos), ref throttle01, hasSquadGoal, squadGoalPos,
+                squadThrottle, squadBlendWeight);
         }
 
         if (dist > tooFar)
@@ -350,13 +364,15 @@ public class EnemySpaceshipAI : MonoBehaviour
             Vector2 dirToTarget = toTarget / dist;
             Vector2 ringPoint = targetPos - dirToTarget * desiredRange;
             throttle01 = 1f;
-            return (ringPoint - rb.position).normalized;
+            return ApplySquadGoal((ringPoint - rb.position).normalized, ref throttle01, hasSquadGoal, squadGoalPos,
+                squadThrottle, squadBlendWeight);
         }
 
         if (enableOrbit)
         {
             phase = DogfightPhase.Orbit;
-            float orbitAngleRad = slotBaseAngleRad + orbitPhaseRad + orbitSign * Mathf.Deg2Rad * (orbitAngularSpeedDeg * Time.time);
+            float orbitAngleRad = slotBaseAngleRad + orbitPhaseRad + orbitSign * Mathf.Deg2Rad *
+                (orbitAngularSpeedDeg * Time.time);
             Vector2 radial = DirFromAngleRad(orbitAngleRad);
             Vector2 tangent = Perp(radial) * orbitSign;
             Vector2 orbitPoint = targetPos + radial * desiredRange + tangent * orbitTangentOffset;
@@ -366,21 +382,49 @@ public class EnemySpaceshipAI : MonoBehaviour
                 Vector2 away = (rb.position - targetPos).normalized;
                 orbitPoint = targetPos + away * desiredRange + Perp(away) * orbitSign * orbitTangentOffset * 1.2f;
                 throttle01 = 1f;
-                return (orbitPoint - rb.position).normalized;
+                return ApplySquadGoal((orbitPoint - rb.position).normalized, ref throttle01, hasSquadGoal,
+                    squadGoalPos, squadThrottle, squadBlendWeight);
             }
 
             throttle01 = orbitThrottle;
-            return (orbitPoint - rb.position).normalized;
+            return ApplySquadGoal((orbitPoint - rb.position).normalized, ref throttle01, hasSquadGoal, squadGoalPos,
+                squadThrottle, squadBlendWeight);
         }
 
         phase = DogfightPhase.Approach;
+        Vector2 approachDirToTarget = toTarget / dist;
+        Vector2 approachRingPoint = targetPos - approachDirToTarget * desiredRange;
+        float err = Mathf.Abs(dist - desiredRange);
+        throttle01 = err > rangeTolerance ? 1f : 0.6f;
+        return ApplySquadGoal((approachRingPoint - rb.position).normalized, ref throttle01, hasSquadGoal,
+            squadGoalPos, squadThrottle, squadBlendWeight);
+    }
+
+    private Vector2 ApplySquadGoal(
+        Vector2 baseDir,
+        ref float baseThrottle,
+        bool hasSquadGoal,
+        Vector2 squadGoalPos,
+        float squadThrottle,
+        float squadBlendWeight)
+    {
+        if (!hasSquadGoal)
+            return baseDir;
+
+        Vector2 toSquadGoal = squadGoalPos - rb.position;
+        if (toSquadGoal.sqrMagnitude < 0.0001f)
         {
-            Vector2 dirToTarget = toTarget / dist;
-            Vector2 ringPoint = targetPos - dirToTarget * desiredRange;
-            float err = Mathf.Abs(dist - desiredRange);
-            throttle01 = err > rangeTolerance ? 1f : 0.6f;
-            return (ringPoint - rb.position).normalized;
+            baseThrottle = Mathf.Max(baseThrottle, squadThrottle);
+            return baseDir;
         }
+
+        Vector2 squadDir = toSquadGoal.normalized;
+        Vector2 blended = baseDir.sqrMagnitude < 0.0001f
+            ? squadDir
+            : Vector2.Lerp(baseDir, squadDir, Mathf.Clamp01(squadBlendWeight));
+
+        baseThrottle = Mathf.Max(baseThrottle, squadThrottle);
+        return blended.sqrMagnitude > 0.0001f ? blended.normalized : squadDir;
     }
 
     private bool ShouldRetreat(Vector2 targetPos)
@@ -729,3 +773,5 @@ public class EnemySpaceshipAI : MonoBehaviour
         Gizmos.DrawLine(pos + vec, pos + vec + left * headLen);
     }
 }
+
+
