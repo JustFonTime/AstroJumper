@@ -3,27 +3,64 @@ using UnityEngine;
 
 public class EnemySquadController : MonoBehaviour
 {
+    private static readonly List<EnemySquadController> Active = new List<EnemySquadController>(64);
+
     [Header("Squad")]
     [SerializeField] private EnemySquadFormationType formationType = EnemySquadFormationType.Vee;
     [SerializeField] private EnemySquadState currentState = EnemySquadState.Engage;
     [SerializeField] private float slotSpacing = 5f;
 
     [Header("Anchor Motion")]
-    [SerializeField] private float anchorMoveSpeed = 12f;
+    [SerializeField] private float anchorMoveSpeed = 14f;
+    [SerializeField] private float maxCatchupSpeed = 34f;
+    [SerializeField] private float targetLeadTime = 0.45f;
+    [SerializeField] private float anchorCatchupBoost = 1.15f;
     [SerializeField] private float engageDistanceFromTarget = 18f;
     [SerializeField] private float regroupDistanceFromTarget = 26f;
+    [SerializeField] private float engageOrbitSpeedDeg = 52f;
+    [SerializeField] private float regroupOrbitSpeedDeg = 28f;
+    [SerializeField] private float orbitLateralOffset = 6f;
+    [SerializeField] private float orbitLaneSpacing = 5f;
+    [SerializeField] private float squadRepulsionRadius = 26f;
+    [SerializeField] private float squadRepulsionStrength = 13f;
+    [Header("Anchor Formation Hold")]
+    [SerializeField] private bool paceAnchorToFollowers = true;
+    [SerializeField] private float anchorSlowWhenLaggingDistance = 2.5f;
+    [SerializeField] private float anchorStopWhenLaggingDistance = 7f;
+    [Range(0f, 1f)] [SerializeField] private float anchorMinLagSpeedScale = 0.05f;
+    [Range(0f, 1f)] [SerializeField] private float anchorLagRecoveryBias = 0.55f;
 
     [Header("Combat Influence")]
-    [Range(0f, 1f)] [SerializeField] private float engageBlendWeight = 0.7f;
+    [Range(0f, 1f)] [SerializeField] private float engageBlendWeight = 0.97f;
     [Range(0f, 1f)] [SerializeField] private float regroupBlendWeight = 1f;
-
+    [Header("Role Slot Lock")]
+    [Range(0f, 1f)] [SerializeField] private float leaderEngageBlendScale = 0.72f;
+    [Range(0f, 1f)] [SerializeField] private float followerEngageBlendScale = 1f;
+    [Range(0f, 1f)] [SerializeField] private float leaderRegroupBlendScale = 0.9f;
+    [Range(0f, 1f)] [SerializeField] private float followerRegroupBlendScale = 1f;
+    [SerializeField] private float combatSlotSpacingMultiplier = 1.15f;
     private readonly List<EnemySquadMember> members = new List<EnemySquadMember>(8);
     private Transform focusTarget;
+    private float orbitAngleDeg;
+    private float orbitSign = 1f;
+    private float orbitSpeedMultiplier = 1f;
+    private float orbitLaneOffset;
 
     public EnemySquadFormationType FormationType => formationType;
     public EnemySquadState CurrentState => currentState;
     public Transform FocusTarget => focusTarget;
     public int MemberCount => members.Count;
+
+    private void OnEnable()
+    {
+        if (!Active.Contains(this))
+            Active.Add(this);
+    }
+
+    private void OnDisable()
+    {
+        Active.Remove(this);
+    }
 
     public void Initialize(
         Transform target,
@@ -39,6 +76,13 @@ public class EnemySquadController : MonoBehaviour
         currentState = initialState;
         engageDistanceFromTarget = Mathf.Max(1f, engageDistance);
         anchorMoveSpeed = Mathf.Max(0.1f, moveSpeed);
+
+        orbitAngleDeg = Random.Range(0f, 360f);
+        orbitSign = Random.value > 0.5f ? 1f : -1f;
+        orbitSpeedMultiplier = 0.8f + (Random.value * 0.45f);
+
+        int laneIndex = Mathf.Abs(GetInstanceID()) % 5;
+        orbitLaneOffset = (laneIndex - 2) * orbitLaneSpacing;
     }
 
     private void FixedUpdate()
@@ -64,7 +108,7 @@ public class EnemySquadController : MonoBehaviour
         if (!members.Contains(member))
             members.Add(member);
 
-        RefreshMemberSlots(roleOverrideMember: member, roleOverride: role);
+        RefreshMemberSlots(member, role);
     }
 
     public void UnregisterMember(EnemySquadMember member)
@@ -81,7 +125,7 @@ public class EnemySquadController : MonoBehaviour
             return;
         }
 
-        RefreshMemberSlots();
+        RefreshMemberSlots(null, EnemySquadRole.Wingman);
     }
 
     public Vector3 GetPreviewSlotWorldPosition(int slotIndex)
@@ -145,7 +189,8 @@ public class EnemySquadController : MonoBehaviour
             case EnemySquadState.Regroup:
                 goalPos = GetWorldSlotPosition(member.SlotIndex);
                 throttle01 = 1f;
-                blendWeight = regroupBlendWeight;
+                blendWeight = GetRoleBlendWeight(member, regroupBlendWeight, leaderRegroupBlendScale,
+                    followerRegroupBlendScale);
                 suppressAttackRuns = true;
                 return true;
 
@@ -164,10 +209,10 @@ public class EnemySquadController : MonoBehaviour
 
             case EnemySquadState.Engage:
                 goalPos = GetCombatSlotPosition(member.SlotIndex, targetPos);
-                throttle01 = member.Role == EnemySquadRole.ShieldSupport ? 0.75f : 0.9f;
-                blendWeight = engageBlendWeight;
-                suppressAttackRuns = member.Role == EnemySquadRole.ShieldSupport ||
-                                     member.Role == EnemySquadRole.Support;
+                throttle01 = member.Role == EnemySquadRole.ShieldSupport ? 0.9f : 1f;
+                blendWeight = GetRoleBlendWeight(member, engageBlendWeight, leaderEngageBlendScale,
+                    followerEngageBlendScale);
+                suppressAttackRuns = true;
                 return true;
         }
 
@@ -180,19 +225,76 @@ public class EnemySquadController : MonoBehaviour
             return;
 
         Vector2 focusPos = focusTarget.position;
+        Vector2 focusVel = Vector2.zero;
+        var focusRb = focusTarget.GetComponent<Rigidbody2D>();
+        if (focusRb != null)
+            focusVel = focusRb.linearVelocity;
+
+        Vector2 predictedFocusPos = focusPos + focusVel * targetLeadTime;
         Vector2 currentPos = transform.position;
-        Vector2 fromTarget = currentPos - focusPos;
 
-        if (fromTarget.sqrMagnitude < 0.001f)
-            fromTarget = Vector2.down;
+        float orbitSpeedDeg = currentState == EnemySquadState.Engage ? engageOrbitSpeedDeg : regroupOrbitSpeedDeg;
+        float baseDistance = currentState == EnemySquadState.Engage ? engageDistanceFromTarget : regroupDistanceFromTarget;
+        float desiredDistance = Mathf.Max(6f, baseDistance + orbitLaneOffset);
 
-        float desiredDistance = currentState == EnemySquadState.Engage
-            ? engageDistanceFromTarget
-            : regroupDistanceFromTarget;
+        orbitAngleDeg += orbitSpeedDeg * orbitSign * orbitSpeedMultiplier * Time.fixedDeltaTime;
 
-        Vector2 desiredPos = focusPos + fromTarget.normalized * desiredDistance;
-        Vector2 nextPos = Vector2.MoveTowards(currentPos, desiredPos, anchorMoveSpeed * Time.fixedDeltaTime);
-        transform.position = nextPos;
+        float orbitRad = orbitAngleDeg * Mathf.Deg2Rad;
+        Vector2 radial = new Vector2(Mathf.Cos(orbitRad), Mathf.Sin(orbitRad));
+        Vector2 tangent = new Vector2(-radial.y, radial.x) * orbitSign;
+
+        Vector2 desiredPos = predictedFocusPos + radial * desiredDistance + tangent * orbitLateralOffset;
+        desiredPos += ComputeSquadRepulsion(currentPos);
+
+        Vector2 toDesired = desiredPos - currentPos;
+        float dynamicSpeed = anchorMoveSpeed + focusVel.magnitude * anchorCatchupBoost;
+        dynamicSpeed = Mathf.Min(dynamicSpeed, maxCatchupSpeed);
+        dynamicSpeed *= ComputeFollowerLagSpeedScale(focusPos);
+
+        if (dynamicSpeed <= 0.001f)
+            return;
+
+        Vector2 step = Vector2.ClampMagnitude(toDesired, dynamicSpeed * Time.fixedDeltaTime);
+        transform.position = currentPos + step;
+    }
+
+    private float ComputeFollowerLagSpeedScale(Vector2 targetPos)
+    {
+        if (!paceAnchorToFollowers || members.Count <= 1)
+            return 1f;
+
+        float maxLag = 0f;
+        float lagSum = 0f;
+        int followerCount = 0;
+
+        for (int i = 0; i < members.Count; i++)
+        {
+            EnemySquadMember member = members[i];
+            if (member == null || member.Role == EnemySquadRole.Leader)
+                continue;
+
+            Vector2 slotPos = currentState == EnemySquadState.Engage
+                ? GetCombatSlotPosition(member.SlotIndex, targetPos)
+                : GetWorldSlotPosition(member.SlotIndex);
+
+            float lag = Vector2.Distance(member.transform.position, slotPos);
+            maxLag = Mathf.Max(maxLag, lag);
+            lagSum += lag;
+            followerCount++;
+        }
+
+        if (followerCount <= 0)
+            return 1f;
+
+        float avgLag = lagSum / followerCount;
+        float effectiveLag = Mathf.Lerp(avgLag, maxLag, Mathf.Clamp01(anchorLagRecoveryBias));
+        if (effectiveLag <= anchorSlowWhenLaggingDistance)
+            return 1f;
+
+        float stopDistance = Mathf.Max(anchorSlowWhenLaggingDistance + 0.01f, anchorStopWhenLaggingDistance);
+        float minScale = Mathf.Clamp01(anchorMinLagSpeedScale);
+        float t = Mathf.InverseLerp(anchorSlowWhenLaggingDistance, stopDistance, effectiveLag);
+        return Mathf.Lerp(1f, minScale, t);
     }
 
     private Vector2 GetWorldSlotPosition(int slotIndex)
@@ -207,15 +309,27 @@ public class EnemySquadController : MonoBehaviour
         if (forward.sqrMagnitude < 0.001f)
             forward = Vector2.up;
 
-        float angleDeg = Mathf.Atan2(forward.y, forward.x) * Mathf.Rad2Deg - 90f;
+        Vector2 tangent = new Vector2(-forward.y, forward.x).normalized * orbitSign;
+        Vector2 formationForward = (forward.normalized + tangent * 0.45f).normalized;
+        float angleDeg = Mathf.Atan2(formationForward.y, formationForward.x) * Mathf.Rad2Deg - 90f;
         Quaternion rotation = Quaternion.Euler(0f, 0f, angleDeg);
-        Vector2 localOffset = GetSlotOffset(slotIndex, members.Count);
-        Vector2 formationCenter = targetPos - forward.normalized * engageDistanceFromTarget;
+        Vector2 localOffset = GetSlotOffset(slotIndex, members.Count) * Mathf.Max(0.1f, combatSlotSpacingMultiplier);
+        Vector2 formationCenter = (Vector2)transform.position;
 
         return formationCenter + (Vector2)(rotation * localOffset);
     }
 
-    private void RefreshMemberSlots(EnemySquadMember roleOverrideMember = null, EnemySquadRole roleOverride = EnemySquadRole.Wingman)
+    private static float GetRoleBlendWeight(
+        EnemySquadMember member,
+        float baseWeight,
+        float leaderScale,
+        float followerScale)
+    {
+        float roleScale = member != null && member.Role == EnemySquadRole.Leader ? leaderScale : followerScale;
+        return Mathf.Clamp01(baseWeight * roleScale);
+    }
+
+    private void RefreshMemberSlots(EnemySquadMember roleOverrideMember, EnemySquadRole roleOverride)
     {
         for (int i = 0; i < members.Count; i++)
         {
@@ -226,6 +340,38 @@ public class EnemySquadController : MonoBehaviour
             EnemySquadRole assignedRole = member == roleOverrideMember ? roleOverride : member.Role;
             member.SetSquad(this, assignedRole, i);
         }
+    }
+
+    private Vector2 ComputeSquadRepulsion(Vector2 currentPos)
+    {
+        if (squadRepulsionRadius <= 0f)
+            return Vector2.zero;
+
+        Vector2 repel = Vector2.zero;
+        int used = 0;
+
+        for (int i = 0; i < Active.Count; i++)
+        {
+            EnemySquadController other = Active[i];
+            if (other == null || other == this)
+                continue;
+            if (other.focusTarget != focusTarget)
+                continue;
+
+            Vector2 delta = currentPos - (Vector2)other.transform.position;
+            float distance = delta.magnitude;
+            if (distance < 0.001f || distance > squadRepulsionRadius)
+                continue;
+
+            float weight = 1f - Mathf.Clamp01(distance / squadRepulsionRadius);
+            repel += (delta / distance) * weight;
+            used++;
+        }
+
+        if (used == 0)
+            return Vector2.zero;
+
+        return repel.normalized * squadRepulsionStrength;
     }
 
     private Vector2 GetSlotOffset(int slotIndex, int totalMembers)
@@ -290,3 +436,4 @@ public class EnemySquadController : MonoBehaviour
         }
     }
 }
+
