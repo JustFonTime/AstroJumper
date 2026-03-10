@@ -54,6 +54,8 @@ public class RadarUI : MonoBehaviour
     private void RefreshDots()
     {
         Vector2 p = player.position;
+        TeamAgent playerTeamAgent = player.GetComponentInParent<TeamAgent>();
+        int playerTeamId = playerTeamAgent != null ? playerTeamAgent.TeamId : 0;
 
         int count = Physics2D.OverlapCircleNonAlloc(p, radarRangeWorld, hits, enemyMasl);
 
@@ -80,6 +82,18 @@ public class RadarUI : MonoBehaviour
 
             Transform t = c.transform;
             if (t == player) continue;
+
+            TeamAgent targetTeamAgent = c.GetComponentInParent<TeamAgent>();
+            if (targetTeamAgent == null)
+                continue;
+
+            int targetTeamId = targetTeamAgent.TeamId;
+            if (targetTeamId == 0)
+                continue;
+
+            if (!TeamRegistry.IsHostile(playerTeamId, targetTeamId))
+                continue;
+
 
             Vector2 offset = (Vector2)t.position - p;
 

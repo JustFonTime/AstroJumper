@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7670360865814592282}
   - component: {fileID: 2582741178997624428}
-  - component: {fileID: 9186295921367157810}
   - component: {fileID: 9160677334752284955}
   - component: {fileID: 1680502412916377063}
   - component: {fileID: 1864589599444257544}
@@ -103,30 +102,6 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
---- !u!114 &9186295921367157810
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3350557924722327067}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 53e52bcec449ab044bfd9fc242211527, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SquadCommander
-  playerTeam: {fileID: 9160677334752284955}
-  playerTransform: {fileID: 7670360865814592282}
-  cam: {fileID: 0}
-  escortKey: 49
-  protectKey: 50
-  skirmishKey: 51
-  regroupKey: 114
-  focusFireKey: 102
-  shipMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  pickRadius: 3
 --- !u!114 &9160677334752284955
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -211,11 +186,17 @@ MonoBehaviour:
     projectile: {fileID: 659358672219713016, guid: 0f075aa575b24054d9af932f0af45de2, type: 3}
     firePoint: {fileID: 8310198182133585324}
     fireRate: 0.3
+    useSpread: 0
+    minSpreadAngle: -2
+    maxSpreadAngle: 2
     canFire: 1
   - id: Double Laser
     projectile: {fileID: 659358672219713016, guid: e10ee13749de8504396be7946512e3ac, type: 3}
     firePoint: {fileID: 8310198182133585324}
     fireRate: 0.75
+    useSpread: 0
+    minSpreadAngle: -2
+    maxSpreadAngle: 2
     canFire: 1
   cam: {fileID: 0}
   projectileSpawn: {fileID: 8310198182133585324}

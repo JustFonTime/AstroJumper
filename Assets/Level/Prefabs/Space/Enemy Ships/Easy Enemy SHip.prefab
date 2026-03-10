@@ -319,35 +319,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpaceshipAI
   player: {fileID: 0}
   shipProfile: {fileID: 11400000, guid: 7cb50b4815f20ef4282368cef3ebe528, type: 2}
-  isBarrellRolling: 0
-  currentSpeedMultiplier: 1
-  returnToCenterRadius: 25
-  hardReturnRadius: 80
-  returnForceMultiplier: 1.25
-  preferredRange: 0
-  preferredRangeFromCombatRange: 0.75
-  rangeTolerance: 10
-  enableOrbit: 1
-  orbitAngularSpeedDeg: 180
-  orbitTangentOffset: 12
-  orbitThrottle: 0.85
-  randomizeDogfightSeedOnSpawn: 1
-  enableSeparation: 1
-  separationRadius: 10
-  separationStrength: 5
-  separationMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  separationIgnoreTriggers: 1
+  fallbackChaseDistance: 18
+  fallbackArriveDistance: 1.25
+  fallbackFullThrottleDistance: 8
+  minimumThrottleWhenMoving: 0.2
   drawDebug: 1
   drawOnlyWhenSelected: 0
-  drawTargetLine: 0
-  hasTargetColor: {r: 0, g: 1, b: 0, a: 1}
-  noTargetColor: {r: 1, g: 0, b: 0, a: 1}
-  velocityGizmoScale: 0.25
-  forceGizmoScale: 0.05
-  maxVelocityGizmoLength: 8
-  maxForceGizmoLength: 6
+  goalLineColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  targetLineColor: {r: 0, g: 1, b: 0, a: 1}
 --- !u!114 &3664788354145895835
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -355,7 +334,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5549628142487207619}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c9dc978f3f72c8e4a9d63484b328d7e6, type: 3}
   m_Name: 
@@ -363,6 +342,16 @@ MonoBehaviour:
   firePoint: {fileID: 3234909650482045839}
   shipProfile: {fileID: 11400000, guid: 7cb50b4815f20ef4282368cef3ebe528, type: 2}
   laserPrefab: {fileID: 659358672219713016, guid: 0f075aa575b24054d9af932f0af45de2, type: 3}
+  avoidFriendlyFire: 1
+  retargetIfUnsafe: 1
+  lineOfFireMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  fireSafetyPadding: 0.5
+  baseSafetyConeAngle: 3
+  drawSafetyRays: 1
+  safeRayColor: {r: 0.2, g: 1, b: 0.2, a: 0.75}
+  blockedRayColor: {r: 1, g: 0.7, b: 0.15, a: 0.95}
   firePointLineColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
 --- !u!50 &3101948059298077492
 Rigidbody2D:

@@ -1,23 +1,16 @@
 using UnityEngine;
 
 [DisallowMultipleComponent]
-[RequireComponent(typeof(ShipOrderController))]
 public class EnemySquadMember : MonoBehaviour
 {
     [SerializeField] private EnemySquadRole role = EnemySquadRole.Wingman;
     [SerializeField] private int slotIndex = -1;
 
-    private ShipOrderController orders;
     private bool clearingAssignment;
 
     public EnemySquadController Squad { get; private set; }
     public EnemySquadRole Role => role;
     public int SlotIndex => slotIndex;
-
-    private void Awake()
-    {
-        orders = GetComponent<ShipOrderController>();
-    }
 
     private void OnDisable()
     {
@@ -58,12 +51,6 @@ public class EnemySquadMember : MonoBehaviour
         Squad = squad;
         role = assignedRole;
         slotIndex = assignedSlotIndex;
-
-        if (orders == null)
-            orders = GetComponent<ShipOrderController>();
-
-        if (orders != null)
-            orders.SetSquadMember(this);
     }
 
     internal void ClearSquad(EnemySquadController squad)
@@ -76,12 +63,7 @@ public class EnemySquadMember : MonoBehaviour
         Squad = null;
         slotIndex = -1;
 
-        if (orders == null)
-            orders = GetComponent<ShipOrderController>();
-
-        if (orders != null)
-            orders.SetSquadMember(null);
-
         clearingAssignment = false;
     }
 }
+

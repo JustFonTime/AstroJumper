@@ -5,6 +5,7 @@ public class TeamRegistry : MonoBehaviour
 {
     //All active Agetns
     private static readonly List<TeamAgent> agents = new List<TeamAgent>(256);
+    public static IReadOnlyList<TeamAgent> Agents => agents;
 
     public static void Register(TeamAgent agent)
     {
@@ -107,3 +108,4 @@ public class TeamRegistry : MonoBehaviour
     
 
 }
+

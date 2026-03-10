@@ -197,9 +197,15 @@ public class SpaceshipHealthComponent : MonoBehaviour, ISpaceDamagable
         if (deathSfx != null)
             AudioSource.PlayClipAtPoint(deathSfx, transform.position, deathVolume);
 
+        var pooledFleet = GetComponent<PooledFleetShip>();
         var pooled = GetComponent<PooledEnemy>();
         var pooledTeamate = GetComponent<PooledTeamate>();
-        if (pooled != null)
+
+        if (pooledFleet != null)
+        {
+            pooledFleet.Despawn();
+        }
+        else if (pooled != null)
         {
             pooled.Despawn();
         }
@@ -246,3 +252,6 @@ public class SpaceshipHealthComponent : MonoBehaviour, ISpaceDamagable
         shieldVFX.SetActive(currentShields > 0f);
     }
 }
+
+
+

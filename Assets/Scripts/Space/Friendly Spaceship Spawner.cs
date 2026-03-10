@@ -1,48 +1,61 @@
-using UnityEngine;
 using System;
-using System.Collections.Generic;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.Pool;
 using Random = UnityEngine.Random;
 
+[Obsolete("FriendlySpaceshipSpawner is legacy. Use FleetSpawner for team-agnostic spawning.", false)]
 public class FriendlySpaceshipSpawner : MonoBehaviour
 {
     public static FriendlySpaceshipSpawner Instance { get; private set; }
 
-    public event Action<int> OnAliveFriendliesChanged; // Pass the new alive friendlies count
+    public event Action<int> OnAliveFriendliesChanged;
+    public event Action<ReinforcementRequest> OnReinforcementRequested;
 
-    [SerializeField] private GameObject[] teamPrefabs; // Array of team prefabs to spawn from
-
-    [SerializeField]
-    private int[] teamSpawnWeights; // Corresponding spawn weights for each prefab (must be same length as teamPrefabs)
+    [SerializeField] private GameObject[] teamPrefabs;
+    [SerializeField] private int[] teamSpawnWeights;
 
     private GameObject player;
-    private int playerTeamId = 0; // Assuming player is always team 0
-    private int aliveFriendlies = 0;
+    private int playerTeamId;
+    private int aliveFriendlies;
+
     [SerializeField] private float minSpawnRadius = 15f;
     [SerializeField] private float maxSpawnRadius = 30f;
+    [SerializeField] private float initialSpawnDelay = 5f;
 
-    [SerializeField] private float
-        initialSpawnDelay = 5f; // Time to wait before starting the first spawn, giving player time to get ready
-
-    [Header("Pooling")] [SerializeField] private int defaultPoolCapacity = 30;
+    [Header("Pooling")]
+    [SerializeField] private int defaultPoolCapacity = 30;
     [SerializeField] private int maxPoolSize = 70;
 
+    [Header("Auto Formation")]
+    [SerializeField] private bool autoAssignFormationSquad = true;
+    [SerializeField] private int maxShipsPerFriendlySquad = 10;
+    [SerializeField] private EnemySquadState friendlySquadInitialState = EnemySquadState.FormUp;
+    [SerializeField] private EnemySquadFormationType friendlyAutoFormationType = EnemySquadFormationType.Vee;
+    [SerializeField] private float friendlySquadSpacing = 5f;
+    [SerializeField] private float friendlySquadEngageDistance = 16f;
+    [SerializeField] private float friendlySquadAnchorMoveSpeed = 13f;
 
-    [Header("Hierarchy Parents ")] [SerializeField]
-    private Transform activeTeamatesRoot;
+    [Header("Friendly Reinforcement Requests")]
+    [SerializeField] private bool enableFriendlyReinforcementRequests = true;
+    [SerializeField] private bool autoFulfillFriendlyReinforcementRequests = false;
+    [SerializeField] private int maxPendingFriendlyReinforcementRequests = 32;
 
+    [Header("Hierarchy Parents")]
+    [FormerlySerializedAs("activeTeamatesRoot")]
+    [SerializeField] private Transform activeTeammatesRoot;
     [SerializeField] private Transform pooledRoot;
 
     private readonly Dictionary<GameObject, ObjectPool<GameObject>> pools = new();
+    private readonly List<EnemySquadController> friendlyAutoSquads = new List<EnemySquadController>(8);
+    private readonly HashSet<EnemySquadController> registeredReinforcementSquads = new();
+    private readonly List<ReinforcementRequest> pendingReinforcementRequests = new(32);
 
-    public int AliveFriendlies
-    {
-        get { return aliveFriendlies; }
-    }
-
+    public int AliveFriendlies => aliveFriendlies;
+    public int PendingFriendlyReinforcementRequestCount => pendingReinforcementRequests.Count;
+    public IReadOnlyList<ReinforcementRequest> PendingFriendlyReinforcementRequests => pendingReinforcementRequests;
 
     private void Awake()
     {
@@ -60,100 +73,403 @@ public class FriendlySpaceshipSpawner : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player");
         if (player == null)
         {
-            Debug.LogError("Player not found in the scene! Make sure the player has the 'Player' tag.");
-
+            Debug.LogError("Player not found in scene. Friendly spawner disabled.");
+            enabled = false;
+            return;
         }
 
-        // Try to get the player's team ID from their TeamAgent component, if it exists
-        var playerTeamAgent = player.GetComponent<TeamAgent>();
-        if (playerTeamAgent != null)
-        {
-            playerTeamId = playerTeamAgent.TeamId;
-        }
+        TeamAgent playerTeamAgent = player.GetComponent<TeamAgent>();
+        playerTeamId = playerTeamAgent != null ? playerTeamAgent.TeamId : 0;
 
-
-        // Create parent objects for organization if they are not assigned in the inspector
-        if (activeTeamatesRoot == null)
+        if (activeTeammatesRoot == null)
         {
-            var go = new GameObject("Teamates_Active");
-            activeTeamatesRoot = go.transform;
+            GameObject go = new GameObject("Teammates_Active");
+            activeTeammatesRoot = go.transform;
         }
 
         if (pooledRoot == null)
         {
-            var go = new GameObject("Teamates_Pooled");
+            GameObject go = new GameObject("Teammates_Pooled");
             go.SetActive(false);
             pooledRoot = go.transform;
         }
 
-        if (teamPrefabs != null && teamPrefabs.Length > 0)
-        {
-            foreach (var prefab in teamPrefabs)
-            {
-                if (prefab != null)
-                {
-                    Prewarm(prefab, Mathf.Max(0, defaultPoolCapacity)); // Prewarm the pool
-                }
-            }
-        }
-
+        PrewarmConfiguredPrefabs();
         StartCoroutine(RunSpawner());
+    }
+
+    private void OnDisable()
+    {
+        UnregisterAllFriendlyReinforcementSquads();
+        pendingReinforcementRequests.Clear();
+    }
+
+    private void PrewarmConfiguredPrefabs()
+    {
+        if (teamPrefabs == null)
+            return;
+
+        for (int i = 0; i < teamPrefabs.Length; i++)
+        {
+            GameObject prefab = teamPrefabs[i];
+            if (prefab != null)
+                Prewarm(prefab, Mathf.Max(0, defaultPoolCapacity));
+        }
     }
 
     private IEnumerator RunSpawner()
     {
         yield return new WaitForSeconds(initialSpawnDelay);
-        for (int i = 0; i < teamSpawnWeights.Length; i++)
+
+        if (teamPrefabs == null || teamPrefabs.Length == 0)
+            yield break;
+
+        int weightCount = teamSpawnWeights != null ? teamSpawnWeights.Length : 0;
+
+        for (int i = 0; i < teamPrefabs.Length; i++)
         {
-            if (teamPrefabs[i] != null)
+            GameObject prefab = teamPrefabs[i];
+            if (prefab == null)
+                continue;
+
+            int weight = i < weightCount ? Mathf.Max(0, teamSpawnWeights[i]) : 1;
+            for (int j = 0; j < weight; j++)
             {
-                for (int j = 0; j < teamSpawnWeights[i]; j++)
-                {
-                    Spawn(teamPrefabs[i]);
-                    yield return new WaitForSeconds(0.5f);
-                } // Delay between spawns, can be adjusted or randomized as needed
+                Spawn(prefab);
+                yield return new WaitForSeconds(0.5f);
             }
         }
     }
 
-    private void Spawn(GameObject prefab)
+    private GameObject Spawn(GameObject prefab, Vector3? overridePosition = null, bool assignAutoSquad = true)
     {
-        if (prefab == null) return;
+        if (prefab == null)
+            return null;
 
-        Vector3 spawnPosition = GetRandomSpawnPosiiton();
-        var pool = GetPool(prefab);
-        var go = pool.Get();
+        Vector3 spawnPosition = overridePosition ?? GetRandomSpawnPosition();
+        ObjectPool<GameObject> pool = GetPool(prefab);
+        GameObject go = pool.Get();
 
-        go.transform.SetParent(activeTeamatesRoot, true);
+        go.transform.SetParent(activeTeammatesRoot, true);
         go.transform.position = spawnPosition;
         go.transform.rotation = Quaternion.identity;
-        
         go.SetActive(true);
 
-        // Assign a team (so enemies can fight each other)
-        if (go.TryGetComponent<TeamAgent>(out var agent))
-        {
+        if (go.TryGetComponent<TeamAgent>(out TeamAgent agent))
             agent.SetTeam(playerTeamId);
-        }
 
-        // Re-init AI every spawn (pool-safe)
-        if (go.TryGetComponent<EnemySpaceshipAI>(out var ai))
+        if (go.TryGetComponent<EnemySpaceshipAI>(out EnemySpaceshipAI ai))
             ai.ResetForSpawn(player);
 
-        if (go.TryGetComponent<EnemySpaceshipCombatAI>(out var combat))
+        if (go.TryGetComponent<EnemySpaceshipCombatAI>(out EnemySpaceshipCombatAI combat))
             combat.ResetForSpawn();
 
+        if (assignAutoSquad && autoAssignFormationSquad)
+            TryAssignToFriendlySquad(go);
 
         aliveFriendlies++;
         OnAliveFriendliesChanged?.Invoke(aliveFriendlies);
+        return go;
     }
 
-    private Vector3 GetRandomSpawnPosiiton()
+    private void TryAssignToFriendlySquad(GameObject ship)
     {
+        if (ship == null)
+            return;
+
+        EnemySpaceshipAI ai = ship.GetComponent<EnemySpaceshipAI>();
+        if (ai == null)
+            return;
+
+        EnemySquadMember member = ship.GetComponent<EnemySquadMember>();
+        if (member == null)
+            member = ship.AddComponent<EnemySquadMember>();
+
+        if (member.Squad != null)
+            return;
+
+        EnemySquadController squad = GetOrCreateFriendlySquad();
+        if (squad == null)
+            return;
+
+        squad.RegisterMember(member, ResolveFriendlyRole(ship, squad.MemberCount));
+    }
+
+    private EnemySquadController GetOrCreateFriendlySquad()
+    {
+        int maxMembers = Mathf.Clamp(maxShipsPerFriendlySquad, 2, 10);
+
+        for (int i = friendlyAutoSquads.Count - 1; i >= 0; i--)
+        {
+            EnemySquadController candidate = friendlyAutoSquads[i];
+            if (candidate == null || !candidate.isActiveAndEnabled || candidate.MemberCount <= 0)
+            {
+                friendlyAutoSquads.RemoveAt(i);
+                continue;
+            }
+
+            RegisterFriendlySquadForReinforcement(candidate);
+            if (candidate.MemberCount < maxMembers)
+            {
+                candidate.ConfigureReinforcementPolicy(maxMembers, 2f, 8f, enableFriendlyReinforcementRequests);
+                return candidate;
+            }
+        }
+
+        GameObject squadObject = new GameObject($"FriendlyAutoSquad_{friendlyAutoSquads.Count + 1}");
+        squadObject.transform.SetParent(activeTeammatesRoot, true);
+        squadObject.transform.position = player != null ? player.transform.position : Vector3.zero;
+
+        EnemySquadController squad = squadObject.AddComponent<EnemySquadController>();
+        squad.Initialize(
+            player != null ? player.transform : null,
+            friendlyAutoFormationType,
+            friendlySquadSpacing,
+            friendlySquadInitialState,
+            friendlySquadEngageDistance,
+            friendlySquadAnchorMoveSpeed);
+        squad.ConfigureReinforcementPolicy(maxMembers, 2f, 8f, enableFriendlyReinforcementRequests);
+
+        RegisterFriendlySquadForReinforcement(squad);
+        friendlyAutoSquads.Add(squad);
+        return squad;
+    }
+
+    private void RegisterFriendlySquadForReinforcement(EnemySquadController squad)
+    {
+        if (squad == null || !enableFriendlyReinforcementRequests)
+            return;
+
+        if (!registeredReinforcementSquads.Add(squad))
+            return;
+
+        squad.ReinforcementRequested += OnFriendlySquadReinforcementRequested;
+    }
+
+    private void OnFriendlySquadReinforcementRequested(ReinforcementRequest request)
+    {
+        RequestFriendlyReinforcements(request);
+    }
+
+    public void RequestFriendlyReinforcements(ReinforcementRequest request)
+    {
+        if (!enableFriendlyReinforcementRequests || !request.IsValid)
+            return;
+
+        PrunePendingFriendlyReinforcementRequests();
+        EnqueueOrUpdateFriendlyReinforcementRequest(request);
+        OnReinforcementRequested?.Invoke(request);
+
+        if (autoFulfillFriendlyReinforcementRequests)
+            TryFulfillPendingFriendlyRequest(request.Squad);
+    }
+
+    private void TryFulfillPendingFriendlyRequest(EnemySquadController squad)
+    {
+        if (squad == null || !squad.isActiveAndEnabled)
+            return;
+
+        int pendingIndex = FindPendingFriendlyRequestIndex(squad);
+        if (pendingIndex < 0)
+            return;
+
+        ReinforcementRequest request = pendingReinforcementRequests[pendingIndex];
+        if (!request.IsValid || !squad.IsUnderStrength)
+        {
+            pendingReinforcementRequests.RemoveAt(pendingIndex);
+            return;
+        }
+
+        GameObject prefab = GetDefaultFriendlyReinforcementPrefab();
+        if (prefab == null)
+        {
+            Debug.LogWarning("FriendlySpaceshipSpawner: no prefab available for friendly reinforcement fulfill.");
+            return;
+        }
+
+        int teamId = ResolveFriendlyTeamId(request.TeamId);
+        int spawnCount = Mathf.Max(0, request.MissingCount);
+
+        for (int i = 0; i < spawnCount; i++)
+        {
+            Vector2 spawnOffset = Random.insideUnitCircle * Mathf.Max(1f, friendlySquadSpacing * 0.6f);
+            Vector3 spawnPos = request.RallyPoint + spawnOffset;
+
+            GameObject ship = Spawn(prefab, spawnPos, assignAutoSquad: false);
+            if (ship == null)
+                continue;
+
+            TeamAgent agent = ship.GetComponent<TeamAgent>();
+            if (agent != null)
+                agent.SetTeam(teamId);
+
+            EnemySquadMember member = ship.GetComponent<EnemySquadMember>();
+            if (member == null)
+                member = ship.AddComponent<EnemySquadMember>();
+
+            squad.RegisterMember(member, ResolveFriendlyRole(ship, squad.MemberCount));
+
+            if (!squad.IsUnderStrength)
+                break;
+        }
+
+        if (!squad.IsUnderStrength)
+        {
+            pendingReinforcementRequests.RemoveAt(pendingIndex);
+            return;
+        }
+
+        ReinforcementRequest refreshedRequest = new ReinforcementRequest(
+            squad,
+            teamId,
+            squad.DesiredMemberCount,
+            squad.MemberCount,
+            squad.FocusTarget,
+            request.RallyPoint,
+            Time.time);
+
+        if (refreshedRequest.IsValid)
+            pendingReinforcementRequests[pendingIndex] = refreshedRequest;
+        else
+            pendingReinforcementRequests.RemoveAt(pendingIndex);
+    }
+
+    private int ResolveFriendlyTeamId(int requestedTeamId)
+    {
+        if (requestedTeamId == playerTeamId)
+            return requestedTeamId;
+
+        return playerTeamId;
+    }
+
+    private GameObject GetDefaultFriendlyReinforcementPrefab()
+    {
+        if (teamPrefabs == null || teamPrefabs.Length == 0)
+            return null;
+
+        int totalWeight = 0;
+        for (int i = 0; i < teamPrefabs.Length; i++)
+        {
+            if (teamPrefabs[i] == null)
+                continue;
+
+            int weight = GetSpawnWeightAt(i);
+            if (weight > 0)
+                totalWeight += weight;
+        }
+
+        if (totalWeight <= 0)
+        {
+            for (int i = 0; i < teamPrefabs.Length; i++)
+            {
+                if (teamPrefabs[i] != null)
+                    return teamPrefabs[i];
+            }
+
+            return null;
+        }
+
+        int pick = Random.Range(0, totalWeight);
+        int cumulative = 0;
+
+        for (int i = 0; i < teamPrefabs.Length; i++)
+        {
+            GameObject prefab = teamPrefabs[i];
+            if (prefab == null)
+                continue;
+
+            int weight = GetSpawnWeightAt(i);
+            if (weight <= 0)
+                continue;
+
+            cumulative += weight;
+            if (pick < cumulative)
+                return prefab;
+        }
+
+        return null;
+    }
+
+    private int GetSpawnWeightAt(int index)
+    {
+        if (teamSpawnWeights != null && index >= 0 && index < teamSpawnWeights.Length)
+            return Mathf.Max(0, teamSpawnWeights[index]);
+
+        return 1;
+    }
+
+    private void EnqueueOrUpdateFriendlyReinforcementRequest(ReinforcementRequest request)
+    {
+        int existingIndex = FindPendingFriendlyRequestIndex(request.Squad);
+        if (existingIndex >= 0)
+        {
+            pendingReinforcementRequests[existingIndex] = request;
+            return;
+        }
+
+        int maxQueue = Mathf.Max(1, maxPendingFriendlyReinforcementRequests);
+        while (pendingReinforcementRequests.Count >= maxQueue)
+            pendingReinforcementRequests.RemoveAt(0);
+
+        pendingReinforcementRequests.Add(request);
+    }
+
+    private int FindPendingFriendlyRequestIndex(EnemySquadController squad)
+    {
+        for (int i = 0; i < pendingReinforcementRequests.Count; i++)
+        {
+            if (pendingReinforcementRequests[i].Squad == squad)
+                return i;
+        }
+
+        return -1;
+    }
+
+    private void PrunePendingFriendlyReinforcementRequests()
+    {
+        for (int i = pendingReinforcementRequests.Count - 1; i >= 0; i--)
+        {
+            ReinforcementRequest request = pendingReinforcementRequests[i];
+            EnemySquadController squad = request.Squad;
+
+            if (!request.IsValid || squad == null || !squad.isActiveAndEnabled || !squad.IsUnderStrength)
+                pendingReinforcementRequests.RemoveAt(i);
+        }
+    }
+
+    private void UnregisterAllFriendlyReinforcementSquads()
+    {
+        foreach (EnemySquadController squad in registeredReinforcementSquads)
+        {
+            if (squad != null)
+                squad.ReinforcementRequested -= OnFriendlySquadReinforcementRequested;
+        }
+
+        registeredReinforcementSquads.Clear();
+    }
+
+    private static EnemySquadRole ResolveFriendlyRole(GameObject ship, int slotIndex)
+    {
+        if (ship == null)
+            return slotIndex == 0 ? EnemySquadRole.Leader : EnemySquadRole.Wingman;
+
+        if (ship.GetComponent<ShieldGiver>() != null)
+            return EnemySquadRole.ShieldSupport;
+
+        if (ship.GetComponent<Kamakazy>() != null)
+            return EnemySquadRole.Kamikaze;
+
+        return slotIndex == 0 ? EnemySquadRole.Leader : EnemySquadRole.Wingman;
+    }
+
+    private Vector3 GetRandomSpawnPosition()
+    {
+        if (player == null)
+            return Vector3.zero;
+
         Vector2 randomDirection = Random.insideUnitCircle.normalized;
         float randomDistance = Random.Range(minSpawnRadius, maxSpawnRadius);
-        Vector3 spawnPosition = player.transform.position + (Vector3)(randomDirection * randomDistance);
-        return spawnPosition;
+        return player.transform.position + (Vector3)(randomDirection * randomDistance);
     }
 
     public void NotifyTeamateGone()
@@ -162,29 +478,19 @@ public class FriendlySpaceshipSpawner : MonoBehaviour
         OnAliveFriendliesChanged?.Invoke(aliveFriendlies);
     }
 
-    /// <summary>
-    ///  Prewarms the object pool for a given prefab by instantiating and immediately releasing a specified number of instances. This helps to reduce runtime instantiation overhead when the game starts, ensuring smoother performance during gameplay.
-    /// </summary>
-    /// <param name="prefab"></param>
-    /// <param name="count"></param>
     private void Prewarm(GameObject prefab, int count)
     {
-        var pool = GetPool(prefab);
+        ObjectPool<GameObject> pool = GetPool(prefab);
         for (int i = 0; i < count; i++)
         {
-            var go = pool.Get();
+            GameObject go = pool.Get();
             pool.Release(go);
         }
     }
 
-    /// <summary>
-    ///  Gets or creates an object pool for the given prefab. Each prefab has its own pool to ensure type safety and proper management of pooled objects.
-    /// </summary>
-    /// <param name="prefab"></param>
-    /// <returns></returns>
     private ObjectPool<GameObject> GetPool(GameObject prefab)
     {
-        if (pools.TryGetValue(prefab, out var existing))
+        if (pools.TryGetValue(prefab, out ObjectPool<GameObject> existing))
             return existing;
 
         ObjectPool<GameObject> pool = null;
@@ -192,19 +498,19 @@ public class FriendlySpaceshipSpawner : MonoBehaviour
         pool = new ObjectPool<GameObject>(
             createFunc: () =>
             {
-                var go = Instantiate(prefab, pooledRoot);
+                GameObject go = Instantiate(prefab, pooledRoot);
                 go.SetActive(false);
 
-                // Ensure the prefab has a PooledTeamate component for pooling management
-                var pe = go.GetComponent<PooledTeamate>();
-                if (pe == null) pe = go.AddComponent<PooledTeamate>();
-                pe.Init(this, pool);
+                PooledTeamate pooled = go.GetComponent<PooledTeamate>();
+                if (pooled == null)
+                    pooled = go.AddComponent<PooledTeamate>();
 
+                pooled.Init(this, pool);
                 return go;
             },
             actionOnGet: go =>
             {
-                if (go.TryGetComponent<Rigidbody2D>(out var rb))
+                if (go.TryGetComponent<Rigidbody2D>(out Rigidbody2D rb))
                 {
                     rb.linearVelocity = Vector2.zero;
                     rb.angularVelocity = 0f;
@@ -225,3 +531,10 @@ public class FriendlySpaceshipSpawner : MonoBehaviour
         return pool;
     }
 }
+
+
+
+
+
+
+

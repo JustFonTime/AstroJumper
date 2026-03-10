@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 248b8a0131e4c5e429b42dd520b481b1, type: 3}
   m_Name: Normal Enemy Ship Profile 1
   m_EditorClassIdentifier: Assembly-CSharp::EnemyShipProfileSO
-  forwardThrust: 12
-  maxSpeed: 60
+  forwardThrust: 8
+  maxSpeed: 40
   rotationOffset: -90
-  minTurnDegPerSec: 90
-  maxTurnDegPerSec: 180
+  minTurnDegPerSec: 0
+  maxTurnDegPerSec: 90
   turnAuthorityBySpeed:
     serializedVersion: 2
     m_Curve:
@@ -41,21 +41,17 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  alignStrength: 6
-  dampStrength: 1.2
-  useRandomSpeed: 1
-  minSpeedMultiplier: 0.8
-  maxSpeedMultiplier: 1.2
-  oscillationHz: 0.8
-  useRandomBarrelRoll: 0
-  barrelRollDistance: 15
-  barrelRollDuration: 0.5
-  barrelRollSpinDegrees: 360
-  barrelRollMinTime: 4
-  barrelRollMaxTime: 10
+  alignStrength: 4
+  dampStrength: 0.3
+  focusDistance: 18
+  arriveDistance: 1.25
+  fullThrottleDistance: 8
   combatRange: 130
-  minFireRate: 0.3
-  maxFireRate: 0.6
+  minFireRate: 0.6
+  maxFireRate: 1.3
+  useWeaponSpread: 1
+  minSpreadAngle: 7
+  maxSpreadAngle: 7
   maxHealth: 50
   maxShields: 25
   startingShields: 25

@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.Pool;
 using Random = UnityEngine.Random;
 
+[Obsolete("EnemySpaceshipSpawner is legacy. Use FleetSpawner for team-agnostic spawning.", false)]
 public class EnemySpaceshipSpawner : MonoBehaviour
 {
     public static EnemySpaceshipSpawner Instance { get; private set; }
@@ -12,6 +13,7 @@ public class EnemySpaceshipSpawner : MonoBehaviour
     public event Action<int> OnAliveEnemiesChanged;
     public event Action<int> OnWaveChanged;
     public event Action AllWavesCompleted;
+    public event Action<ReinforcementRequest> OnReinforcementRequested;
 
     public enum SpawnType
     {
@@ -42,6 +44,19 @@ public class EnemySpaceshipSpawner : MonoBehaviour
     [Header("Fallback Spawn Area")] [SerializeField] private Vector2 fallbackMinSpawnAreaSize = new Vector2(40f, 40f);
     [SerializeField] private Vector2 fallbackMaxSpawnAreaSize = new Vector2(80f, 80f);
 
+    [Header("Auto Formation")]
+    [SerializeField] private bool autoAssignFormationSquads = true;
+    [SerializeField] private int maxShipsPerAutoSquad = 10;
+    [SerializeField] private EnemySquadState autoSquadInitialState = EnemySquadState.Engage;
+    [SerializeField] private EnemySquadFormationType autoSquadFormationType = EnemySquadFormationType.Vee;
+    [SerializeField] private float autoSquadSpacing = 5f;
+    [SerializeField] private float autoSquadEngageDistance = 18f;
+    [SerializeField] private float autoSquadAnchorMoveSpeed = 14f;
+
+    [Header("Reinforcement Requests")]
+    [SerializeField] private bool autoFulfillReinforcementRequests = false;
+    [SerializeField] private int maxPendingReinforcementRequests = 32;
+
     [Header("Pooling")] [SerializeField] private int defaultPoolCapacity = 50;
     [SerializeField] private int maxPoolSize = 200;
 
@@ -52,11 +67,17 @@ public class EnemySpaceshipSpawner : MonoBehaviour
 
     private GameObject player;
     private readonly Dictionary<GameObject, ObjectPool<GameObject>> pools = new();
+    private readonly Dictionary<int, List<EnemySquadController>> autoSquadsByTeam = new();
+    private readonly HashSet<EnemySquadController> registeredReinforcementSquads = new();
+    private readonly List<ReinforcementRequest> pendingReinforcementRequests = new(32);
+
     private int aliveEnemies = 0;
     private int currentWave = 0;
 
     public int AliveEnemies => aliveEnemies;
     public int CurrentWave => currentWave;
+    public int PendingReinforcementRequestCount => pendingReinforcementRequests.Count;
+    public IReadOnlyList<ReinforcementRequest> PendingReinforcementRequests => pendingReinforcementRequests;
 
     private void Awake()
     {
@@ -89,6 +110,12 @@ public class EnemySpaceshipSpawner : MonoBehaviour
 
         PrewarmConfiguredPrefabs();
         StartCoroutine(RunSpawner());
+    }
+
+    private void OnDisable()
+    {
+        UnregisterAllReinforcementSquads();
+        pendingReinforcementRequests.Clear();
     }
 
     private void PrewarmConfiguredPrefabs()
@@ -192,8 +219,8 @@ public class EnemySpaceshipSpawner : MonoBehaviour
 
     private int PickSquadSize(WaveEnemyEntry entry, int remaining)
     {
-        int minSize = Mathf.Clamp(entry.minSquadSize, 2, 5);
-        int maxSize = Mathf.Clamp(entry.maxSquadSize, minSize, 5);
+        int minSize = Mathf.Clamp(entry.minSquadSize, 2, 10);
+        int maxSize = Mathf.Clamp(entry.maxSquadSize, minSize, 10);
         int requested = Random.Range(minSize, maxSize + 1);
 
         if (remaining >= 2)
@@ -222,11 +249,13 @@ public class EnemySpaceshipSpawner : MonoBehaviour
             entry.initialSquadState,
             entry.squadEngageDistance,
             entry.squadAnchorMoveSpeed);
+        squad.ConfigureReinforcementPolicy(Mathf.Clamp(squadSize, 1, 10), 2f, 8f, true);
+        RegisterSquadForReinforcement(squad);
 
         for (int i = 0; i < squadSize; i++)
         {
             Vector3 memberSpawnPos = squad.GetPreviewSlotWorldPosition(i);
-            GameObject go = SpawnSingle(entry.prefab, memberSpawnPos, teamId);
+            GameObject go = SpawnSingle(entry.prefab, memberSpawnPos, teamId, assignAutoSquad: false);
             if (go == null)
                 continue;
 
@@ -252,7 +281,75 @@ public class EnemySpaceshipSpawner : MonoBehaviour
         return slotIndex == 0 ? EnemySquadRole.Leader : EnemySquadRole.Wingman;
     }
 
-    private GameObject SpawnSingle(GameObject prefab, Vector3 spawnPosition, int teamId)
+    private void TryAssignToAutoSquad(GameObject ship, int teamId)
+    {
+        if (ship == null)
+            return;
+
+        EnemySpaceshipAI ai = ship.GetComponent<EnemySpaceshipAI>();
+        if (ai == null)
+            return;
+
+        EnemySquadMember member = ship.GetComponent<EnemySquadMember>();
+        if (member == null)
+            member = ship.AddComponent<EnemySquadMember>();
+
+        if (member.Squad != null)
+            return;
+
+        EnemySquadController squad = GetOrCreateAutoSquad(teamId);
+        if (squad == null)
+            return;
+
+        squad.RegisterMember(member, ResolveRole(ship, squad.MemberCount));
+    }
+
+    private EnemySquadController GetOrCreateAutoSquad(int teamId)
+    {
+        if (!autoSquadsByTeam.TryGetValue(teamId, out List<EnemySquadController> squads))
+        {
+            squads = new List<EnemySquadController>();
+            autoSquadsByTeam.Add(teamId, squads);
+        }
+
+        int maxMembers = Mathf.Clamp(maxShipsPerAutoSquad, 2, 10);
+        for (int i = squads.Count - 1; i >= 0; i--)
+        {
+            EnemySquadController candidate = squads[i];
+            if (candidate == null || !candidate.isActiveAndEnabled || candidate.MemberCount <= 0)
+            {
+                squads.RemoveAt(i);
+                continue;
+            }
+
+            RegisterSquadForReinforcement(candidate);
+            if (candidate.MemberCount < maxMembers)
+            {
+                candidate.ConfigureReinforcementPolicy(maxMembers, 2f, 8f, true);
+                return candidate;
+            }
+        }
+
+        GameObject squadObject = new GameObject($"AutoSquad_T{teamId}_{squads.Count + 1}");
+        squadObject.transform.SetParent(activeEnemiesRoot, true);
+        squadObject.transform.position = player != null ? player.transform.position : Vector3.zero;
+
+        EnemySquadController squad = squadObject.AddComponent<EnemySquadController>();
+        squad.Initialize(
+            player != null ? player.transform : null,
+            autoSquadFormationType,
+            autoSquadSpacing,
+            autoSquadInitialState,
+            autoSquadEngageDistance,
+            autoSquadAnchorMoveSpeed);
+        squad.ConfigureReinforcementPolicy(maxMembers, 2f, 8f, true);
+
+        RegisterSquadForReinforcement(squad);
+        squads.Add(squad);
+        return squad;
+    }
+
+    private GameObject SpawnSingle(GameObject prefab, Vector3 spawnPosition, int teamId, bool assignAutoSquad = true)
     {
         if (prefab == null) return null;
 
@@ -272,9 +369,186 @@ public class EnemySpaceshipSpawner : MonoBehaviour
         if (go.TryGetComponent<EnemySpaceshipCombatAI>(out var combat))
             combat.ResetForSpawn();
 
+        if (assignAutoSquad && autoAssignFormationSquads)
+            TryAssignToAutoSquad(go, teamId);
+
         aliveEnemies++;
         OnAliveEnemiesChanged?.Invoke(aliveEnemies);
         return go;
+    }
+
+    public void RequestReinforcements(ReinforcementRequest request)
+    {
+        if (!request.IsValid)
+            return;
+
+        PrunePendingReinforcementRequests();
+        EnqueueOrUpdateReinforcementRequest(request);
+        OnReinforcementRequested?.Invoke(request);
+
+        if (autoFulfillReinforcementRequests)
+        {
+            TryFulfillPendingRequestForSquad(request.Squad);
+        }
+    }
+
+    private void TryFulfillPendingRequestForSquad(EnemySquadController squad)
+    {
+        if (squad == null || !squad.isActiveAndEnabled)
+            return;
+
+        int pendingIndex = FindPendingRequestIndex(squad);
+        if (pendingIndex < 0)
+            return;
+
+        ReinforcementRequest request = pendingReinforcementRequests[pendingIndex];
+        if (!request.IsValid || !squad.IsUnderStrength)
+        {
+            pendingReinforcementRequests.RemoveAt(pendingIndex);
+            return;
+        }
+
+        GameObject prefab = GetDefaultReinforcementPrefab();
+        if (prefab == null)
+        {
+            Debug.LogWarning("EnemySpaceshipSpawner: auto-fulfill is enabled but no reinforcement prefab is configured.");
+            return;
+        }
+
+        int teamId = ResolveReinforcementTeamId(request.TeamId);
+        int spawnCount = Mathf.Max(0, request.MissingCount);
+
+        for (int i = 0; i < spawnCount; i++)
+        {
+            Vector2 spawnOffset = Random.insideUnitCircle * Mathf.Max(1f, autoSquadSpacing * 0.6f);
+            Vector3 spawnPos = request.RallyPoint + spawnOffset;
+
+            GameObject ship = SpawnSingle(prefab, spawnPos, teamId, assignAutoSquad: false);
+            if (ship == null)
+                continue;
+
+            EnemySquadMember member = ship.GetComponent<EnemySquadMember>();
+            if (member == null)
+                member = ship.AddComponent<EnemySquadMember>();
+
+            squad.RegisterMember(member, ResolveRole(ship, squad.MemberCount));
+        }
+
+        if (!squad.IsUnderStrength)
+        {
+            pendingReinforcementRequests.RemoveAt(pendingIndex);
+            return;
+        }
+
+        ReinforcementRequest refreshedRequest = new ReinforcementRequest(
+            squad,
+            teamId,
+            squad.DesiredMemberCount,
+            squad.MemberCount,
+            squad.FocusTarget,
+            request.RallyPoint,
+            Time.time);
+
+        if (refreshedRequest.IsValid)
+            pendingReinforcementRequests[pendingIndex] = refreshedRequest;
+        else
+            pendingReinforcementRequests.RemoveAt(pendingIndex);
+    }
+
+    private int ResolveReinforcementTeamId(int requestedTeamId)
+    {
+        if (requestedTeamId != 0)
+            return requestedTeamId;
+
+        return fallbackEnemyTeamId != 0 ? fallbackEnemyTeamId : 1;
+    }
+
+    private GameObject GetDefaultReinforcementPrefab()
+    {
+        if (spawnerSettings != null && spawnerSettings.enemySpaceshipPrefab != null)
+            return spawnerSettings.enemySpaceshipPrefab;
+
+        for (int waveIndex = 0; waveIndex < waves.Count; waveIndex++)
+        {
+            WaveSpawnSettings wave = waves[waveIndex];
+            if (wave == null || wave.enemies == null)
+                continue;
+
+            for (int entryIndex = 0; entryIndex < wave.enemies.Count; entryIndex++)
+            {
+                WaveEnemyEntry entry = wave.enemies[entryIndex];
+                if (entry != null && entry.prefab != null)
+                    return entry.prefab;
+            }
+        }
+
+        return null;
+    }
+
+    private void RegisterSquadForReinforcement(EnemySquadController squad)
+    {
+        if (squad == null)
+            return;
+
+        if (!registeredReinforcementSquads.Add(squad))
+            return;
+
+        squad.ReinforcementRequested += OnSquadReinforcementRequested;
+    }
+
+    private void OnSquadReinforcementRequested(ReinforcementRequest request)
+    {
+        RequestReinforcements(request);
+    }
+
+    private void EnqueueOrUpdateReinforcementRequest(ReinforcementRequest request)
+    {
+        int existingIndex = FindPendingRequestIndex(request.Squad);
+        if (existingIndex >= 0)
+        {
+            pendingReinforcementRequests[existingIndex] = request;
+            return;
+        }
+
+        int maxQueue = Mathf.Max(1, maxPendingReinforcementRequests);
+        while (pendingReinforcementRequests.Count >= maxQueue)
+            pendingReinforcementRequests.RemoveAt(0);
+
+        pendingReinforcementRequests.Add(request);
+    }
+
+    private int FindPendingRequestIndex(EnemySquadController squad)
+    {
+        for (int i = 0; i < pendingReinforcementRequests.Count; i++)
+        {
+            if (pendingReinforcementRequests[i].Squad == squad)
+                return i;
+        }
+
+        return -1;
+    }
+
+    private void PrunePendingReinforcementRequests()
+    {
+        for (int i = pendingReinforcementRequests.Count - 1; i >= 0; i--)
+        {
+            ReinforcementRequest request = pendingReinforcementRequests[i];
+            EnemySquadController squad = request.Squad;
+
+            if (!request.IsValid || squad == null || !squad.isActiveAndEnabled || !squad.IsUnderStrength)
+                pendingReinforcementRequests.RemoveAt(i);
+        }
+    }
+
+    private void UnregisterAllReinforcementSquads()
+    {
+        foreach (EnemySquadController squad in registeredReinforcementSquads)
+        {
+            if (squad != null)
+                squad.ReinforcementRequested -= OnSquadReinforcementRequested;
+        }
+
+        registeredReinforcementSquads.Clear();
     }
 
     public void NotifyEnemyGone()
@@ -346,6 +620,9 @@ public class EnemySpaceshipSpawner : MonoBehaviour
         );
     }
 }
+
+
+
 
 
 

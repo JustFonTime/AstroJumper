@@ -1,7 +1,12 @@
+using System;
 using UnityEngine;
 
+[Obsolete("SquadCommander is deprecated. Use squad/spawner reinforcement contracts (team-agnostic AI layer) instead.", false)]
 public class SquadCommander : MonoBehaviour
 {
+    [Header("Legacy")]
+    [SerializeField] private bool legacyModeEnabled = false;
+
     [Header("Refs")] [SerializeField] private TeamAgent playerTeam;
     [SerializeField] private Transform playerTransform;
     [SerializeField] private Camera cam;
@@ -30,6 +35,9 @@ public class SquadCommander : MonoBehaviour
 
     private void Update()
     {
+        if (!legacyModeEnabled)
+            return;
+
         if (!playerTeam) return;
 
         if (Input.GetKeyDown(escortKey))
@@ -50,6 +58,9 @@ public class SquadCommander : MonoBehaviour
 
     private void IssueEscort()
     {
+        if (!legacyModeEnabled)
+            return;
+
         foreach (var ship in ShipOrderController.Active)
         {
             if (!IsMyTeammate(ship)) continue;
@@ -61,6 +72,9 @@ public class SquadCommander : MonoBehaviour
 
     private void IssueProtect()
     {
+        if (!legacyModeEnabled)
+            return;
+
         foreach (var ship in ShipOrderController.Active)
         {
             if (!IsMyTeammate(ship)) continue;
@@ -72,6 +86,9 @@ public class SquadCommander : MonoBehaviour
 
     private void IssueSkirmish()
     {
+        if (!legacyModeEnabled)
+            return;
+
         foreach (var ship in ShipOrderController.Active)
         {
             if (!IsMyTeammate(ship)) continue;
@@ -83,6 +100,9 @@ public class SquadCommander : MonoBehaviour
 
     private void IssueRegroup()
     {
+        if (!legacyModeEnabled)
+            return;
+
         foreach (var ship in ShipOrderController.Active)
         {
             if (!IsMyTeammate(ship)) continue;
@@ -94,6 +114,9 @@ public class SquadCommander : MonoBehaviour
 
     private void IssueFocusFireAtMouse()
     {
+        if (!legacyModeEnabled)
+            return;
+
         TeamAgent target = PickHostileNearMouse();
         if (target == null)
         {
@@ -156,3 +179,4 @@ public class SquadCommander : MonoBehaviour
         return best;
     }
 }
+

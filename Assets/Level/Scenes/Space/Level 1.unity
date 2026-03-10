@@ -338,6 +338,60 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &787467169
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 787467171}
+  - component: {fileID: 787467170}
+  m_Layer: 0
+  m_Name: BorderController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &787467170
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 787467169}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab89980fb16cf7f4d93a028a33f947f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpaceArenaBoundaryController
+  center: {fileID: 787467171}
+  centerTag: Player
+  autoFindCenterOnEnable: 0
+  safeRadius: 2000
+  graceSecondsOutside: 10
+  includePlayer: 0
+  lethalDamage: 1000000
+  checkInterval: 0.25
+  drawDebugRadius: 1
+  debugRadiusColor: {r: 0.2, g: 0.95, b: 0.95, a: 0.9}
+--- !u!4 &787467171
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 787467169}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &835516080
 GameObject:
   m_ObjectHideFlags: 0
@@ -409,7 +463,7 @@ Transform:
   m_GameObject: {fileID: 835516080}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.054762185, z: -10}
+  m_LocalPosition: {x: 56.8, y: -47.8, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -596,12 +650,28 @@ MonoBehaviour:
   waves:
   - enemies:
     - prefab: {fileID: 5549628142487207619, guid: 66b35331de539834f819bbbac8b67800, type: 3}
-      count: 5
+      count: 3
+      spawnAsSquad: 0
+      minSquadSize: 3
+      maxSquadSize: 3
+      formationType: 0
+      initialSquadState: 1
+      squadSpacing: 4
+      squadEngageDistance: 18
+      squadAnchorMoveSpeed: 12
     spawnSpacing: 0
     timeToSpawnAfterFinalDeath: 0
   assignTeams: 1
   enemyTeamIds: 0100000002000000
   fallbackEnemyTeamId: 1
+  fallbackMinSpawnAreaSize: {x: 40, y: 40}
+  fallbackMaxSpawnAreaSize: {x: 80, y: 80}
+  autoAssignFormationSquads: 1
+  maxShipsPerAutoSquad: 5
+  autoSquadInitialState: 1
+  autoSquadSpacing: 5
+  autoSquadEngageDistance: 18
+  autoSquadAnchorMoveSpeed: 14
   defaultPoolCapacity: 50
   maxPoolSize: 200
   activeEnemiesRoot: {fileID: 0}
@@ -770,7 +840,7 @@ Transform:
   m_GameObject: {fileID: 1354088533}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.054762185, z: -10}
+  m_LocalPosition: {x: 56.8, y: -47.8, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -792,7 +862,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1941959783
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -813,6 +883,12 @@ MonoBehaviour:
   initialSpawnDelay: 5
   defaultPoolCapacity: 30
   maxPoolSize: 70
+  autoAssignFormationSquad: 1
+  maxShipsPerFriendlySquad: 5
+  friendlySquadInitialState: 0
+  friendlySquadSpacing: 5
+  friendlySquadEngageDistance: 16
+  friendlySquadAnchorMoveSpeed: 13
   activeTeamatesRoot: {fileID: 0}
   pooledRoot: {fileID: 0}
 --- !u!4 &1941959784
@@ -844,23 +920,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5549628142487207619, guid: 51f5d574addb7084cabc5b0bfe0d0bdc, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6134351781619663024, guid: 51f5d574addb7084cabc5b0bfe0d0bdc, type: 3}
       propertyPath: m_LocalScale.x
-      value: 500
+      value: 700
       objectReference: {fileID: 0}
     - target: {fileID: 6134351781619663024, guid: 51f5d574addb7084cabc5b0bfe0d0bdc, type: 3}
       propertyPath: m_LocalScale.y
-      value: 500
+      value: 700
       objectReference: {fileID: 0}
     - target: {fileID: 6134351781619663024, guid: 51f5d574addb7084cabc5b0bfe0d0bdc, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -108
+      value: -1023
       objectReference: {fileID: 0}
     - target: {fileID: 6134351781619663024, guid: 51f5d574addb7084cabc5b0bfe0d0bdc, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 122
+      value: 906
       objectReference: {fileID: 0}
     - target: {fileID: 6134351781619663024, guid: 51f5d574addb7084cabc5b0bfe0d0bdc, type: 3}
       propertyPath: m_LocalPosition.z
@@ -919,11 +995,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7670360865814592282, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 56.8
       objectReference: {fileID: 0}
     - target: {fileID: 7670360865814592282, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.054762185
+      value: -47.8
       objectReference: {fileID: 0}
     - target: {fileID: 7670360865814592282, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1167,3 +1243,4 @@ SceneRoots:
   - {fileID: 245580821}
   - {fileID: 1941959784}
   - {fileID: 1975656125}
+  - {fileID: 787467171}

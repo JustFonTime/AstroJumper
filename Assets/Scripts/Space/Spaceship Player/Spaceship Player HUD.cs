@@ -14,6 +14,9 @@ public class SpaceshipPlayerHUD : MonoBehaviour
     private SpaceshipHealthComponent playerHealth;
     private SpaceshipMovement playerMovement;
 
+    private FleetSpawner fleetSpawner;
+    private EnemySpaceshipSpawner legacyEnemySpawner;
+
     private void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
@@ -23,21 +26,46 @@ public class SpaceshipPlayerHUD : MonoBehaviour
             playerMovement = player.GetComponent<SpaceshipMovement>();
         }
 
-        if (EnemySpaceshipSpawner.Instance != null)
+        fleetSpawner = FleetSpawner.Instance;
+        if (fleetSpawner != null)
         {
-            EnemySpaceshipSpawner.Instance.OnWaveChanged += SetWave;
-            EnemySpaceshipSpawner.Instance.OnAliveEnemiesChanged += SetAliveEnemies;
-            EnemySpaceshipSpawner.Instance.AllWavesCompleted += HandleAllWavesCompleted;
+            fleetSpawner.OnWaveChanged += SetWave;
+            fleetSpawner.OnAliveEnemiesChanged += SetAliveEnemies;
+            fleetSpawner.AllWavesCompleted += HandleAllWavesCompleted;
+
+            SetWave(fleetSpawner.CurrentWave);
+            SetAliveEnemies(fleetSpawner.AliveTrackedEnemies);
+            return;
+        }
+
+        legacyEnemySpawner = EnemySpaceshipSpawner.Instance;
+        if (legacyEnemySpawner != null)
+        {
+            legacyEnemySpawner.OnWaveChanged += SetWave;
+            legacyEnemySpawner.OnAliveEnemiesChanged += SetAliveEnemies;
+            legacyEnemySpawner.AllWavesCompleted += HandleAllWavesCompleted;
+
+            SetWave(legacyEnemySpawner.CurrentWave);
+            SetAliveEnemies(legacyEnemySpawner.AliveEnemies);
         }
     }
 
     private void OnDestroy()
     {
-        if (EnemySpaceshipSpawner.Instance != null)
+        if (fleetSpawner != null)
         {
-            EnemySpaceshipSpawner.Instance.OnWaveChanged -= SetWave;
-            EnemySpaceshipSpawner.Instance.OnAliveEnemiesChanged -= SetAliveEnemies;
-            EnemySpaceshipSpawner.Instance.AllWavesCompleted -= HandleAllWavesCompleted;
+            fleetSpawner.OnWaveChanged -= SetWave;
+            fleetSpawner.OnAliveEnemiesChanged -= SetAliveEnemies;
+            fleetSpawner.AllWavesCompleted -= HandleAllWavesCompleted;
+            fleetSpawner = null;
+        }
+
+        if (legacyEnemySpawner != null)
+        {
+            legacyEnemySpawner.OnWaveChanged -= SetWave;
+            legacyEnemySpawner.OnAliveEnemiesChanged -= SetAliveEnemies;
+            legacyEnemySpawner.AllWavesCompleted -= HandleAllWavesCompleted;
+            legacyEnemySpawner = null;
         }
     }
 

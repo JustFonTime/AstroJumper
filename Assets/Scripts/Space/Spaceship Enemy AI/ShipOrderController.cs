@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+[Obsolete("ShipOrderController is deprecated. Use SquadController and reinforcement request hooks instead.", false)]
 [DisallowMultipleComponent]
 [RequireComponent(typeof(TeamAgent))]
 [RequireComponent(typeof(TargetingComponent))]
@@ -17,6 +19,9 @@ public class ShipOrderController : MonoBehaviour
     }
 
     public static readonly List<ShipOrderController> Active = new List<ShipOrderController>(256);
+
+    [Header("Legacy")]
+    [SerializeField] private bool legacyModeEnabled = false;
 
     [Header("Order")] [SerializeField] private OrderKind defaultOrder = OrderKind.Skirmish;
     [SerializeField] private bool squadControllable = true;
@@ -56,7 +61,8 @@ public class ShipOrderController : MonoBehaviour
     private float orbitSign;
     private float thinkTimer;
 
-    public bool SquadControllable => squadControllable;
+    public bool LegacyModeEnabled => legacyModeEnabled;
+    public bool SquadControllable => legacyModeEnabled && squadControllable;
     public int TeamId => self != null ? self.TeamId : 0;
     public OrderKind CurrentOrder => currentOrder;
     public Transform Anchor => anchor;
@@ -76,6 +82,12 @@ public class ShipOrderController : MonoBehaviour
 
     private void OnEnable()
     {
+        if (!legacyModeEnabled)
+        {
+            Active.Remove(this);
+            return;
+        }
+
         if (!Active.Contains(this))
             Active.Add(this);
 
@@ -89,6 +101,9 @@ public class ShipOrderController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (!legacyModeEnabled)
+            return;
+
         thinkTimer -= Time.fixedDeltaTime;
         if (thinkTimer > 0f) return;
         thinkTimer = orderThinkInterval;
@@ -103,31 +118,49 @@ public class ShipOrderController : MonoBehaviour
 
     public void IssueSkirmish()
     {
+        if (!legacyModeEnabled)
+            return;
+
         ApplyOrder(OrderKind.Skirmish, null, null);
     }
 
     public void IssueEscort(Transform leader)
     {
+        if (!legacyModeEnabled)
+            return;
+
         ApplyOrder(OrderKind.Escort, leader, null);
     }
 
     public void IssueProtect(Transform anchorTransform)
     {
+        if (!legacyModeEnabled)
+            return;
+
         ApplyOrder(OrderKind.Protect, anchorTransform, null);
     }
 
     public void IssueFocusFire(TeamAgent target)
     {
+        if (!legacyModeEnabled)
+            return;
+
         ApplyOrder(OrderKind.FocusFire, null, target);
     }
 
     public void IssueRegroup(Transform leader)
     {
+        if (!legacyModeEnabled)
+            return;
+
         ApplyOrder(OrderKind.Regroup, leader, null);
     }
 
     public void IssueRetreatFrom(Vector2 threatPos)
     {
+        if (!legacyModeEnabled)
+            return;
+
         anchor = null;
         forcedTarget = null;
         currentOrder = OrderKind.Retreat;
@@ -136,12 +169,15 @@ public class ShipOrderController : MonoBehaviour
         targeting.SetExternalTarget(null);
 
         Vector2 away = ((Vector2)transform.position - threatPos);
-        if (away.sqrMagnitude < 0.001f) away = Random.insideUnitCircle;
+        if (away.sqrMagnitude < 0.001f) away = UnityEngine.Random.insideUnitCircle;
         slotAngleRad = Mathf.Atan2(away.y, away.x);
     }
 
     private void ApplyOrder(OrderKind kind, Transform newAnchor, TeamAgent newForcedTarget)
     {
+        if (!legacyModeEnabled)
+            return;
+
         currentOrder = kind;
         anchor = newAnchor;
         forcedTarget = newForcedTarget;
@@ -295,6 +331,9 @@ public class ShipOrderController : MonoBehaviour
         goalPos = myPos;
         throttle01 = 0f;
 
+        if (!legacyModeEnabled)
+            return false;
+
         if (squadMember != null && squadMember.TryGetTravelGoal(myPos, out goalPos, out throttle01))
             return true;
 
@@ -343,6 +382,9 @@ public class ShipOrderController : MonoBehaviour
         blendWeight = 0f;
         suppressAttackRuns = false;
 
+        if (!legacyModeEnabled)
+            return false;
+
         return squadMember != null &&
                squadMember.TryGetCombatGoal(myPos, targetPos, out goalPos, out throttle01, out blendWeight,
                    out suppressAttackRuns);
@@ -350,3 +392,4 @@ public class ShipOrderController : MonoBehaviour
 
     private static Vector2 DirFromAngle(float rad) => new Vector2(Mathf.Cos(rad), Mathf.Sin(rad));
 }
+
