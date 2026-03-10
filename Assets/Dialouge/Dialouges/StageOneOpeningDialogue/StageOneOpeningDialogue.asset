@@ -10,8 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8272b93dc3d77eb438eb50b775493e52, type: 3}
-  m_Name: DialougeFileName
+  m_Name: StageOneOpeningDialogue
   m_EditorClassIdentifier: Assembly-CSharp::DialougeContainerSO
-  <FileName>k__BackingField: DialougeFileName
+  <FileName>k__BackingField: StageOneOpeningDialogue
   <Dialouges>k__BackingField:
-  - {fileID: 11400000, guid: b7fae43f599d9fb4cb5af9e1d3fc5e8e, type: 2}
+  - {fileID: 11400000, guid: 850a63f2c0d9a2f4cabc6fd9f491d4ff, type: 2}
+  - {fileID: 11400000, guid: 2f722896a8c7dbe48adbad47124724c5, type: 2}
+  - {fileID: 11400000, guid: 3f1389c80d4d59f4d85ee5c9d18a5648, type: 2}

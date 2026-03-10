@@ -10,9 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d145281873616314eabf77c7718bad03, type: 3}
-  m_Name: Choice1
+  m_Name: D3
   m_EditorClassIdentifier: Assembly-CSharp::DialougeSO
-  <DialougeName>k__BackingField: Choice1
-  <Text>k__BackingField: New Text
+  <DialougeName>k__BackingField: D3
+  <CharacterName>k__BackingField: 
+  <CharacterIcon>k__BackingField: {fileID: 0}
+  <Text>k__BackingField: Begin the training stage now!
+  <Choices>k__BackingField:
+  - <Name>k__BackingField: 
+    <Text>k__BackingField: Next Dialouge
+    <Requirements>k__BackingField: 
+    <NextDialouge>k__BackingField: {fileID: 0}
   <DialougeTypes>k__BackingField: 0
   <IsStartingDialouge>k__BackingField: 0

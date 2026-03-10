@@ -100,6 +100,8 @@ public static class DialougeIOUtility
             node.ID = nodeData.ID;
             node.Text = nodeData.Text;
             node.Choices = choices;
+            node.CharacterName = nodeData.CharacterName;
+            node.CharacterIcon = nodeData.CharacterIcon;
 
             node.Draw();
 
@@ -241,7 +243,7 @@ public static class DialougeIOUtility
 
         dialougeContainer.Dialouges.Add(dialouge);
 
-        dialouge.Initialize(node.DialougeName, node.Text, ConvertNodeChoicesToDialougeChoices(node.Choices), node.DialougeType, node.IsStaringNode());
+        dialouge.Initialize(node.DialougeName, node.Text, node.CharacterName, node.CharacterIcon, ConvertNodeChoicesToDialougeChoices(node.Choices), node.DialougeType, node.IsStaringNode());
 
         Debug.Log(dialouge.Choices.Count);
         if(ConvertNodeChoicesToDialougeChoices(node.Choices) == null)
@@ -262,6 +264,7 @@ public static class DialougeIOUtility
             DialougeChoiceData choiceData = new DialougeChoiceData()
             {
                 Text = nodeChoice.Text,
+                Requirements = nodeChoice.Requirements,
             };
         
             dialougeChoices.Add(choiceData);
@@ -278,6 +281,7 @@ public static class DialougeIOUtility
             DialougeChoiceSavaData choiceData = new DialougeChoiceSavaData()
             {
                 Text = choice.Text,
+                Requirements = choice.Requirements,
                 NodeID = choice.NodeID,
             };
 
@@ -294,6 +298,8 @@ public static class DialougeIOUtility
         {
             ID = node.ID,
             Name = node.DialougeName,
+            CharacterName = node.CharacterName,
+            CharacterIcon = node.CharacterIcon,
             Choices = choices,
             Text = node.Text,
             DialougeType = node.DialougeType,

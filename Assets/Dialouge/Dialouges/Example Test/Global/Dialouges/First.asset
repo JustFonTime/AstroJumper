@@ -13,10 +13,13 @@ MonoBehaviour:
   m_Name: First
   m_EditorClassIdentifier: Assembly-CSharp::DialougeSO
   <DialougeName>k__BackingField: First
+  <CharacterName>k__BackingField: Me
+  <CharacterIcon>k__BackingField: {fileID: 21300000, guid: f0ac408f34ad0c0419aca771715a18a7, type: 3}
   <Text>k__BackingField: This is a dialogue system
   <Choices>k__BackingField:
   - <Name>k__BackingField: 
     <Text>k__BackingField: Next Dialouge
+    <Requirements>k__BackingField: 
     <NextDialouge>k__BackingField: {fileID: 11400000, guid: 7dd992cdb1b2b8c47aef94e4443fea9f, type: 2}
   <DialougeTypes>k__BackingField: 0
   <IsStartingDialouge>k__BackingField: 1
