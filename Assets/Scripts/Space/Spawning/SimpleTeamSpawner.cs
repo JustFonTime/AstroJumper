@@ -1,95 +1,79 @@
-﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
 using Random = UnityEngine.Random;
-
 
 [DisallowMultipleComponent]
 [RequireComponent(typeof(FleetSpawner))]
 [AddComponentMenu("Space/Spawning/Simple Team Spawner")]
 public class SimpleTeamSpawner : MonoBehaviour
 {
-    [Serializable]
-    public class SimpleTeamEntry
-    {
-        public string label = "Team";
-        public int teamId = 1;
-        [Range(1, 10)] public int squadSize = 5;
-        [Min(1)] public int initialSquads = 1;
-        public GameObject shipPrefab;
-        public Transform spawnPoint;
-        public Transform focusTarget;
-    }
+    [Header("Battle Setup")]
+    [SerializeField] private int teamAId = 1;
+    [SerializeField] private int teamBId = 2;
+    [SerializeField] [Range(1, 10)] private int squadsPerFleet = 2;
+    [SerializeField] [Range(1, 10)] private int shipsPerSquad = 5;
+    [SerializeField] private GameObject sharedShipPrefab;
+    [SerializeField] private GameObject teamAShipPrefab;
+    [SerializeField] private GameObject teamBShipPrefab;
 
-    [Header("Teams")]
-    [SerializeField] private List<SimpleTeamEntry> teams = new List<SimpleTeamEntry>();
-    [SerializeField] private bool autoSpawnOnStart = true;
-    [SerializeField] private bool disableLegacySpawnersOnStart = true;
-
-    [Header("Shared Squad Settings")]
+    [Header("Formation")]
     [SerializeField] private EnemySquadFormationType formationType = EnemySquadFormationType.Vee;
     [SerializeField] private EnemySquadState squadState = EnemySquadState.Engage;
     [SerializeField] private float squadSpacing = 5f;
     [SerializeField] private float squadEngageDistance = 18f;
     [SerializeField] private float squadAnchorMoveSpeed = 14f;
-    [SerializeField] private float squadClusterSpacing = 14f;
+    [SerializeField] private float squadClusterSpacing = 16f;
+    [SerializeField] private Vector2 squadJitter = new Vector2(4f, 4f);
 
-    [Header("Fallback Spawn Placement")]
-    [SerializeField] private SpaceArenaBoundaryController arenaBoundary;
-    [SerializeField] [Range(0.05f, 2f)] private float boundaryRadiusMultiplier = 0.85f;
-    [SerializeField] private float defaultTeamSeparation = 5000f;
-    [SerializeField] private Vector2 localJitter = new Vector2(8f, 8f);
+    [Header("Spawn Points")]
+    [SerializeField] private Transform teamASpawnPoint;
+    [SerializeField] private Transform teamBSpawnPoint;
+    [SerializeField] private float defaultFleetSeparation = 220f;
 
-    [Header("Hotkeys (Spawn One Extra Squad)")]
-    [SerializeField] private bool enableHotkeys = true;
-    [SerializeField] private KeyCode spawnTeam1Key = KeyCode.U;
-    [SerializeField] private KeyCode spawnTeam2Key = KeyCode.I;
-    [SerializeField] private KeyCode spawnTeam3Key = KeyCode.O;
+    [Header("Runtime")]
+    [SerializeField] private bool autoSpawnOnStart = true;
+    [SerializeField] private bool disableOtherSpawnersOnStart = true;
+    [SerializeField] private bool updateFleetFocusFromLiveCenters = true;
+    [SerializeField] private bool enableSpawnHotkey = true;
+    [SerializeField] private KeyCode spawnBattleKey = KeyCode.B;
+    [SerializeField] private bool setTrackedEnemyTeamsOnFleetSpawner = true;
 
     private FleetSpawner fleetSpawner;
-    private GameObject player;
-    private int playerTeamId;
+    private Transform teamAFocusProxy;
+    private Transform teamBFocusProxy;
 
     private void Awake()
     {
         fleetSpawner = GetComponent<FleetSpawner>();
         if (fleetSpawner == null)
             fleetSpawner = FleetSpawner.Instance;
-
-        ResolveRuntimeRefs();
     }
 
     private void Start()
     {
-        ResolveRuntimeRefs();
+        if (disableOtherSpawnersOnStart)
+            DisableOtherSpawners();
 
-        if (disableLegacySpawnersOnStart)
-            DisableLegacySpawners();
+        EnsureFocusProxies();
 
-        ApplyTrackedEnemyTeamsToFleet();
+        if (setTrackedEnemyTeamsOnFleetSpawner && fleetSpawner != null)
+            fleetSpawner.SetTrackedEnemyTeams(new List<int> { teamAId, teamBId });
 
         if (autoSpawnOnStart)
-            SpawnAllConfiguredTeams();
+            SpawnBattle();
     }
 
     private void Update()
     {
-        if (!enableHotkeys)
-            return;
+        if (updateFleetFocusFromLiveCenters)
+            UpdateFocusTargetsFromLiveTeams();
 
-        if (Input.GetKeyDown(spawnTeam1Key))
-            SpawnExtraSquadForTeamIndex(0);
-
-        if (Input.GetKeyDown(spawnTeam2Key))
-            SpawnExtraSquadForTeamIndex(1);
-
-        if (Input.GetKeyDown(spawnTeam3Key))
-            SpawnExtraSquadForTeamIndex(2);
+        if (enableSpawnHotkey && Input.GetKeyDown(spawnBattleKey))
+            SpawnBattle();
     }
 
-    [ContextMenu("Spawn All Configured Teams")]
-    public void SpawnAllConfiguredTeams()
+    [ContextMenu("Spawn Battle")]
+    public void SpawnBattle()
     {
         if (fleetSpawner == null)
         {
@@ -97,80 +81,94 @@ public class SimpleTeamSpawner : MonoBehaviour
             return;
         }
 
-        for (int i = 0; i < teams.Count; i++)
+        if (teamAId == teamBId)
         {
-            SimpleTeamEntry entry = teams[i];
-            if (entry == null)
-                continue;
-
-            SpawnTeamByIndex(i, Mathf.Max(1, entry.initialSquads));
+            Debug.LogError("SimpleTeamSpawner: teamAId and teamBId must be different.");
+            return;
         }
+
+        EnsureFocusProxies();
+
+        Vector3 teamABase = ResolveSpawnBase(isTeamA: true);
+        Vector3 teamBBase = ResolveSpawnBase(isTeamA: false);
+
+        SpawnFleet(teamAId, teamABase, teamBFocusProxy, ResolveTeamPrefab(isTeamA: true));
+        SpawnFleet(teamBId, teamBBase, teamAFocusProxy, ResolveTeamPrefab(isTeamA: false));
+
+        UpdateFocusTargetsFromLiveTeams();
     }
 
     public void SpawnExtraSquadForTeamIndex(int teamIndex)
     {
-        SpawnTeamByIndex(teamIndex, 1);
-    }
-
-    private void SpawnTeamByIndex(int teamIndex, int squadsToSpawn)
-    {
         if (fleetSpawner == null)
             return;
 
-        if (teamIndex < 0 || teamIndex >= teams.Count)
-            return;
+        EnsureFocusProxies();
 
-        SimpleTeamEntry entry = teams[teamIndex];
-        if (entry == null)
-            return;
-
-        int squadCount = Mathf.Max(1, squadsToSpawn);
-        int squadSize = Mathf.Clamp(entry.squadSize, 1, 10);
-
-        for (int squadIndex = 0; squadIndex < squadCount; squadIndex++)
+        if (teamIndex == 0)
         {
-            Vector3 basePos = ResolveBasePositionForTeamIndex(teamIndex);
-            Vector3 clusterOffset = ComputeSquadOffset(squadIndex);
-            Vector3 spawnPos = basePos + clusterOffset + (Vector3)RandomLocalJitter();
-
-            fleetSpawner.SpawnSquadForTeam(
-                entry.teamId,
-                squadSize,
-                spawnPos,
-                formationType,
-                squadSpacing,
-                squadState,
-                squadEngageDistance,
-                squadAnchorMoveSpeed,
-                entry.focusTarget,
-                entry.shipPrefab);
+            SpawnSingleSquad(teamAId, ResolveSpawnBase(isTeamA: true), teamBFocusProxy, ResolveTeamPrefab(isTeamA: true), 0);
+            return;
         }
+
+        if (teamIndex == 1)
+            SpawnSingleSquad(teamBId, ResolveSpawnBase(isTeamA: false), teamAFocusProxy, ResolveTeamPrefab(isTeamA: false), 0);
     }
 
-    private Vector3 ResolveBasePositionForTeamIndex(int teamIndex)
+    public void SpawnAllConfiguredTeams()
     {
-        if (teamIndex < 0 || teamIndex >= teams.Count)
-            return Vector3.zero;
+        SpawnBattle();
+    }
 
-        SimpleTeamEntry entry = teams[teamIndex];
-        if (entry != null && entry.spawnPoint != null)
-            return entry.spawnPoint.position;
+    private void SpawnFleet(int teamId, Vector3 basePosition, Transform focusTarget, GameObject prefab)
+    {
+        int count = Mathf.Max(1, squadsPerFleet);
+        for (int squadIndex = 0; squadIndex < count; squadIndex++)
+            SpawnSingleSquad(teamId, basePosition, focusTarget, prefab, squadIndex);
+    }
 
-        if (arenaBoundary == null)
-            arenaBoundary = FindObjectOfType<SpaceArenaBoundaryController>();
+    private void SpawnSingleSquad(
+        int teamId,
+        Vector3 basePosition,
+        Transform focusTarget,
+        GameObject prefab,
+        int squadIndex)
+    {
+        Vector3 spawnPos = basePosition + ComputeSquadOffset(squadIndex) + (Vector3)RandomJitter();
+        fleetSpawner.SpawnSquadForTeam(
+            teamId,
+            Mathf.Clamp(shipsPerSquad, 1, 10),
+            spawnPos,
+            formationType,
+            Mathf.Max(1f, squadSpacing),
+            squadState,
+            Mathf.Max(1f, squadEngageDistance),
+            Mathf.Max(0.1f, squadAnchorMoveSpeed),
+            focusTarget,
+            prefab);
+    }
 
-        if (arenaBoundary != null && arenaBoundary.SafeRadius > 0.01f)
-        {
-            int totalTeams = Mathf.Max(1, teams.Count);
-            float angleDeg = (360f / totalTeams) * teamIndex;
-            float radius = Mathf.Max(1f, arenaBoundary.SafeRadius * Mathf.Max(0.05f, boundaryRadiusMultiplier));
-            Vector2 offset = Quaternion.Euler(0f, 0f, angleDeg) * Vector2.right * radius;
-            return (Vector3)arenaBoundary.CenterPosition + (Vector3)offset;
-        }
+    private Vector3 ResolveSpawnBase(bool isTeamA)
+    {
+        Transform spawn = isTeamA ? teamASpawnPoint : teamBSpawnPoint;
+        if (spawn != null)
+            return spawn.position;
 
-        Vector3 center = player != null ? player.transform.position : Vector3.zero;
-        float separation = Mathf.Max(100f, defaultTeamSeparation);
-        return center + new Vector3(separation * teamIndex, 0f, 0f);
+        float halfSeparation = Mathf.Max(10f, defaultFleetSeparation) * 0.5f;
+        return isTeamA ? Vector3.left * halfSeparation : Vector3.right * halfSeparation;
+    }
+
+    private GameObject ResolveTeamPrefab(bool isTeamA)
+    {
+        GameObject specific = isTeamA ? teamAShipPrefab : teamBShipPrefab;
+        return specific != null ? specific : sharedShipPrefab;
+    }
+
+    private Vector2 RandomJitter()
+    {
+        float x = Random.Range(-Mathf.Abs(squadJitter.x), Mathf.Abs(squadJitter.x));
+        float y = Random.Range(-Mathf.Abs(squadJitter.y), Mathf.Abs(squadJitter.y));
+        return new Vector2(x, y);
     }
 
     private Vector3 ComputeSquadOffset(int squadIndex)
@@ -181,57 +179,70 @@ public class SimpleTeamSpawner : MonoBehaviour
         int ringSize = 6;
         int ring = ((squadIndex - 1) / ringSize) + 1;
         int indexInRing = (squadIndex - 1) % ringSize;
-
         float angleDeg = (360f / ringSize) * indexInRing;
         float radius = Mathf.Max(1f, squadClusterSpacing) * ring;
         Vector2 offset = Quaternion.Euler(0f, 0f, angleDeg) * Vector2.right * radius;
         return offset;
     }
 
-    private Vector2 RandomLocalJitter()
+    private void EnsureFocusProxies()
     {
-        float x = Random.Range(-Mathf.Abs(localJitter.x), Mathf.Abs(localJitter.x));
-        float y = Random.Range(-Mathf.Abs(localJitter.y), Mathf.Abs(localJitter.y));
-        return new Vector2(x, y);
+        if (teamAFocusProxy == null)
+            teamAFocusProxy = CreateFocusProxy("TeamA_FocusProxy");
+
+        if (teamBFocusProxy == null)
+            teamBFocusProxy = CreateFocusProxy("TeamB_FocusProxy");
+
+        if (teamAFocusProxy != null)
+            teamAFocusProxy.position = ResolveSpawnBase(isTeamA: true);
+
+        if (teamBFocusProxy != null)
+            teamBFocusProxy.position = ResolveSpawnBase(isTeamA: false);
     }
 
-    private void ResolveRuntimeRefs()
+    private Transform CreateFocusProxy(string focusName)
     {
-        if (player == null)
-            player = GameObject.FindGameObjectWithTag("Player");
-
-        if (player == null)
-        {
-            playerTeamId = 0;
-            return;
-        }
-
-        TeamAgent playerTeamAgent = player.GetComponent<TeamAgent>();
-        playerTeamId = playerTeamAgent != null ? playerTeamAgent.TeamId : 0;
+        GameObject go = new GameObject(focusName);
+        go.transform.SetParent(transform, true);
+        return go.transform;
     }
 
-    private void ApplyTrackedEnemyTeamsToFleet()
+    private void UpdateFocusTargetsFromLiveTeams()
     {
-        if (fleetSpawner == null)
+        if (teamAFocusProxy == null || teamBFocusProxy == null)
             return;
 
-        HashSet<int> trackedEnemyTeams = new HashSet<int>();
-        for (int i = 0; i < teams.Count; i++)
+        if (TryGetTeamCenter(teamAId, out Vector3 teamACenter))
+            teamAFocusProxy.position = teamACenter;
+
+        if (TryGetTeamCenter(teamBId, out Vector3 teamBCenter))
+            teamBFocusProxy.position = teamBCenter;
+    }
+
+    private static bool TryGetTeamCenter(int teamId, out Vector3 center)
+    {
+        center = Vector3.zero;
+        int count = 0;
+
+        IReadOnlyList<TeamAgent> agents = TeamRegistry.Agents;
+        for (int i = 0; i < agents.Count; i++)
         {
-            SimpleTeamEntry entry = teams[i];
-            if (entry == null)
+            TeamAgent agent = agents[i];
+            if (agent == null || !agent.isActiveAndEnabled || agent.TeamId != teamId)
                 continue;
 
-            if (entry.teamId == playerTeamId)
-                continue;
-
-            trackedEnemyTeams.Add(entry.teamId);
+            center += agent.transform.position;
+            count++;
         }
 
-        fleetSpawner.SetTrackedEnemyTeams(new List<int>(trackedEnemyTeams));
+        if (count <= 0)
+            return false;
+
+        center /= count;
+        return true;
     }
 
-    private void DisableLegacySpawners()
+    private void DisableOtherSpawners()
     {
 #pragma warning disable CS0618
         EnemySpaceshipSpawner[] enemySpawners = FindObjectsOfType<EnemySpaceshipSpawner>(true);
