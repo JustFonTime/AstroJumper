@@ -13,7 +13,10 @@ public class HitBox : MonoBehaviour
     [SerializeField] private int damage = 10;
     [SerializeField] private bool isPermanent = false; // for hitboxes you attach to the enemy itself
     [SerializeField] private float duration = 1f;
+
     [SerializeField] private float knockbackForce = 5f;
+    [SerializeField] private float knockbackVerticalForce = 3f;
+
     [SerializeField] private bool isMelee = true; 
     [SerializeField] private float projectileSpeed = 5f;
     [SerializeField] private LayerMask targetLayer; // which layer the hitbox should interact with (player, enemy, etc.)
@@ -68,6 +71,12 @@ public class HitBox : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D other)
     {
         GameObject otherObject = other.gameObject;
+
+        //self protection can not hit itself
+        if (other.transform.IsChildOf(transform.root) ||
+        other.transform == transform.root)
+            return;
+
         print("hitbox: Hit " + other.name);
         if ((targetLayer.value & (1 << otherObject.layer)) == 0 || (ignoreLayer.value & (1 << otherObject.layer)) != 0) // Checks if objects layer is in the layer mask, found from https://discussions.unity.com/t/checking-if-a-layer-is-in-a-layer-mask/860331
         {
@@ -77,8 +86,8 @@ public class HitBox : MonoBehaviour
         Unit unit = other.GetComponent<Unit>();
         if (unit != null)
         {
-            unit.TakeDamage(damage);
-            if(!isMelee)
+            unit.TakeDamage(damage, knockbackForce, knockbackVerticalForce, transform.position);
+            if (!isMelee)
             {
                 DestroyAttack();
 
@@ -100,6 +109,9 @@ public class HitBox : MonoBehaviour
     {
         return sprite;
     }
+
+    public float GetKnockbackForce() => knockbackForce;
+    public float GetKnockbackVerticalForce() => knockbackVerticalForce;
 
     private void DestroyAttack()
     {

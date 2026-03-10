@@ -5,11 +5,14 @@ using UnityEngine;
 using System.Xml.Serialization;
 using System;
 using System.Linq;
+using UnityEditor.Search;
 
 public class DialougeNode : Node
 {
     public string ID { get; set; }
     public string DialougeName {get; set;}
+    public string CharacterName { get; set; }
+    public Sprite CharacterIcon { get; set; }
     public List<DialougeChoiceSavaData> Choices { get; set; }
     public string Text { get; set; }
     public DialougeTypes DialougeType { get; set; }
@@ -22,6 +25,8 @@ public class DialougeNode : Node
         ID = Guid.NewGuid().ToString();
         this.graphView = graphView;
         DialougeName = nodeName;
+        CharacterName = "New Character";
+        CharacterIcon = null;
         Choices = new List<DialougeChoiceSavaData>();
         Text = "New Text";
         SetPosition(new Rect(position, Vector2.zero));
@@ -62,15 +67,39 @@ public class DialougeNode : Node
 
         VisualElement customDataContainer = new VisualElement();
 
+        Foldout textNameFoldout = DialougeElementUtility.CreateFoldout("Character Name");
+        TextField textNameTextField = DialougeElementUtility.CreateTextField(CharacterName, label: null, callback =>
+        {
+            CharacterName = callback.newValue;
+        });
+        textNameFoldout.Add(textNameTextField);
+        customDataContainer.Add(textNameFoldout);
+
+        extensionContainer.Add(customDataContainer);
+        
         Foldout textFoldout = DialougeElementUtility.CreateFoldout("Dialouge Text");
         TextField textTextField = DialougeElementUtility.CreateTextArea(Text, null, callback =>
         {
             Text = callback.newValue;
         });
         textFoldout.Add(textTextField);
+        
+
+        ObjectField characterIcon = new ObjectField("Character Icon")
+        {
+            objectType = typeof(Sprite),
+            value = CharacterIcon
+        };
+
+        characterIcon.RegisterValueChangedCallback(evt =>
+        {
+            CharacterIcon = evt.newValue as Sprite;
+        });
+
+        textFoldout.Add(characterIcon);
         customDataContainer.Add(textFoldout);
 
-        extensionContainer.Add(customDataContainer);
+
     }
 
     public void DisconnectAllPorts()

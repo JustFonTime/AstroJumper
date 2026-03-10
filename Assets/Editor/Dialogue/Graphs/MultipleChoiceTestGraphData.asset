@@ -1,0 +1,69 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0339091ce14bb0640878a4b65c6c98e9, type: 3}
+  m_Name: MultipleChoiceTestGraphData
+  m_EditorClassIdentifier: Assembly-CSharp-Editor::DialougeGraphSavaDataSO
+  <FileName>k__BackingField: MultipleChoiceTest
+  <Nodes>k__BackingField:
+  - <Name>k__BackingField: MultiTest1
+    <CharacterName>k__BackingField: New Character
+    <CharacterIcon>k__BackingField: insert file path here
+    <Text>k__BackingField: Testing for multiple choice
+    <ID>k__BackingField: e6934abe-b3e6-4bf9-ba76-a3e998cf87ba
+    <Choices>k__BackingField:
+    - <Text>k__BackingField: Next Dialouge
+      <Requirements>k__BackingField: 
+      <NodeID>k__BackingField: 2d458972-e923-41b9-9e07-9bdef9696dca
+    <DialougeType>k__BackingField: 0
+    <Position>k__BackingField: {x: 57.333336, y: 246}
+  - <Name>k__BackingField: multi4
+    <CharacterName>k__BackingField: New Character
+    <CharacterIcon>k__BackingField: insert file path here
+    <Text>k__BackingField: Hopeffuly this really works
+    <ID>k__BackingField: babc1c43-e344-4dad-b91c-2de855df8ea6
+    <Choices>k__BackingField:
+    - <Text>k__BackingField: Next Dialouge
+      <Requirements>k__BackingField: 
+      <NodeID>k__BackingField: 
+    <DialougeType>k__BackingField: 0
+    <Position>k__BackingField: {x: 864, y: 358.66666}
+  - <Name>k__BackingField: multi3
+    <CharacterName>k__BackingField: New Character
+    <CharacterIcon>k__BackingField: insert file path here
+    <Text>k__BackingField: hopefully this works
+    <ID>k__BackingField: 3090adcc-f178-4266-979d-3a54680c6d06
+    <Choices>k__BackingField:
+    - <Text>k__BackingField: Next Dialouge
+      <Requirements>k__BackingField: 
+      <NodeID>k__BackingField: 
+    <DialougeType>k__BackingField: 0
+    <Position>k__BackingField: {x: 814.6667, y: 184.66667}
+  - <Name>k__BackingField: DialougeName
+    <CharacterName>k__BackingField: New Character
+    <CharacterIcon>k__BackingField: insert file path here
+    <Text>k__BackingField: One should have a requirement and the other should return
+      an empty string
+    <ID>k__BackingField: 2d458972-e923-41b9-9e07-9bdef9696dca
+    <Choices>k__BackingField:
+    - <Text>k__BackingField: Bing
+      <Requirements>k__BackingField: statOne:50
+      <NodeID>k__BackingField: 3090adcc-f178-4266-979d-3a54680c6d06
+    - <Text>k__BackingField: Bop
+      <Requirements>k__BackingField: progress:10
+      <NodeID>k__BackingField: babc1c43-e344-4dad-b91c-2de855df8ea6
+    <DialougeType>k__BackingField: 1
+    <Position>k__BackingField: {x: 344.66666, y: 210.66667}
+  <OldUngroupedNodeNames>k__BackingField:
+  - MultiTest1
+  - multi4
+  - multi3
+  - DialougeName

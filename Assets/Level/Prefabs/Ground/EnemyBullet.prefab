@@ -170,3 +170,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyProjectile
   lifetime: 5
+  projectileDamage: 10
