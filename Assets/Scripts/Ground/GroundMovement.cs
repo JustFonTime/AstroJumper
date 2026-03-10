@@ -36,6 +36,12 @@ public class GroundMovement : MonoBehaviour
     [SerializeField] private string jumpActionName = "Jump";
     [SerializeField] private string dropActionName = "Drop";
 
+    [Header("Knockback")]
+    [SerializeField] private float knockbackDuration = 0.3f;
+    
+    private bool isKnockedBack;
+    private Unit unit;
+
     private Rigidbody2D rb;
     private Collider2D playerCol;
 
@@ -55,6 +61,7 @@ public class GroundMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         playerCol = GetComponent<Collider2D>();
+        unit = GetComponent<Unit>();
 
         if (groundCheck == null)
             Debug.LogError("GroundMovement: groundCheck is not assigned.");
@@ -76,6 +83,8 @@ public class GroundMovement : MonoBehaviour
 
         jumpAction.performed += OnJump;
         dropAction.performed += OnDrop;
+
+        Unit.onKnockedBack += OnKnockedBack;
     }
 
     private void OnDisable()
@@ -86,6 +95,31 @@ public class GroundMovement : MonoBehaviour
         moveAction.Disable();
         jumpAction.Disable();
         dropAction.Disable();
+        
+        Unit.onKnockedBack -= OnKnockedBack;
+
+    }
+
+    //knockback event subscription
+    private void OnKnockedBack(Unit damagedUnit, Vector2 force)
+    {
+        if (unit == null || damagedUnit != unit) return;
+        StartCoroutine(DoKnockback(force));
+    }
+
+
+    //call this method to apply knockback to players
+    private IEnumerator DoKnockback(Vector2 force)
+    {
+        isKnockedBack = true;
+
+        // Apply the force after zeroing horizontal velocity
+        rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
+        rb.AddForce(force, ForceMode2D.Impulse);
+
+        yield return new WaitForSeconds(knockbackDuration);
+
+        isKnockedBack = false;
     }
 
     private void Update()
@@ -116,7 +150,9 @@ public class GroundMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        HandleHorizontal();
+        if (!isKnockedBack)
+            HandleHorizontal();
+
         HandleJumpBuffered();
     }
 
@@ -140,15 +176,20 @@ public class GroundMovement : MonoBehaviour
 
         float clampedX = Mathf.Clamp(rb.linearVelocity.x, -moveSpeed, moveSpeed);
         rb.linearVelocity = new Vector2(clampedX, rb.linearVelocity.y);
-        if (xInput > 0.01f)
+
+        // Only update facing direction when not knocked back so sprite doesn't flip
+        if (!isKnockedBack)
         {
-            isFacingRight = true;
-            this.gameObject.GetComponent<SpriteRenderer>().flipX = false;
-        }
-        else if (xInput < -0.01f)
-        {
-            isFacingRight = false;
-            this.gameObject.GetComponent<SpriteRenderer>().flipX = true;
+            if (xInput > 0.01f)
+            {
+                isFacingRight = true;
+                GetComponent<SpriteRenderer>().flipX = false;
+            }
+            else if (xInput < -0.01f)
+            {
+                isFacingRight = false;
+                GetComponent<SpriteRenderer>().flipX = true;
+            }
         }
     }
 
