@@ -23,18 +23,23 @@ public class GameOverManager : MonoBehaviour
     // Called by Retry button
     public void RetryLevel()
     {
-        Debug.Log("Retry clicked - Game scene not yet implemented");
+        SceneLoader.Instance.LoadNextScene("Tutorial Ground");
+    }
+
+    public void RetrySpaceLevel()
+    {
+        SceneLoader.Instance.LoadNextScene("Tutorial Space");
     }
 
     // Called by Level Select button
     public void GoToLevelSelect()
     {
-        SceneManager.LoadScene("Level Selector 2");
+        SceneLoader.Instance.LoadNextScene("Level Selector 2");
     }
 
     // Called by Main Menu button
     public void GoToMainMenu()
     {
-        SceneManager.LoadScene("Menus");
+        SceneLoader.Instance.LoadNextScene("Menus");
     }
 }

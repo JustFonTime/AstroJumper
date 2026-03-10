@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 8411720836180918621}
   - component: {fileID: 5720486373328719542}
   - component: {fileID: 9160677334752284955}
-  - component: {fileID: 7111247293776723749}
+  - component: {fileID: 1680502412916377063}
   m_Layer: 0
   m_Name: Player Spaceship
   m_TagString: Player
@@ -117,6 +117,8 @@ MonoBehaviour:
   playerUpgradeState: {fileID: 4162244750886775844}
   shipProfile: {fileID: 0}
   shieldVFX: {fileID: 6809346634109102056}
+  deathSfx: {fileID: 0}
+  deathVolume: 1
   currentHealth: 50
   maxHealth: 50
   maxShileds: 50
@@ -178,8 +180,8 @@ MonoBehaviour:
   forwardThrust: 12
   maxSpeed: 35
   brakeStrength: 6
-  alignStrength: 0
-  coastDampStrength: 0
+  alignStrength: 6
+  coastDampStrength: 1.25
   rotationOffset: -90
   rotationLerp: 9
   barrellRollDistance: 10.37
@@ -194,7 +196,7 @@ MonoBehaviour:
   boostConsumptionRate: 20
   rechargeDelay: 2
   rechargeRate: 10
-  drawDebug: 1
+  drawDebug: 0
   drawOnlyWhenSelected: 0
   velocityGizmoScale: 0.25
   forceGizmoScale: 0.05
@@ -276,7 +278,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamAgent
   teamId: 0
---- !u!114 &7111247293776723749
+--- !u!114 &1680502412916377063
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -289,7 +291,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TargetSlots
   teamId: 0
-  maxAttackers: 3
+  maxAttackers: 10
 --- !u!1 &6809346634109102056
 GameObject:
   m_ObjectHideFlags: 0

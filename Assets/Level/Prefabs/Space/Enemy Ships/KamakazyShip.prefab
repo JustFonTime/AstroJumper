@@ -205,7 +205,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 16797ee38a3232b4ba33d6c06881adf2, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 41998a512477564498b670a9cf577929, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -260,6 +260,8 @@ MonoBehaviour:
   playerUpgradeState: {fileID: 0}
   shipProfile: {fileID: 11400000, guid: 8bd50cbd59634a2448b1c6805ea7ad4d, type: 2}
   shieldVFX: {fileID: 7468690794723602730}
+  deathSfx: {fileID: 0}
+  deathVolume: 1
   currentHealth: 100
   maxHealth: 100
   maxShileds: 100
@@ -316,7 +318,7 @@ MonoBehaviour:
   explosionForce: 10
   enemyLayer:
     serializedVersion: 2
-    m_Bits: 2147487744
+    m_Bits: 4096
   startedExplosionSequence: 0
 --- !u!50 &3101948059298077492
 Rigidbody2D:

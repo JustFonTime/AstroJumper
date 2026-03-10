@@ -9,11 +9,12 @@ public class LoadingManager : MonoBehaviour
     public TMP_Text loadingText; // Reference to the TextMeshProUGUI component for displaying loading text
 
     [Header("Loading Settings")]
-    public string sceneToLoad = "Level Selector 2"; // Name of the scene to load
+    public string sceneToLoad = ""; // Name of the scene to load
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        sceneToLoad = SceneLoader.Instance.SceneToLoad;
         StartCoroutine(LoadSceneAsync());
     }
 
@@ -35,6 +36,6 @@ public class LoadingManager : MonoBehaviour
                 asyncLoad.allowSceneActivation = true; // Allow the scene to activate
             }
             yield return null;
-        } 
+        }
     }
 }
