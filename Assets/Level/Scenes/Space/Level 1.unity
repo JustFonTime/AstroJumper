@@ -212,48 +212,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e5dc360da6c157940a327e3bdc1adb5b, type: 3}
---- !u!1 &428016414 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5549628142487207619, guid: 51f5d574addb7084cabc5b0bfe0d0bdc, type: 3}
-  m_PrefabInstance: {fileID: 1975656125}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &428016424
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 428016414}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7344ffbad6df0b444b8aebe661450d94, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FlagshipSlowMovement
-  moveSpeed: 2
-  turnSpeedDegPerSec: 10
-  roamRadius: 20
-  arriveDistance: 2
-  minRetargetDelay: 1.5
-  maxRetargetDelay: 4
---- !u!1 &434068929 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6743563204653108161, guid: 51f5d574addb7084cabc5b0bfe0d0bdc, type: 3}
-  m_PrefabInstance: {fileID: 1975656125}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &434068935
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 434068929}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ca1f604d46837b24198020f96b937bcf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TargetSlots
-  teamId: 0
-  maxAttackers: 10
 --- !u!1 &619394800
 GameObject:
   m_ObjectHideFlags: 0
@@ -740,7 +698,7 @@ MonoBehaviour:
   useArenaBoundaryIfAvailable: 1
   boundarySpawnRadiusRatio: 0.82
   fallbackFlagshipSeparation: 1400
-  fleetSpawnRadiusAroundFlagship: 120
+  fleetSpawnRadiusAroundFlagship: 275
   squadSpawnJitter: {x: 20, y: 20}
   defendRatio: 0.34
   attackRatio: 0.43
@@ -751,8 +709,12 @@ MonoBehaviour:
   roamProgressSpeed: 0.18
   hookReinforcementRequests: 1
   disableFleetSpawnerAutoFulfill: 1
-  reinforcementSpawnRadius: 75
+  reinforcementSpawnRadius: 245
   maxReinforcementsPerRequest: 5
+  drawSpawnRadiusDebug: 1
+  drawSpawnRadiusOnlyWhenSelected: 0
+  fleetSpawnRadiusDebugColor: {r: 0.2, g: 0.55, b: 1, a: 0.95}
+  reinforcementSpawnRadiusDebugColor: {r: 0.2, g: 0.55, b: 1, a: 0.5}
 --- !u!114 &1055831341
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1016,14 +978,6 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6134351781619663024, guid: 51f5d574addb7084cabc5b0bfe0d0bdc, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 700
-      objectReference: {fileID: 0}
-    - target: {fileID: 6134351781619663024, guid: 51f5d574addb7084cabc5b0bfe0d0bdc, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 700
-      objectReference: {fileID: 0}
-    - target: {fileID: 6134351781619663024, guid: 51f5d574addb7084cabc5b0bfe0d0bdc, type: 3}
       propertyPath: m_LocalPosition.x
       value: -1023
       objectReference: {fileID: 0}
@@ -1066,13 +1020,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 5549628142487207619, guid: 51f5d574addb7084cabc5b0bfe0d0bdc, type: 3}
-      insertIndex: 7
-      addedObject: {fileID: 428016424}
-    - targetCorrespondingSourceObject: {fileID: 6743563204653108161, guid: 51f5d574addb7084cabc5b0bfe0d0bdc, type: 3}
-      insertIndex: 3
-      addedObject: {fileID: 434068935}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 51f5d574addb7084cabc5b0bfe0d0bdc, type: 3}
 --- !u!1001 &2006749524
 PrefabInstance:
