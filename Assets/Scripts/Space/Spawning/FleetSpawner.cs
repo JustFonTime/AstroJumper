@@ -257,10 +257,16 @@ public class FleetSpawner : MonoBehaviour
             agent.SetTeam(teamId);
 
         if (go.TryGetComponent<EnemySpaceshipAI>(out EnemySpaceshipAI ai))
+        {
+            ai.enabled = true;
             ai.ResetForSpawn(player);
+        }
 
         if (go.TryGetComponent<EnemySpaceshipCombatAI>(out EnemySpaceshipCombatAI combat))
+        {
+            combat.enabled = true;
             combat.ResetForSpawn();
+        }
 
         if (assignAutoSquad && autoAssignShipsToSquads)
             TryAssignToAutoSquad(go, teamId, focusTargetOverride);
@@ -444,6 +450,21 @@ public class FleetSpawner : MonoBehaviour
 
         if (autoFulfillReinforcementRequests)
             TryFulfillPendingRequestForSquad(request.Squad);
+    }
+
+    public void SetAutoFulfillReinforcementRequests(bool enabled)
+    {
+        autoFulfillReinforcementRequests = enabled;
+    }
+
+    public void RemovePendingReinforcementRequest(EnemySquadController squad)
+    {
+        if (squad == null)
+            return;
+
+        int index = FindPendingRequestIndex(squad);
+        if (index >= 0)
+            pendingReinforcementRequests.RemoveAt(index);
     }
 
     public void NotifyShipGone(int teamId)
@@ -1138,12 +1159,3 @@ public class FleetSpawner : MonoBehaviour
         return offset;
     }
 }
-
-
-
-
-
-
-
-
-

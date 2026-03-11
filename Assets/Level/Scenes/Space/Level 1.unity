@@ -348,6 +348,7 @@ GameObject:
   m_Component:
   - component: {fileID: 787467171}
   - component: {fileID: 787467170}
+  - component: {fileID: 787467172}
   m_Layer: 0
   m_Name: BorderController
   m_TagString: Untagged
@@ -370,9 +371,9 @@ MonoBehaviour:
   center: {fileID: 787467171}
   centerTag: Player
   autoFindCenterOnEnable: 0
-  safeRadius: 2000
+  safeRadius: 1000
   graceSecondsOutside: 10
-  includePlayer: 0
+  includePlayer: 1
   lethalDamage: 1000000
   checkInterval: 0.25
   drawDebugRadius: 1
@@ -392,6 +393,47 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &787467172
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 787467169}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd592fef57ce4f6993cacecbb4907061, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SquadDebugHotkeys
+  enableHotkeys: 1
+  controlScope: 0
+  cycleScopeKey: 9
+  veeKey: 49
+  lineKey: 50
+  diamondKey: 51
+  ringKey: 52
+  escortKey: 53
+  spacingDecreaseKey: 91
+  spacingIncreaseKey: 93
+  spacingStep: 0.5
+  formUpKey: 122
+  engageKey: 120
+  regroupKey: 99
+  retreatKey: 118
+  showOverlay: 1
+  toggleOverlayKey: 282
+  toggleControlsCategoryKey: 283
+  toggleSquadsCategoryKey: 284
+  toggleSystemCategoryKey: 285
+  showControlsCategory: 1
+  showSquadsCategory: 1
+  showSystemCategory: 1
+  fontSize: 26
+  textColor: {r: 1, g: 1, b: 1, a: 1}
+  overlayPosition: {x: 14, y: 14}
+  overlayWidth: 900
+  maxSquadsToDisplay: 14
+  maxRequestsToDisplay: 5
 --- !u!1 &835516080
 GameObject:
   m_ObjectHideFlags: 0
@@ -463,7 +505,7 @@ Transform:
   m_GameObject: {fileID: 835516080}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 56.8, y: -47.8, z: -10}
+  m_LocalPosition: {x: 0, y: 0, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -595,6 +637,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &913081957
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 913081958}
+  m_Layer: 0
+  m_Name: Spawn B
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &913081958
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 913081957}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 598, y: -21, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1020784283 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7670360865814592282, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
@@ -609,9 +682,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1055831339}
+  - component: {fileID: 1055831341}
   - component: {fileID: 1055831340}
   m_Layer: 0
-  m_Name: Enemy SPawner
+  m_Name: Fleet SPawner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -641,40 +715,77 @@ MonoBehaviour:
   m_GameObject: {fileID: 1055831337}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b0f199f077509c47bad15ab404b6ffb, type: 3}
+  m_Script: {fileID: 11500000, guid: ad6b7ae9a54d48ee9a6ea07487b046c8, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemySpaceshipSpawner
-  initialSpawnDelay: 5
-  spawnType: 1
-  spawnerSettings: {fileID: 11400000, guid: 3e818ecb229b1c84f9565281337883cc, type: 2}
-  waves:
-  - enemies:
-    - prefab: {fileID: 5549628142487207619, guid: 66b35331de539834f819bbbac8b67800, type: 3}
-      count: 3
-      spawnAsSquad: 0
-      minSquadSize: 3
-      maxSquadSize: 3
-      formationType: 0
-      initialSquadState: 1
-      squadSpacing: 4
-      squadEngageDistance: 18
-      squadAnchorMoveSpeed: 12
-    spawnSpacing: 0
-    timeToSpawnAfterFinalDeath: 0
-  assignTeams: 1
-  enemyTeamIds: 0100000002000000
-  fallbackEnemyTeamId: 1
+  m_EditorClassIdentifier: Assembly-CSharp::SimpleTeamSpawner
+  teamAId: 1
+  teamBId: 2
+  squadsPerFleet: 7
+  shipsPerSquad: 4
+  sharedShipPrefab: {fileID: 5549628142487207619, guid: 66b35331de539834f819bbbac8b67800, type: 3}
+  teamAShipPrefab: {fileID: 0}
+  teamBShipPrefab: {fileID: 0}
+  formationType: 0
+  squadState: 1
+  squadSpacing: 5
+  squadEngageDistance: 18
+  squadAnchorMoveSpeed: 14
+  squadClusterSpacing: 14
+  squadJitter: {x: 4, y: 4}
+  teamASpawnPoint: {fileID: 1793985341}
+  teamBSpawnPoint: {fileID: 913081958}
+  defaultFleetSeparation: 220
+  autoSpawnOnStart: 1
+  clearExistingTeamsBeforeSpawn: 1
+  disableOtherSpawnersOnStart: 1
+  updateFleetFocusFromLiveCenters: 1
+  enableSpawnHotkey: 1
+  spawnBattleKey: 98
+  setTrackedEnemyTeamsOnFleetSpawner: 1
+--- !u!114 &1055831341
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1055831337}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c660333a1d2648f1b1c204fd8b45bff9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FleetSpawner
+  teamConfigs: []
+  fallbackShipPrefab: {fileID: 0}
+  defaultFocusTarget: {fileID: 0}
+  autoAssignShipsToSquads: 1
+  defaultAutoSquadMaxMembers: 10
+  defaultAutoFormationType: 0
+  defaultAutoSquadState: 1
+  defaultAutoSquadSpacing: 5
+  defaultAutoSquadEngageDistance: 18
+  defaultAutoSquadAnchorMoveSpeed: 14
+  squadSeparationDistance: 12
+  enableReinforcementRequests: 1
+  autoFulfillReinforcementRequests: 0
+  maxPendingReinforcementRequests: 64
+  defaultRequestDelaySeconds: 2
+  defaultRequestCooldownSeconds: 8
+  spawnMode: 0
+  initialWaveSpawnDelay: 2
+  waitForTrackedEnemyTeamsToClear: 1
+  trackedEnemyTeamIds: 01000000
+  waves: []
+  autoSpawnConfiguredTeamsOnStart: 0
+  startupSpawnAsSquads: 1
+  startupShipsPerTeam: 5
+  includePlayerTeamInStartup: 0
+  startupTeamSpacing: 20
+  startupShipJitter: {x: 6, y: 6}
   fallbackMinSpawnAreaSize: {x: 40, y: 40}
   fallbackMaxSpawnAreaSize: {x: 80, y: 80}
-  autoAssignFormationSquads: 1
-  maxShipsPerAutoSquad: 5
-  autoSquadInitialState: 1
-  autoSquadSpacing: 5
-  autoSquadEngageDistance: 18
-  autoSquadAnchorMoveSpeed: 14
-  defaultPoolCapacity: 50
+  defaultPoolCapacity: 40
   maxPoolSize: 200
-  activeEnemiesRoot: {fileID: 0}
+  activeShipsRoot: {fileID: 0}
   pooledRoot: {fileID: 0}
 --- !u!1 &1354088533
 GameObject:
@@ -840,13 +951,13 @@ Transform:
   m_GameObject: {fileID: 1354088533}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 56.8, y: -47.8, z: -10}
+  m_LocalPosition: {x: 0, y: 0, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1941959782
+--- !u!1 &1793985340
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -854,53 +965,24 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1941959784}
-  - component: {fileID: 1941959783}
+  - component: {fileID: 1793985341}
   m_Layer: 0
-  m_Name: Friendly Spawner
+  m_Name: Spawn A
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!114 &1941959783
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1941959782}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 70771d833acc89a4d881e025dffd6df4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FriendlySpaceshipSpawner
-  teamPrefabs:
-  - {fileID: 5549628142487207619, guid: 6d86112d450eb3e49aa0ded401048f30, type: 3}
-  teamSpawnWeights: 05000000
-  minSpawnRadius: 300
-  maxSpawnRadius: 450
-  initialSpawnDelay: 5
-  defaultPoolCapacity: 30
-  maxPoolSize: 70
-  autoAssignFormationSquad: 1
-  maxShipsPerFriendlySquad: 5
-  friendlySquadInitialState: 0
-  friendlySquadSpacing: 5
-  friendlySquadEngageDistance: 16
-  friendlySquadAnchorMoveSpeed: 13
-  activeTeamatesRoot: {fileID: 0}
-  pooledRoot: {fileID: 0}
---- !u!4 &1941959784
+  m_IsActive: 1
+--- !u!4 &1793985341
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1941959782}
+  m_GameObject: {fileID: 1793985340}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.20572, y: 7.24701, z: 0}
+  m_LocalPosition: {x: -534, y: 4, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -920,7 +1002,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5549628142487207619, guid: 51f5d574addb7084cabc5b0bfe0d0bdc, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6134351781619663024, guid: 51f5d574addb7084cabc5b0bfe0d0bdc, type: 3}
       propertyPath: m_LocalScale.x
@@ -989,17 +1071,37 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1864589599444257544, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
+      propertyPath: maxHealth
+      value: -2147483648
+      objectReference: {fileID: 0}
+    - target: {fileID: 1864589599444257544, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
+      propertyPath: maxShileds
+      value: 1e+20
+      objectReference: {fileID: 0}
+    - target: {fileID: 1864589599444257544, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
+      propertyPath: currentHealth
+      value: -2147483648
+      objectReference: {fileID: 0}
+    - target: {fileID: 1864589599444257544, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
+      propertyPath: currentShields
+      value: 1e+20
+      objectReference: {fileID: 0}
     - target: {fileID: 3350557924722327067, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
       propertyPath: m_Name
       value: Player Spaceship
       objectReference: {fileID: 0}
+    - target: {fileID: 3350557924722327067, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7670360865814592282, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 56.8
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7670360865814592282, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -47.8
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7670360865814592282, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1241,6 +1343,7 @@ SceneRoots:
   - {fileID: 835516083}
   - {fileID: 1354088538}
   - {fileID: 245580821}
-  - {fileID: 1941959784}
   - {fileID: 1975656125}
   - {fileID: 787467171}
+  - {fileID: 1793985341}
+  - {fileID: 913081958}

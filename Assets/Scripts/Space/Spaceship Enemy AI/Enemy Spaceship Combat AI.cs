@@ -1,4 +1,5 @@
-using System.Collections;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(TeamAgent))]
@@ -11,10 +12,21 @@ public class EnemySpaceshipCombatAI : MonoBehaviour
     private Coroutine fireCo;
     private float spawnRadius = 1f;
     private readonly RaycastHit2D[] lineOfFireHits = new RaycastHit2D[24];
+    private Transform[] cachedTurretPivots = new Transform[0];
 
     [Header("Refs")] [SerializeField] private Transform firePoint;
+    [SerializeField] private Transform[] turretPivots = new Transform[0];
     [SerializeField] private EnemyShipProfileSO shipProfile;
     [SerializeField] private GameObject laserPrefab;
+
+    [Header("Turret Motion")]
+    [SerializeField] private bool orbitFirePointAroundShip = true;
+    [SerializeField] private bool rotateTurretPivotsTowardAim = true;
+    [SerializeField] private bool autoUseFirePointChildrenAsTurretPivots = true;
+    [SerializeField] private bool autoFindTurretPivotsInChildren = true;
+    [SerializeField] private bool useFirePointAsTurretPivotFallback = true;
+    [SerializeField] private bool requireTargetToRotateTurrets = false;
+    [SerializeField] private float turretTurnSpeedDegPerSec = 720f;
 
     [Header("Fire Safety")]
     [SerializeField] private bool avoidFriendlyFire = true;
@@ -27,6 +39,8 @@ public class EnemySpaceshipCombatAI : MonoBehaviour
     [SerializeField] private Color blockedRayColor = new Color(1f, 0.7f, 0.15f, 0.95f);
 
     [Header("Debug")] [SerializeField] private Color firePointLineColor = Color.red;
+    [SerializeField] private bool drawTurretAimLines = false;
+    [SerializeField] private Color turretAimLineColor = Color.cyan;
 
     public Vector3 AimDirectionWorld { get; private set; }
 
@@ -35,11 +49,14 @@ public class EnemySpaceshipCombatAI : MonoBehaviour
         targeting = GetComponent<TargetingComponent>();
         team = GetComponent<TeamAgent>();
 
-        if (firePoint != null)
-        {
-            spawnRadius = firePoint.localPosition.magnitude;
-            if (spawnRadius < 0.001f) spawnRadius = 1f;
-        }
+        CacheSpawnRadius();
+        CacheTurretPivots();
+    }
+
+    private void OnValidate()
+    {
+        CacheSpawnRadius();
+        CacheTurretPivots();
     }
 
     private void OnEnable()
@@ -55,6 +72,12 @@ public class EnemySpaceshipCombatAI : MonoBehaviour
 
     public void ResetForSpawn()
     {
+        if (!enabled)
+            enabled = true;
+
+        CacheSpawnRadius();
+        CacheTurretPivots();
+
         if (shipProfile == null || laserPrefab == null || firePoint == null)
             return;
 
@@ -65,15 +88,89 @@ public class EnemySpaceshipCombatAI : MonoBehaviour
     private void FixedUpdate()
     {
         UpdateAimDirection();
-        RotateSpawnPointAroundCenter();
+
+        if (orbitFirePointAroundShip)
+            RotateSpawnPointAroundCenter();
+
+        if (rotateTurretPivotsTowardAim)
+            RotateTurretPivotsTowardAimDirection();
+
         DrawDebug();
+    }
+
+    private void CacheSpawnRadius()
+    {
+        if (firePoint == null)
+            return;
+
+        spawnRadius = firePoint.localPosition.magnitude;
+        if (spawnRadius < 0.001f)
+            spawnRadius = 1f;
+    }
+
+    private void CacheTurretPivots()
+    {
+        List<Transform> pivots = new List<Transform>();
+
+        if (turretPivots != null && turretPivots.Length > 0)
+        {
+            for (int i = 0; i < turretPivots.Length; i++)
+            {
+                AddPivotIfValid(pivots, turretPivots[i]);
+            }
+        }
+
+        if (pivots.Count == 0 && autoUseFirePointChildrenAsTurretPivots && firePoint != null)
+        {
+            for (int i = 0; i < firePoint.childCount; i++)
+            {
+                AddPivotIfValid(pivots, firePoint.GetChild(i));
+            }
+        }
+
+        if (pivots.Count == 0 && autoFindTurretPivotsInChildren)
+        {
+            Transform[] allChildren = GetComponentsInChildren<Transform>(true);
+            for (int i = 0; i < allChildren.Length; i++)
+            {
+                Transform child = allChildren[i];
+                if (child == null || child == transform)
+                    continue;
+
+                if (IsLikelyTurretPivotName(child.name))
+                    AddPivotIfValid(pivots, child);
+            }
+        }
+
+        if (pivots.Count == 0 && useFirePointAsTurretPivotFallback && firePoint != null)
+            AddPivotIfValid(pivots, firePoint);
+
+        cachedTurretPivots = pivots.ToArray();
+    }
+
+    private static bool IsLikelyTurretPivotName(string nameValue)
+    {
+        if (string.IsNullOrWhiteSpace(nameValue))
+            return false;
+
+        string lower = nameValue.ToLowerInvariant();
+        return lower.Contains("turret") || lower.Contains("gun") || lower.Contains("cannon");
+    }
+
+    private static void AddPivotIfValid(List<Transform> pivots, Transform candidate)
+    {
+        if (candidate == null || pivots.Contains(candidate))
+            return;
+
+        pivots.Add(candidate);
     }
 
     private void UpdateAimDirection()
     {
-        if (!targeting.CurrentTarget) targeting.RetargetNow();
+        if (targeting != null && !targeting.CurrentTarget)
+            targeting.RetargetNow();
 
-        if (!targeting.CurrentTarget)
+        if (targeting == null || !targeting.CurrentTarget)
         {
             AimDirectionWorld = transform.up;
             return;
@@ -86,7 +183,8 @@ public class EnemySpaceshipCombatAI : MonoBehaviour
 
     private void RotateSpawnPointAroundCenter()
     {
-        if (firePoint == null) return;
+        if (firePoint == null)
+            return;
 
         Vector2 aimDir = AimDirectionWorld;
         if (aimDir.sqrMagnitude < 0.0001f)
@@ -95,6 +193,39 @@ public class EnemySpaceshipCombatAI : MonoBehaviour
         Vector2 localAimDir = transform.InverseTransformDirection(aimDir).normalized;
         firePoint.localPosition = (Vector3)(localAimDir * spawnRadius);
         firePoint.up = aimDir;
+    }
+
+    private void RotateTurretPivotsTowardAimDirection()
+    {
+        if (cachedTurretPivots == null || cachedTurretPivots.Length == 0)
+            return;
+
+        bool hasTarget = targeting != null && targeting.CurrentTarget != null;
+        Vector2 aimDir = AimDirectionWorld;
+        if (aimDir.sqrMagnitude < 0.0001f)
+            aimDir = transform.up;
+
+        if (requireTargetToRotateTurrets && !hasTarget)
+            aimDir = transform.up;
+
+        Quaternion desiredRotation = Quaternion.FromToRotation(Vector3.up, aimDir);
+        float maxDegrees = Mathf.Max(0f, turretTurnSpeedDegPerSec) * Time.fixedDeltaTime;
+
+        for (int i = 0; i < cachedTurretPivots.Length; i++)
+        {
+            Transform pivot = cachedTurretPivots[i];
+            if (pivot == null)
+                continue;
+
+            if (maxDegrees <= 0.0001f)
+            {
+                pivot.rotation = desiredRotation;
+            }
+            else
+            {
+                pivot.rotation = Quaternion.RotateTowards(pivot.rotation, desiredRotation, maxDegrees);
+            }
+        }
     }
 
     private IEnumerator FireLoop()
@@ -273,6 +404,19 @@ public class EnemySpaceshipCombatAI : MonoBehaviour
     {
         if (firePoint != null)
             Debug.DrawLine(transform.position, firePoint.position, firePointLineColor, 0f, false);
+
+        if (!drawTurretAimLines || cachedTurretPivots == null)
+            return;
+
+        for (int i = 0; i < cachedTurretPivots.Length; i++)
+        {
+            Transform pivot = cachedTurretPivots[i];
+            if (pivot == null)
+                continue;
+
+            Debug.DrawLine(pivot.position, pivot.position + (pivot.up * 2f), turretAimLineColor, 0f, false);
+        }
     }
 }
+
 

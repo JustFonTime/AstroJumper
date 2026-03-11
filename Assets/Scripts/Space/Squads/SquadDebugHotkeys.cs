@@ -265,8 +265,13 @@ public class SquadDebugHotkeys : MonoBehaviour
                     string leaderName = leader != null ? leader.name : "none";
                     string focusName = squad.FocusTarget != null ? squad.FocusTarget.name : "none";
 
+                    int currentPathIndex = squad.CurrentPathNodeIndex >= 0 ? squad.CurrentPathNodeIndex + 1 : 0;
+                    string pathInfo = squad.IsFollowingWaypointPath
+                        ? $"path={currentPathIndex}/{squad.CurrentPathNodeCount}"
+                        : "path=off";
+
                     overlayBuilder.AppendLine(
-                        $"[{squad.name}] T{squad.TeamId} {squad.FormationType}/{squad.CurrentState} m={squad.MemberCount}/{squad.DesiredMemberCount} spacing={squad.SlotSpacing:0.0} leader={leaderName} focus={focusName}");
+                        $"[{squad.name}] T{squad.TeamId} {squad.FormationType}/{squad.CurrentState} m={squad.MemberCount}/{squad.DesiredMemberCount} spacing={squad.SlotSpacing:0.0} leader={leaderName} focus={focusName} {pathInfo} repath={squad.LastRepathReason}");
 
                     if (squad.IsUnderStrength)
                     {
@@ -381,3 +386,4 @@ public class SquadDebugHotkeys : MonoBehaviour
         }
     }
 }
+

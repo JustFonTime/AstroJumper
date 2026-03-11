@@ -11,7 +11,9 @@ public class EnemySpaceshipAI : MonoBehaviour
 {
     private Rigidbody2D rb;
     private TargetingComponent targeting;
+    private TeamAgent team;
     private EnemySquadMember squadMember;
+    private readonly Collider2D[] localAvoidanceHits = new Collider2D[32];
 
     [Header("Refs")]
     [SerializeField] private GameObject player;
@@ -23,21 +25,42 @@ public class EnemySpaceshipAI : MonoBehaviour
     [SerializeField] private float fallbackFullThrottleDistance = 8f;
     [SerializeField] private float minimumThrottleWhenMoving = 0.2f;
 
+    [Header("Local Avoidance")]
+    [SerializeField] private bool useLocalAvoidance = false;
+    [SerializeField] private bool avoidFriendlyShips = true;
+    [SerializeField] private bool avoidHostileShips = true;
+    [SerializeField] private float localAvoidanceRadius = 10f;
+    [SerializeField] private float localAvoidanceStrength = 0.95f;
+    [SerializeField] private float localAvoidanceLookAheadTime = 0.55f;
+    [SerializeField] private float localAvoidanceClosingSpeed = 0.6f;
+    [SerializeField] private float localAvoidanceHardSeparationDistance = 4f;
+    [SerializeField] [Range(0f, 1f)] private float localAvoidanceMaxBlend = 0.8f;
+    [SerializeField] private LayerMask localAvoidanceMask = ~0;
+    [SerializeField] private bool reduceThrottleDuringAvoidance = false;
+    [SerializeField] [Range(0.1f, 1f)] private float avoidanceThrottleMinScale = 0.65f;
+    [SerializeField] [Range(0f, 1f)] private float avoidanceThrottleResponse = 0.85f;
+
     [Header("Debug")]
     [SerializeField] private bool drawDebug = true;
     [SerializeField] private bool drawOnlyWhenSelected = true;
+    [SerializeField] private bool drawAvoidanceDebug = false;
     [SerializeField] private Color goalLineColor = Color.yellow;
     [SerializeField] private Color targetLineColor = Color.green;
+    [SerializeField] private Color avoidanceLineColor = new Color(1f, 0.25f, 0.9f, 0.9f);
 
     private Vector2 dbgGoal;
     private Vector2 dbgDesiredDir;
+    private Vector2 dbgAvoidance;
     private float dbgThrottle;
+    private int dbgAvoidanceCount;
+    private float localAvoidancePressure01;
     private string dbgState = "spawn";
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         targeting = GetComponent<TargetingComponent>();
+        team = GetComponent<TeamAgent>();
         squadMember = GetComponent<EnemySquadMember>();
 
         rb.gravityScale = 0f;
@@ -74,7 +97,10 @@ public class EnemySpaceshipAI : MonoBehaviour
 
         dbgGoal = rb.position;
         dbgDesiredDir = transform.up;
+        dbgAvoidance = Vector2.zero;
         dbgThrottle = 0f;
+        dbgAvoidanceCount = 0;
+        localAvoidancePressure01 = 0f;
         dbgState = "spawn";
     }
 
@@ -92,6 +118,9 @@ public class EnemySpaceshipAI : MonoBehaviour
         if (!hasGoal)
         {
             dbgState = "idle";
+            dbgAvoidance = Vector2.zero;
+            dbgAvoidanceCount = 0;
+            localAvoidancePressure01 = 0f;
             ApplyFlightAssist(false);
             ClampSpeed();
             return;
@@ -103,12 +132,16 @@ public class EnemySpaceshipAI : MonoBehaviour
         if (dist <= 0.001f)
         {
             dbgState = "hold";
+            dbgAvoidance = Vector2.zero;
+            dbgAvoidanceCount = 0;
+            localAvoidancePressure01 = 0f;
             ApplyFlightAssist(false);
             ClampSpeed();
             return;
         }
 
         Vector2 desiredDir = toGoal / dist;
+        ApplyLocalAvoidance(ref desiredDir);
         dbgDesiredDir = desiredDir;
 
         float arriveDistance = shipProfile.arriveDistance > 0f ? shipProfile.arriveDistance : fallbackArriveDistance;
@@ -127,6 +160,15 @@ public class EnemySpaceshipAI : MonoBehaviour
 
         if (squadMember != null && squadMember.Squad != null)
             dbgState = squadMember.Role == EnemySquadRole.Leader ? "leader-slot" : "follower-slot";
+
+        if (reduceThrottleDuringAvoidance && localAvoidancePressure01 > 0.001f)
+        {
+            float response = Mathf.Clamp01(avoidanceThrottleResponse);
+            float pressure = Mathf.Clamp01(localAvoidancePressure01 * response);
+            float minScale = Mathf.Clamp(avoidanceThrottleMinScale, 0.1f, 1f);
+            float throttleScale = Mathf.Lerp(1f, minScale, pressure);
+            throttle01 *= throttleScale;
+        }
 
         SteerToward(desiredDir);
         ApplyForwardThrust(throttle01);
@@ -187,6 +229,111 @@ public class EnemySpaceshipAI : MonoBehaviour
             return target.transform;
 
         return player != null ? player.transform : null;
+    }
+
+    private void ApplyLocalAvoidance(ref Vector2 desiredDir)
+    {
+        dbgAvoidance = Vector2.zero;
+        dbgAvoidanceCount = 0;
+        localAvoidancePressure01 = 0f;
+
+        if (!useLocalAvoidance || localAvoidanceRadius <= 0.01f || localAvoidanceStrength <= 0f)
+            return;
+
+        Vector2 myPos = rb.position;
+        Vector2 myVel = rb.linearVelocity;
+        float radius = Mathf.Max(0.5f, localAvoidanceRadius);
+
+        int hitCount = Physics2D.OverlapCircleNonAlloc(myPos, radius, localAvoidanceHits, localAvoidanceMask);
+        if (hitCount <= 0)
+            return;
+
+        Vector2 repel = Vector2.zero;
+        float strongestWeight = 0f;
+
+        for (int i = 0; i < hitCount; i++)
+        {
+            Collider2D hit = localAvoidanceHits[i];
+            if (hit == null)
+                continue;
+
+            Rigidbody2D otherRb = hit.attachedRigidbody;
+            if (otherRb == rb)
+                continue;
+
+            TeamAgent otherTeam = hit.GetComponentInParent<TeamAgent>();
+            if (!ShouldAvoidTeam(otherTeam))
+                continue;
+
+            Vector2 otherPos = otherRb != null ? otherRb.position : (Vector2)hit.bounds.center;
+            Vector2 delta = myPos - otherPos;
+            float dist = delta.magnitude;
+
+            if (dist < 0.001f || dist > radius)
+                continue;
+
+            Vector2 otherVel = otherRb != null ? otherRb.linearVelocity : Vector2.zero;
+            Vector2 toOther = -delta / dist;
+            float closing = Vector2.Dot(myVel - otherVel, toOther);
+
+            if (closing < localAvoidanceClosingSpeed && dist > localAvoidanceHardSeparationDistance)
+                continue;
+
+            float lookAhead = Mathf.Max(0f, localAvoidanceLookAheadTime);
+            Vector2 futureDelta = (myPos + myVel * lookAhead) - (otherPos + otherVel * lookAhead);
+            float futureDist = futureDelta.magnitude;
+            Vector2 pushDir = futureDist > 0.01f ? futureDelta / futureDist : delta / dist;
+
+            float distWeight = 1f - (dist / radius);
+            float futureWeight = 1f - Mathf.Clamp01(futureDist / radius);
+
+            float hardDistance = Mathf.Max(0.01f, localAvoidanceHardSeparationDistance);
+            float hardWeight = dist < hardDistance ? 1f - Mathf.Clamp01(dist / hardDistance) : 0f;
+
+            float closingWeight = 0f;
+            if (closing > localAvoidanceClosingSpeed)
+            {
+                float denom = Mathf.Max(0.01f, localAvoidanceClosingSpeed * 2f);
+                closingWeight = Mathf.Clamp01((closing - localAvoidanceClosingSpeed) / denom);
+            }
+
+            float weight = Mathf.Max(distWeight, futureWeight * 0.85f) + (hardWeight * 1.35f) + (closingWeight * 0.65f);
+            if (weight <= 0.0001f)
+                continue;
+
+            repel += pushDir * weight;
+            strongestWeight = Mathf.Max(strongestWeight, weight);
+            dbgAvoidanceCount++;
+        }
+
+        if (repel.sqrMagnitude <= 0.0001f)
+            return;
+
+        Vector2 avoidDir = repel.normalized;
+        Vector2 steered = (desiredDir + avoidDir * localAvoidanceStrength).normalized;
+
+        float blend = Mathf.Clamp01(Mathf.Max(strongestWeight, repel.magnitude * 0.2f));
+        blend = Mathf.Min(Mathf.Clamp01(localAvoidanceMaxBlend), blend);
+
+        desiredDir = Vector2.Lerp(desiredDir, steered, blend).normalized;
+        localAvoidancePressure01 = Mathf.Clamp01(Mathf.Max(strongestWeight, blend));
+        dbgAvoidance = avoidDir * (blend * radius * 0.35f);
+    }
+
+    private bool ShouldAvoidTeam(TeamAgent otherTeam)
+    {
+        if (otherTeam == null || team == null)
+            return true;
+
+        bool sameTeam = otherTeam.TeamId == team.TeamId;
+        if (sameTeam)
+            return avoidFriendlyShips;
+
+        bool hostile = TeamRegistry.IsHostile(team.TeamId, otherTeam.TeamId);
+        if (hostile)
+            return avoidHostileShips;
+
+        return avoidFriendlyShips || avoidHostileShips;
     }
 
     private void SteerToward(Vector2 desiredDir)
@@ -285,9 +432,15 @@ public class EnemySpaceshipAI : MonoBehaviour
         Gizmos.color = Color.cyan;
         Gizmos.DrawLine(transform.position, transform.position + (Vector3)(dbgDesiredDir * 2f));
 
+        if (drawAvoidanceDebug && dbgAvoidance.sqrMagnitude > 0.0001f)
+        {
+            Gizmos.color = avoidanceLineColor;
+            Gizmos.DrawLine(transform.position, transform.position + (Vector3)dbgAvoidance);
+            Gizmos.DrawSphere(transform.position + (Vector3)dbgAvoidance, 0.18f);
+        }
+
 #if UNITY_EDITOR
-        Handles.Label(transform.position + Vector3.up * 1.2f, $"{dbgState} thr={dbgThrottle:0.00}");
+        Handles.Label(transform.position + Vector3.up * 1.2f, $"{dbgState} thr={dbgThrottle:0.00} avoid={dbgAvoidanceCount} p={localAvoidancePressure01:0.00}");
 #endif
     }
 }
-

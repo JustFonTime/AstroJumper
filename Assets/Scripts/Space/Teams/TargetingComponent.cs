@@ -17,7 +17,7 @@ public class TargetingComponent : MonoBehaviour
     [Tooltip("If true, only targets with available TargetSlots.")] [SerializeField]
     private bool enforceTargetSlots = true;
 
-    [Tooltip("If true, keep current target as long as it stays valid (alive + hostile + in range).")] [SerializeField]
+    [Tooltip("If true, keep current target as long as it stays valid (alive + hostile + in range)." )] [SerializeField]
     private bool stickToTarget = true;
 
     [Tooltip("If false, this component will NOT auto-pick targets (but it can still use external/forced targets).")]
