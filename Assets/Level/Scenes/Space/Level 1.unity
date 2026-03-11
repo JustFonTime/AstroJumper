@@ -383,8 +383,10 @@ MonoBehaviour:
   toggleControlsCategoryKey: 283
   toggleSquadsCategoryKey: 284
   toggleSystemCategoryKey: 285
+  toggleTeamsCategoryKey: 286
   showControlsCategory: 1
   showSquadsCategory: 1
+  showTeamsCategory: 1
   showSystemCategory: 1
   fontSize: 26
   textColor: {r: 1, g: 1, b: 1, a: 1}
@@ -678,7 +680,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SimpleTeamSpawner
   autoSpawnOnStart: 1
   clearExistingBattleOnSpawn: 1
-  disableOtherSpawnersOnStart: 1
   updateObjectiveProxies: 1
   enableSpawnHotkey: 1
   spawnBattleKey: 98
@@ -700,6 +701,7 @@ MonoBehaviour:
   fallbackFlagshipSeparation: 1400
   fleetSpawnRadiusAroundFlagship: 275
   squadSpawnJitter: {x: 20, y: 20}
+  enableFlagshipSlowMovement: 1
   defendRatio: 0.34
   attackRatio: 0.43
   defendOrbitRadius: 180
@@ -743,19 +745,7 @@ MonoBehaviour:
   maxPendingReinforcementRequests: 64
   defaultRequestDelaySeconds: 2
   defaultRequestCooldownSeconds: 8
-  spawnMode: 0
-  initialWaveSpawnDelay: 2
-  waitForTrackedEnemyTeamsToClear: 1
   trackedEnemyTeamIds: 01000000
-  waves: []
-  autoSpawnConfiguredTeamsOnStart: 0
-  startupSpawnAsSquads: 1
-  startupShipsPerTeam: 5
-  includePlayerTeamInStartup: 0
-  startupTeamSpacing: 20
-  startupShipJitter: {x: 6, y: 6}
-  fallbackMinSpawnAreaSize: {x: 40, y: 40}
-  fallbackMaxSpawnAreaSize: {x: 80, y: 80}
   defaultPoolCapacity: 40
   maxPoolSize: 200
   activeShipsRoot: {fileID: 0}
@@ -1052,7 +1042,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3350557924722327067, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7670360865814592282, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1306,4 +1296,3 @@ SceneRoots:
   - {fileID: 787467171}
   - {fileID: 1793985341}
   - {fileID: 913081958}
-

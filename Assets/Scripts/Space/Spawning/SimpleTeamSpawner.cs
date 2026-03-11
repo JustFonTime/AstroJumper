@@ -120,7 +120,7 @@ public class SimpleTeamSpawner : MonoBehaviour
 
         if (fleetSpawner != null)
         {
-            fleetSpawner.SetTrackedEnemyTeams(new List<int> { PlayerTeamId, EnemyTeamId });
+            fleetSpawner.SetTrackedEnemyTeams(new List<int> { EnemyTeamId });
             if (disableFleetSpawnerAutoFulfill)
                 fleetSpawner.SetAutoFulfillReinforcementRequests(false);
         }
@@ -667,6 +667,7 @@ public class SimpleTeamSpawner : MonoBehaviour
         }
     }
 }
+
 
 
 
