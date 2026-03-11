@@ -3,7 +3,6 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-
 [RequireComponent(typeof(Collider2D))]
 public class SpaceshipHealthComponent : MonoBehaviour, ISpaceDamagable
 {
@@ -22,6 +21,8 @@ public class SpaceshipHealthComponent : MonoBehaviour, ISpaceDamagable
     [SerializeField] private GameObject shieldVFX;
     [SerializeField] private AudioClip deathSfx;
     [SerializeField] private float deathVolume = 1f;
+    [SerializeField] private ParticleSystem deathVfxPrefab;
+    [SerializeField] private float deathVfxDestroyPadding = 0.25f;
 
     [Tooltip(
         "These will all be overtin by player state or enemy ship profile, just visual indicators to see what the acutaly numbers are")]
@@ -40,6 +41,7 @@ public class SpaceshipHealthComponent : MonoBehaviour, ISpaceDamagable
     [SerializeField] private float rechargeShieldRatePerHalfSecond = 5f;
 
     [Header("Effects")] public bool IsBuffedByShieldEnemy = false;
+    private bool isDead;
 
     public int Health => currentHealth;
     public int MaxHealth => maxHealth;
@@ -59,6 +61,7 @@ public class SpaceshipHealthComponent : MonoBehaviour, ISpaceDamagable
     {
         StopShieldRechargeCoroutines();
         canRechargeShield = false;
+        isDead = false;
 
         if (isPlayer)
         {
@@ -194,6 +197,11 @@ public class SpaceshipHealthComponent : MonoBehaviour, ISpaceDamagable
 
     private void Die()
     {
+        if (isDead) return;
+        isDead = true;
+
+        SpawnDeathVfx();
+
         if (deathSfx != null)
             AudioSource.PlayClipAtPoint(deathSfx, transform.position, deathVolume);
 
@@ -221,6 +229,48 @@ public class SpaceshipHealthComponent : MonoBehaviour, ISpaceDamagable
         {
             Destroy(gameObject);
         }
+    }
+
+    private void SpawnDeathVfx()
+    {
+        if (deathVfxPrefab == null) return;
+
+        ParticleSystem vfx = Instantiate(deathVfxPrefab, transform.position, Quaternion.identity);
+        float lifetime = GetParticleSystemTotalLifetime(vfx);
+        Destroy(vfx.gameObject, lifetime + deathVfxDestroyPadding);
+    }
+
+    private static float GetParticleSystemTotalLifetime(ParticleSystem ps)
+    {
+        var main = ps.main;
+
+        float duration = main.duration;
+        float startLifetimeMax = main.startLifetime.mode switch
+        {
+            ParticleSystemCurveMode.TwoConstants => main.startLifetime.constantMax,
+            ParticleSystemCurveMode.Constant => main.startLifetime.constant,
+            _ => main.startLifetime.constantMax
+        };
+
+        float childMax = 0f;
+        ParticleSystem[] children = ps.GetComponentsInChildren<ParticleSystem>(true);
+        for (int i = 0; i < children.Length; i++)
+        {
+            if (children[i] == ps) continue;
+            var childMain = children[i].main;
+
+            float childDuration = childMain.duration;
+            float childStartLifetime = childMain.startLifetime.mode switch
+            {
+                ParticleSystemCurveMode.TwoConstants => childMain.startLifetime.constantMax,
+                ParticleSystemCurveMode.Constant => childMain.startLifetime.constant,
+                _ => childMain.startLifetime.constantMax
+            };
+
+            childMax = Mathf.Max(childMax, childDuration + childStartLifetime);
+        }
+
+        return Mathf.Max(duration + startLifetimeMax, childMax);
     }
 
     public void HealShields(float amount)
@@ -252,6 +302,3 @@ public class SpaceshipHealthComponent : MonoBehaviour, ISpaceDamagable
         shieldVFX.SetActive(currentShields > 0f);
     }
 }
-
-
-

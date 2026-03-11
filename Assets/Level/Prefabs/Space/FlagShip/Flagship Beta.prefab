@@ -279,6 +279,8 @@ MonoBehaviour:
   shieldVFX: {fileID: 5700664030587308242}
   deathSfx: {fileID: 8300000, guid: fd9d2439687099945bd16cb5b176f80c, type: 3}
   deathVolume: 1
+  deathVfxPrefab: {fileID: 0}
+  deathVfxDestroyPadding: 0.25
   currentHealth: 100
   maxHealth: 100
   maxShileds: 100
@@ -316,12 +318,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7344ffbad6df0b444b8aebe661450d94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FlagshipSlowMovement
-  moveSpeed: 2
+  moveSpeed: 10
   turnSpeedDegPerSec: 10
-  roamRadius: 20
-  arriveDistance: 2
-  minRetargetDelay: 1.5
-  maxRetargetDelay: 4
+  roamRadius: 0
+  arriveDistance: 200
+  minRetargetDelay: 15
+  maxRetargetDelay: 30
+  useBoundaryControllerRoam: 1
+  boundaryController: {fileID: 0}
+  autoFindBoundaryController: 1
+  boundaryRoamRadiusRatio: 0.9
+  sideBoundaryBuffer: 0
+  sidePreference: 0
+  innerExclusionRadiusRatio: 0.45
+  innerExclusionPadding: 213.8
+  drawRoamRadiusDebug: 1
+  drawRoamRadiusOnlyWhenSelected: 1
+  roamRadiusDebugColor: {r: 1, g: 0.39696717, b: 0.19999999, a: 0.95}
+  drawPathTrailDebug: 1
+  drawPathForNonPlayerTeamsOnly: 1
+  maxPathSamples: 96
+  pathSampleInterval: 0.2
+  minPathSampleDistance: 20
+  drawCurrentTargetDebug: 1
+  targetMarkerRadius: 120
+  pathTrailColor: {r: 1, g: 0.45, b: 0.15, a: 0.95}
+  targetLinkColor: {r: 1, g: 0.9, b: 0.2, a: 0.9}
 --- !u!114 &7286197874541789975
 MonoBehaviour:
   m_ObjectHideFlags: 0

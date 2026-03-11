@@ -297,6 +297,8 @@ MonoBehaviour:
   shieldVFX: {fileID: 5700664030587308242}
   deathSfx: {fileID: 8300000, guid: fd9d2439687099945bd16cb5b176f80c, type: 3}
   deathVolume: 1
+  deathVfxPrefab: {fileID: 3539175396477220020, guid: e3110dc05c7ec0e40bb02fc5e5c74fb9, type: 3}
+  deathVfxDestroyPadding: 0.25
   currentHealth: 100
   maxHealth: 100
   maxShileds: 100
@@ -356,7 +358,7 @@ MonoBehaviour:
   flagshipNoFlyInfluenceDistance: 45
   flagshipNoFlySteeringStrength: 1.35
   flagshipNoFlyMaxBlend: 0.9
-  drawDebug: 1
+  drawDebug: 0
   drawOnlyWhenSelected: 0
   drawAvoidanceDebug: 0
   drawLineOfSightDebug: 0
@@ -398,7 +400,7 @@ MonoBehaviour:
     m_Bits: 4294967295
   fireSafetyPadding: 0.5
   baseSafetyConeAngle: 3
-  drawSafetyRays: 1
+  drawSafetyRays: 0
   safeRayColor: {r: 0.2, g: 1, b: 0.2, a: 0.75}
   blockedRayColor: {r: 1, g: 0.7, b: 0.15, a: 0.95}
   firePointLineColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}

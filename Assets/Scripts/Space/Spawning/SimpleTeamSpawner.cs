@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -65,6 +65,7 @@ public class SimpleTeamSpawner : MonoBehaviour
     [SerializeField] private float fallbackFlagshipSeparation = 1400f;
     [SerializeField] private float fleetSpawnRadiusAroundFlagship = 120f;
     [SerializeField] private Vector2 squadSpawnJitter = new Vector2(20f, 20f);
+    [SerializeField] private bool enableFlagshipSlowMovement = true;
 
     [Header("Role Zones")]
     [SerializeField] [Range(0f, 1f)] private float defendRatio = 0.34f;
@@ -262,8 +263,9 @@ public class SimpleTeamSpawner : MonoBehaviour
             agent.SetTeam(teamId);
 
         FlagshipSlowMovement slowMovement = flagshipObject.GetComponent<FlagshipSlowMovement>();
+        bool allowFlagshipMovement = enableFlagshipSlowMovement && slowMovement != null;
         if (slowMovement != null)
-            slowMovement.enabled = false;
+            slowMovement.enabled = allowFlagshipMovement;
 
         EnemySpaceshipAI shipAi = flagshipObject.GetComponent<EnemySpaceshipAI>();
         if (shipAi != null)
@@ -274,9 +276,16 @@ public class SimpleTeamSpawner : MonoBehaviour
         {
             rb.linearVelocity = Vector2.zero;
             rb.angularVelocity = 0f;
-            rb.constraints |= RigidbodyConstraints2D.FreezePositionX |
-                              RigidbodyConstraints2D.FreezePositionY |
-                              RigidbodyConstraints2D.FreezeRotation;
+
+            RigidbodyConstraints2D freezeTransformConstraints =
+                RigidbodyConstraints2D.FreezePositionX |
+                RigidbodyConstraints2D.FreezePositionY |
+                RigidbodyConstraints2D.FreezeRotation;
+
+            if (allowFlagshipMovement)
+                rb.constraints &= ~freezeTransformConstraints;
+            else
+                rb.constraints |= freezeTransformConstraints;
         }
 
         FlagshipController controller = flagshipObject.GetComponent<FlagshipController>();

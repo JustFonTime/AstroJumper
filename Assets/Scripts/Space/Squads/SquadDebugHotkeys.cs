@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
@@ -43,8 +43,10 @@ public class SquadDebugHotkeys : MonoBehaviour
     [SerializeField] private KeyCode toggleControlsCategoryKey = KeyCode.F2;
     [SerializeField] private KeyCode toggleSquadsCategoryKey = KeyCode.F3;
     [SerializeField] private KeyCode toggleSystemCategoryKey = KeyCode.F4;
+    [SerializeField] private KeyCode toggleTeamsCategoryKey = KeyCode.F5;
     [SerializeField] private bool showControlsCategory = true;
     [SerializeField] private bool showSquadsCategory = true;
+    [SerializeField] private bool showTeamsCategory = true;
     [SerializeField] private bool showSystemCategory = true;
     [SerializeField] [Range(12, 36)] private int fontSize = 20;
     [SerializeField] private Color textColor = Color.white;
@@ -55,6 +57,8 @@ public class SquadDebugHotkeys : MonoBehaviour
 
     private readonly List<EnemySquadController> scopedSquads = new List<EnemySquadController>(64);
     private readonly StringBuilder overlayBuilder = new StringBuilder(4096);
+    private readonly Dictionary<int, TeamOverlayStats> teamStatsById = new Dictionary<int, TeamOverlayStats>(8);
+    private readonly List<int> orderedTeamIds = new List<int>(8);
 
     private GUIStyle overlayStyle;
     private GameObject player;
@@ -62,6 +66,18 @@ public class SquadDebugHotkeys : MonoBehaviour
     private float nextPlayerResolveTime;
     private string lastActionMessage = "None";
     private float lastActionTime = -999f;
+
+    private sealed class TeamOverlayStats
+    {
+        public int TeamId;
+        public int SquadCount;
+        public int CurrentMembers;
+        public int DesiredMembers;
+        public int UnderStrengthSquads;
+        public int PendingRequests;
+        public float SoonestReinforcementSeconds = float.PositiveInfinity;
+        public FlagshipController Flagship;
+    }
 
     private void Start()
     {
@@ -106,6 +122,9 @@ public class SquadDebugHotkeys : MonoBehaviour
 
         if (Input.GetKeyDown(toggleSystemCategoryKey))
             showSystemCategory = !showSystemCategory;
+
+        if (Input.GetKeyDown(toggleTeamsCategoryKey))
+            showTeamsCategory = !showTeamsCategory;
     }
 
     private void HandleCommandHotkeys()
@@ -239,7 +258,7 @@ public class SquadDebugHotkeys : MonoBehaviour
         {
             overlayBuilder.AppendLine();
             overlayBuilder.AppendLine("[Controls]");
-            overlayBuilder.AppendLine($"{toggleOverlayKey}: overlay  {toggleControlsCategoryKey}: controls  {toggleSquadsCategoryKey}: squads  {toggleSystemCategoryKey}: system");
+            overlayBuilder.AppendLine($"{toggleOverlayKey}: overlay  {toggleControlsCategoryKey}: controls  {toggleSquadsCategoryKey}: squads  {toggleSystemCategoryKey}: system  {toggleTeamsCategoryKey}: teams");
             overlayBuilder.AppendLine($"{cycleScopeKey}: cycle scope");
             overlayBuilder.AppendLine($"{veeKey}/{lineKey}/{diamondKey}/{ringKey}/{escortKey}: Vee/Line/Diamond/Ring/Escort");
             overlayBuilder.AppendLine($"{spacingDecreaseKey}/{spacingIncreaseKey}: spacing -/+ ({spacingStep:0.0})");
@@ -285,6 +304,9 @@ public class SquadDebugHotkeys : MonoBehaviour
             }
         }
 
+        if (showTeamsCategory)
+            AppendTeamStatsSection();
+
         if (showSystemCategory)
         {
             overlayBuilder.AppendLine();
@@ -315,6 +337,157 @@ public class SquadDebugHotkeys : MonoBehaviour
                     overlayBuilder.AppendLine($"  ... +{pending.Count - shown} more pending requests");
             }
         }
+    }
+
+    private void AppendTeamStatsSection()
+    {
+        BuildTeamStatsSnapshot();
+
+        overlayBuilder.AppendLine();
+        overlayBuilder.AppendLine("[Teams]");
+
+        if (orderedTeamIds.Count == 0)
+        {
+            overlayBuilder.AppendLine("No active team stats available.");
+            return;
+        }
+
+        FleetSpawner fleet = FleetSpawner.Instance;
+
+        for (int i = 0; i < orderedTeamIds.Count; i++)
+        {
+            int teamId = orderedTeamIds[i];
+            if (!teamStatsById.TryGetValue(teamId, out TeamOverlayStats stats) || stats == null)
+                continue;
+
+            bool isPlayerTeam = teamId == playerTeamId;
+            string teamLabel = isPlayerTeam ? "Player" : "Enemy";
+
+            int aliveShips = fleet != null ? fleet.GetAliveCountForTeam(teamId) : stats.CurrentMembers;
+            int desiredMembers = Mathf.Max(stats.CurrentMembers, stats.DesiredMembers);
+            string nextReq = stats.UnderStrengthSquads > 0 && !float.IsPositiveInfinity(stats.SoonestReinforcementSeconds)
+                ? $"{stats.SoonestReinforcementSeconds:0.0}s"
+                : "-";
+
+            overlayBuilder.AppendLine(
+                $"{teamLabel} T{teamId}: aliveShips={aliveShips} squads={stats.SquadCount} members={stats.CurrentMembers}/{desiredMembers} underStrength={stats.UnderStrengthSquads} nextReinforce={nextReq} pendingReq={stats.PendingRequests}");
+
+            if (stats.Flagship != null && stats.Flagship.Health != null)
+            {
+                SpaceshipHealthComponent health = stats.Flagship.Health;
+                overlayBuilder.AppendLine(
+                    $"  flagship: state={stats.Flagship.CurrentState} hp={health.Health}/{health.MaxHealth} shields={health.Shield}/{health.MaxShield} nodes={stats.Flagship.RemainingShieldNodes}");
+            }
+            else
+            {
+                overlayBuilder.AppendLine("  flagship: none");
+            }
+        }
+    }
+
+    private void BuildTeamStatsSnapshot()
+    {
+        teamStatsById.Clear();
+        orderedTeamIds.Clear();
+
+        GetOrCreateTeamStats(playerTeamId);
+
+        IReadOnlyList<EnemySquadController> activeSquads = EnemySquadController.Active;
+        for (int i = 0; i < activeSquads.Count; i++)
+        {
+            EnemySquadController squad = activeSquads[i];
+            if (squad == null || !squad.isActiveAndEnabled)
+                continue;
+
+            int teamId = squad.TeamId;
+            if (teamId < 0)
+                continue;
+
+            TeamOverlayStats stats = GetOrCreateTeamStats(teamId);
+            stats.SquadCount++;
+            stats.CurrentMembers += squad.MemberCount;
+            stats.DesiredMembers += squad.DesiredMemberCount;
+
+            if (squad.IsUnderStrength)
+            {
+                stats.UnderStrengthSquads++;
+                stats.SoonestReinforcementSeconds = Mathf.Min(
+                    stats.SoonestReinforcementSeconds,
+                    squad.SecondsUntilNextReinforcementRequest);
+            }
+        }
+
+        FleetSpawner fleet = FleetSpawner.Instance;
+        if (fleet != null)
+        {
+            IReadOnlyList<ReinforcementRequest> pending = fleet.PendingReinforcementRequests;
+            for (int i = 0; i < pending.Count; i++)
+            {
+                ReinforcementRequest request = pending[i];
+                int teamId = request.TeamId;
+                if (teamId < 0)
+                    continue;
+
+                TeamOverlayStats stats = GetOrCreateTeamStats(teamId);
+                stats.PendingRequests++;
+            }
+        }
+
+        FlagshipController[] flagships = FindObjectsOfType<FlagshipController>(true);
+        for (int i = 0; i < flagships.Length; i++)
+        {
+            FlagshipController flagship = flagships[i];
+            if (flagship == null || !flagship.isActiveAndEnabled)
+                continue;
+
+            int teamId = -1;
+            if (flagship.TeamAgent != null)
+            {
+                teamId = flagship.TeamAgent.TeamId;
+            }
+            else if (flagship.TryGetComponent(out TeamAgent teamAgent))
+            {
+                teamId = teamAgent.TeamId;
+            }
+
+            if (teamId < 0)
+                continue;
+
+            TeamOverlayStats stats = GetOrCreateTeamStats(teamId);
+            if (stats.Flagship == null)
+            {
+                stats.Flagship = flagship;
+            }
+            else if (stats.Flagship.CurrentState == FlagshipController.BattleState.Destroyed &&
+                     flagship.CurrentState != FlagshipController.BattleState.Destroyed)
+            {
+                stats.Flagship = flagship;
+            }
+        }
+
+        orderedTeamIds.Sort(CompareTeamIds);
+    }
+
+    private TeamOverlayStats GetOrCreateTeamStats(int teamId)
+    {
+        if (teamStatsById.TryGetValue(teamId, out TeamOverlayStats existing))
+            return existing;
+
+        TeamOverlayStats created = new TeamOverlayStats { TeamId = teamId };
+        teamStatsById.Add(teamId, created);
+        orderedTeamIds.Add(teamId);
+        return created;
+    }
+
+    private int CompareTeamIds(int a, int b)
+    {
+        if (a == playerTeamId && b != playerTeamId)
+            return -1;
+
+        if (b == playerTeamId && a != playerTeamId)
+            return 1;
+
+        return a.CompareTo(b);
     }
 
     private void RegisterAction(string actionLabel, int affectedSquads)
