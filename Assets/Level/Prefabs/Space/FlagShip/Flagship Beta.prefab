@@ -51,9 +51,9 @@ GameObject:
   - component: {fileID: 5987801976191449055}
   - component: {fileID: 3188465081199529637}
   - component: {fileID: 8529934722949041833}
+  - component: {fileID: 7286197874541789975}
   - component: {fileID: 3101948059298077492}
   - component: {fileID: 3252553446457875857}
-  - component: {fileID: 7286197874541789975}
   m_Layer: 12
   m_Name: Flagship Beta
   m_TagString: Untagged
@@ -322,6 +322,24 @@ MonoBehaviour:
   arriveDistance: 2
   minRetargetDelay: 1.5
   maxRetargetDelay: 4
+--- !u!114 &7286197874541789975
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5549628142487207619}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3c3c813380129348812fe3272297391, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FlagshipNoFlyZone
+  radius: 275
+  buffer: 60
+  drawDebug: 1
+  drawOnlyWhenSelected: 0
+  coreColor: {r: 1, g: 0.15, b: 0.15, a: 0.95}
+  bufferColor: {r: 1, g: 0.15, b: 0.15, a: 0.45}
 --- !u!50 &3101948059298077492
 Rigidbody2D:
   serializedVersion: 5
@@ -385,24 +403,6 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: -0.008419412}
   m_Radius: 0.2802473
---- !u!114 &7286197874541789975
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5549628142487207619}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a3c3c813380129348812fe3272297391, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FlagshipNoFlyZone
-  radius: 275
-  buffer: 60
-  drawDebug: 1
-  drawOnlyWhenSelected: 0
-  coreColor: {r: 1, g: 0.15, b: 0.15, a: 0.95}
-  bufferColor: {r: 1, g: 0.15, b: 0.15, a: 0.45}
 --- !u!1001 &1359578371742569218
 PrefabInstance:
   m_ObjectHideFlags: 0
