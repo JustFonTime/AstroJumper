@@ -132,9 +132,15 @@ public class Unit : MonoBehaviour
             Vector3 offsetDirection = IsFacingRight() ? Vector3.right : Vector3.left;
             Vector3 offset = new Vector3(hitBoxInfo.GetOffset().x * offsetDirection.x, hitBoxInfo.GetOffset().y, hitBoxInfo.GetOffset().z);
             projectile.transform.position = transform.position + offset;
-            projectile.GetComponent<Projectile>().SetDirection(IsFacingRight() ? 1 : -1);
-            projectile.GetComponent<Projectile>().SetYValue(transform.position.y);
-            projectile.GetComponent<Projectile>().SetSpeed(hitBoxInfo.GetProjectileSpeed());
+
+            Projectile proj = projectile.GetComponent<Projectile>();
+            proj.SetDirection(IsFacingRight() ? 1 : -1);
+            proj.SetYValue(transform.position.y);
+            proj.SetSpeed(hitBoxInfo.GetProjectileSpeed());
+
+            proj.SetWallLayers(LayerMask.GetMask("Ground"));
+            //Debug.Log("WallLayer mask value: " + LayerMask.GetMask("Ground")); 
+
             return projectile;
         }
 

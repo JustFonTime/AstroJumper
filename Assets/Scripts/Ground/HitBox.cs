@@ -113,7 +113,7 @@ public class HitBox : MonoBehaviour
     public float GetKnockbackForce() => knockbackForce;
     public float GetKnockbackVerticalForce() => knockbackVerticalForce;
 
-    private void DestroyAttack()
+    public void DestroyAttack()
     {
         onDurationOver?.Invoke(attackListIndex);
         if(!isMelee)
@@ -125,6 +125,12 @@ public class HitBox : MonoBehaviour
         Destroy(transform.parent.gameObject); 
         Destroy(gameObject);
     }
+    public void ForceDestroy()
+    {
+        DestroyAttack();
+    }
+
+
 
     public void setPool(ProjectilePool pool)
     {
