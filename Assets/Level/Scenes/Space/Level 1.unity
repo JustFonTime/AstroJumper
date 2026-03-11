@@ -334,7 +334,7 @@ MonoBehaviour:
   includePlayer: 1
   lethalDamage: 1000000
   checkInterval: 0.25
-  drawDebugRadius: 1
+  drawDebugRadius: 0
   debugRadiusColor: {r: 0.2, g: 0.95, b: 0.95, a: 0.9}
 --- !u!4 &787467171
 Transform:
@@ -378,7 +378,7 @@ MonoBehaviour:
   engageKey: 120
   regroupKey: 99
   retreatKey: 118
-  showOverlay: 1
+  showOverlay: 0
   toggleOverlayKey: 282
   toggleControlsCategoryKey: 283
   toggleSquadsCategoryKey: 284
@@ -711,7 +711,7 @@ MonoBehaviour:
   disableFleetSpawnerAutoFulfill: 1
   reinforcementSpawnRadius: 245
   maxReinforcementsPerRequest: 5
-  drawSpawnRadiusDebug: 1
+  drawSpawnRadiusDebug: 0
   drawSpawnRadiusOnlyWhenSelected: 0
   fleetSpawnRadiusDebugColor: {r: 0.2, g: 0.55, b: 1, a: 0.95}
   reinforcementSpawnRadiusDebugColor: {r: 0.2, g: 0.55, b: 1, a: 0.5}
@@ -1306,3 +1306,4 @@ SceneRoots:
   - {fileID: 787467171}
   - {fileID: 1793985341}
   - {fileID: 913081958}
+

@@ -79,7 +79,7 @@ public class SpaceshipMovement : MonoBehaviour
     private float turnInput;    // A/D (-1..1)
 
     [Header("Debug Gizmos")]
-    [SerializeField] private bool drawDebug = true;
+    [SerializeField] private bool drawDebug = false;
     [SerializeField] private bool drawOnlyWhenSelected = true;
 
     [SerializeField] private float velocityGizmoScale = 0.25f;
@@ -386,4 +386,5 @@ public class SpaceshipMovement : MonoBehaviour
         Gizmos.DrawLine(pos + vec, pos + vec + l * headLen);
     }
 }
+
 

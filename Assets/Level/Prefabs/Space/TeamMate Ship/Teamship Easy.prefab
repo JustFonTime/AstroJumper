@@ -46,7 +46,6 @@ GameObject:
   - component: {fileID: 6134351781619663024}
   - component: {fileID: 6537647891272567404}
   - component: {fileID: 6013819963189794247}
-  - component: {fileID: 790527390912482259}
   - component: {fileID: 6146821176628325350}
   - component: {fileID: 8343255327243430252}
   - component: {fileID: 7849794099789389228}
@@ -236,34 +235,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &790527390912482259
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5549628142487207619}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5c31ef6d67655eb42899bafc8256a1a4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ShipOrderController
-  defaultOrder: 0
-  squadControllable: 1
-  orderThinkInterval: 0.2
-  escortRadius: 12
-  assistRadius: 35
-  escortLeash: 45
-  protectOrbitRadius: 16
-  defenseRadius: 40
-  protectLeash: 55
-  protectOrbitAngularSpeedDeg: 45
-  regroupRadius: 10
-  retreatDistance: 25
-  shipMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  threatPickInnerBias: 0.75
 --- !u!114 &6146821176628325350
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -368,7 +339,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   separationIgnoreTriggers: 1
-  drawDebug: 1
+  drawDebug: 0
   drawOnlyWhenSelected: 0
   drawTargetLine: 0
   hasTargetColor: {r: 0, g: 1, b: 0, a: 1}
@@ -1060,3 +1031,5 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 9083306183511141861, guid: c72e1411e2e4ff84a87796edeb13556e, type: 3}
   m_PrefabInstance: {fileID: 9164286057227572245}
   m_PrefabAsset: {fileID: 0}
+
+

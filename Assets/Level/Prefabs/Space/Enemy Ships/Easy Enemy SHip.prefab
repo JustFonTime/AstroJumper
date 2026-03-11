@@ -325,7 +325,7 @@ MonoBehaviour:
   fallbackArriveDistance: 1.25
   fallbackFullThrottleDistance: 8
   minimumThrottleWhenMoving: 0.2
-  useLocalAvoidance: 0
+  useLocalAvoidance: 1
   avoidFriendlyShips: 1
   avoidHostileShips: 1
   localAvoidanceRadius: 10
@@ -377,7 +377,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5549628142487207619}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c9dc978f3f72c8e4a9d63484b328d7e6, type: 3}
   m_Name: 

@@ -35,7 +35,6 @@ public class SimpleTeamSpawner : MonoBehaviour
     [Header("Battle")]
     [SerializeField] private bool autoSpawnOnStart = true;
     [SerializeField] private bool clearExistingBattleOnSpawn = true;
-    [SerializeField] private bool disableOtherSpawnersOnStart = true;
     [SerializeField] private bool updateObjectiveProxies = true;
     [SerializeField] private bool enableSpawnHotkey = true;
     [SerializeField] private KeyCode spawnBattleKey = KeyCode.B;
@@ -83,7 +82,7 @@ public class SimpleTeamSpawner : MonoBehaviour
     [SerializeField] [Range(1, 10)] private int maxReinforcementsPerRequest = 5;
 
     [Header("Debug")]
-    [SerializeField] private bool drawSpawnRadiusDebug = true;
+    [SerializeField] private bool drawSpawnRadiusDebug = false;
     [SerializeField] private bool drawSpawnRadiusOnlyWhenSelected = false;
     [SerializeField] private Color fleetSpawnRadiusDebugColor = new Color(0.2f, 0.55f, 1f, 0.95f);
     [SerializeField] private Color reinforcementSpawnRadiusDebugColor = new Color(0.2f, 0.55f, 1f, 0.5f);
@@ -118,8 +117,6 @@ public class SimpleTeamSpawner : MonoBehaviour
 
     private void Start()
     {
-        if (disableOtherSpawnersOnStart)
-            DisableOtherSpawners();
 
         if (fleetSpawner != null)
         {
@@ -536,7 +533,7 @@ public class SimpleTeamSpawner : MonoBehaviour
 
             EnemySquadMember member = ship.GetComponent<EnemySquadMember>();
             if (member == null)
-                member = ship.AddComponent<SquadMember>();
+                member = ship.AddComponent<EnemySquadMember>();
 
             squad.RegisterMember(member, EnemySquadRole.Wingman);
         }
@@ -628,27 +625,6 @@ public class SimpleTeamSpawner : MonoBehaviour
         runtimes.RemoveAt(index);
     }
 
-    private void DisableOtherSpawners()
-    {
-#pragma warning disable CS0618
-        EnemySpaceshipSpawner[] enemySpawners = FindObjectsOfType<EnemySpaceshipSpawner>(true);
-        for (int i = 0; i < enemySpawners.Length; i++)
-        {
-            EnemySpaceshipSpawner spawner = enemySpawners[i];
-            if (spawner != null)
-                spawner.enabled = false;
-        }
-
-        FriendlySpaceshipSpawner[] friendlySpawners = FindObjectsOfType<FriendlySpaceshipSpawner>(true);
-        for (int i = 0; i < friendlySpawners.Length; i++)
-        {
-            FriendlySpaceshipSpawner spawner = friendlySpawners[i];
-            if (spawner != null)
-                spawner.enabled = false;
-        }
-#pragma warning restore CS0618
-    }
-
     private void OnDrawGizmos()
     {
         if (!drawSpawnRadiusDebug || drawSpawnRadiusOnlyWhenSelected)
@@ -691,3 +667,6 @@ public class SimpleTeamSpawner : MonoBehaviour
         }
     }
 }
+
+
+

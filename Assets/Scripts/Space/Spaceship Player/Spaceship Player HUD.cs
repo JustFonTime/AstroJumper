@@ -15,7 +15,6 @@ public class SpaceshipPlayerHUD : MonoBehaviour
     private SpaceshipMovement playerMovement;
 
     private FleetSpawner fleetSpawner;
-    private EnemySpaceshipSpawner legacyEnemySpawner;
 
     private void Start()
     {
@@ -26,27 +25,14 @@ public class SpaceshipPlayerHUD : MonoBehaviour
             playerMovement = player.GetComponent<SpaceshipMovement>();
         }
 
+        if (waveText != null)
+            waveText.text = "Flagship Battle";
+
         fleetSpawner = FleetSpawner.Instance;
         if (fleetSpawner != null)
         {
-            fleetSpawner.OnWaveChanged += SetWave;
             fleetSpawner.OnAliveEnemiesChanged += SetAliveEnemies;
-            fleetSpawner.AllWavesCompleted += HandleAllWavesCompleted;
-
-            SetWave(fleetSpawner.CurrentWave);
             SetAliveEnemies(fleetSpawner.AliveTrackedEnemies);
-            return;
-        }
-
-        legacyEnemySpawner = EnemySpaceshipSpawner.Instance;
-        if (legacyEnemySpawner != null)
-        {
-            legacyEnemySpawner.OnWaveChanged += SetWave;
-            legacyEnemySpawner.OnAliveEnemiesChanged += SetAliveEnemies;
-            legacyEnemySpawner.AllWavesCompleted += HandleAllWavesCompleted;
-
-            SetWave(legacyEnemySpawner.CurrentWave);
-            SetAliveEnemies(legacyEnemySpawner.AliveEnemies);
         }
     }
 
@@ -54,18 +40,8 @@ public class SpaceshipPlayerHUD : MonoBehaviour
     {
         if (fleetSpawner != null)
         {
-            fleetSpawner.OnWaveChanged -= SetWave;
             fleetSpawner.OnAliveEnemiesChanged -= SetAliveEnemies;
-            fleetSpawner.AllWavesCompleted -= HandleAllWavesCompleted;
             fleetSpawner = null;
-        }
-
-        if (legacyEnemySpawner != null)
-        {
-            legacyEnemySpawner.OnWaveChanged -= SetWave;
-            legacyEnemySpawner.OnAliveEnemiesChanged -= SetAliveEnemies;
-            legacyEnemySpawner.AllWavesCompleted -= HandleAllWavesCompleted;
-            legacyEnemySpawner = null;
         }
     }
 
@@ -100,19 +76,9 @@ public class SpaceshipPlayerHUD : MonoBehaviour
         shieldSlider.value = shield / maxShield;
     }
 
-    public void SetWave(int wave)
-    {
-        waveText.text = "Wave: " + wave.ToString();
-    }
-
     public void SetAliveEnemies(int aliveEnemies)
     {
-        aliveEnemiesText.text = "Enemies Left: " + aliveEnemies.ToString();
-    }
-
-    private void HandleAllWavesCompleted()
-    {
-        waveText.text = "All Waves Completed!";
-        aliveEnemiesText.text = "";
+        if (aliveEnemiesText != null)
+            aliveEnemiesText.text = "Enemies Left: " + aliveEnemies.ToString();
     }
 }

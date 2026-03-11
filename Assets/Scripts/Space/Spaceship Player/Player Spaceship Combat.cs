@@ -11,7 +11,7 @@ public class PlayerSpaceshipCombat : MonoBehaviour
     [SerializeField]
     private Transform projectileSpawn;
 
-    [Header("Debug")] [SerializeField] private bool drawDebug = true;
+    [Header("Debug")] [SerializeField] private bool drawDebug = false;
     [SerializeField] private float debugLineLen = 3f;
 
     public Vector3 AimDirectionWorld { get; private set; }
@@ -128,3 +128,4 @@ public class PlayerSpaceshipCombat : MonoBehaviour
         return Quaternion.Euler(0f, 0f, angle) * baseDirection;
     }
 }
+

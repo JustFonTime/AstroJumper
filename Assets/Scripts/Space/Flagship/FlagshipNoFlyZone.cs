@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 
 [DisallowMultipleComponent]
@@ -13,7 +13,7 @@ public class FlagshipNoFlyZone : MonoBehaviour
     [SerializeField] private float buffer = 25f;
 
     [Header("Debug")]
-    [SerializeField] private bool drawDebug = true;
+    [SerializeField] private bool drawDebug = false;
     [SerializeField] private bool drawOnlyWhenSelected = false;
     [SerializeField] private Color coreColor = new Color(1f, 0.15f, 0.15f, 0.95f);
     [SerializeField] private Color bufferColor = new Color(1f, 0.15f, 0.15f, 0.45f);
@@ -98,3 +98,4 @@ public class FlagshipNoFlyZone : MonoBehaviour
         Gizmos.DrawLine(center + Vector3.up * core, center + Vector3.down * core);
     }
 }
+

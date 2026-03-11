@@ -38,7 +38,7 @@ public class SquadDebugHotkeys : MonoBehaviour
     [SerializeField] private KeyCode retreatKey = KeyCode.V;
 
     [Header("Overlay")]
-    [SerializeField] private bool showOverlay = true;
+    [SerializeField] private bool showOverlay = false;
     [SerializeField] private KeyCode toggleOverlayKey = KeyCode.F1;
     [SerializeField] private KeyCode toggleControlsCategoryKey = KeyCode.F2;
     [SerializeField] private KeyCode toggleSquadsCategoryKey = KeyCode.F3;
@@ -320,7 +320,7 @@ public class SquadDebugHotkeys : MonoBehaviour
             else
             {
                 overlayBuilder.AppendLine(
-                    $"FleetSpawner: wave={fleet.CurrentWave} trackedEnemies={fleet.AliveTrackedEnemies} pendingRequests={fleet.PendingReinforcementRequestCount}");
+                    $"FleetSpawner: trackedEnemies={fleet.AliveTrackedEnemies} pendingRequests={fleet.PendingReinforcementRequestCount}");
 
                 IReadOnlyList<ReinforcementRequest> pending = fleet.PendingReinforcementRequests;
                 int shown = Mathf.Min(maxRequestsToDisplay, pending.Count);
@@ -559,4 +559,6 @@ public class SquadDebugHotkeys : MonoBehaviour
         }
     }
 }
+
+
 

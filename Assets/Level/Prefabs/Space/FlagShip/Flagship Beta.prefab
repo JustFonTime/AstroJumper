@@ -332,15 +332,15 @@ MonoBehaviour:
   sidePreference: 0
   innerExclusionRadiusRatio: 0.45
   innerExclusionPadding: 213.8
-  drawRoamRadiusDebug: 1
+  drawRoamRadiusDebug: 0
   drawRoamRadiusOnlyWhenSelected: 1
   roamRadiusDebugColor: {r: 1, g: 0.39696717, b: 0.19999999, a: 0.95}
-  drawPathTrailDebug: 1
+  drawPathTrailDebug: 0
   drawPathForNonPlayerTeamsOnly: 1
   maxPathSamples: 96
   pathSampleInterval: 0.2
   minPathSampleDistance: 20
-  drawCurrentTargetDebug: 1
+  drawCurrentTargetDebug: 0
   targetMarkerRadius: 120
   pathTrailColor: {r: 1, g: 0.45, b: 0.15, a: 0.95}
   targetLinkColor: {r: 1, g: 0.9, b: 0.2, a: 0.9}
@@ -358,7 +358,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FlagshipNoFlyZone
   radius: 275
   buffer: 60
-  drawDebug: 1
+  drawDebug: 0
   drawOnlyWhenSelected: 0
   coreColor: {r: 1, g: 0.15, b: 0.15, a: 0.95}
   bufferColor: {r: 1, g: 0.15, b: 0.15, a: 0.45}
@@ -822,3 +822,4 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5369244763913833518, guid: 23f4f240ea8ab3a4f8e6ea06d6fdf628, type: 3}
   m_PrefabInstance: {fileID: 9137882318850128525}
   m_PrefabAsset: {fileID: 0}
+

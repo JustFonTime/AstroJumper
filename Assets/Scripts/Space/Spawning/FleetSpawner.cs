@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
@@ -31,47 +30,10 @@ public class FleetSpawner : MonoBehaviour
         public List<ShipPrefabOption> shipPrefabs = new List<ShipPrefabOption>();
     }
 
-    [Serializable]
-    public class FleetWaveEntry
-    {
-        public int teamId = 1;
-        [Min(1)] public int count = 5;
-
-        [Header("Squad Spawning")]
-        public bool spawnAsSquad = false;
-        [Range(2, 10)] public int minSquadSize = 2;
-        [Range(2, 10)] public int maxSquadSize = 4;
-        public EnemySquadFormationType formationType = EnemySquadFormationType.Vee;
-        public EnemySquadState initialSquadState = EnemySquadState.Engage;
-        public float squadSpacing = 5f;
-        public float squadEngageDistance = 18f;
-        public float squadAnchorMoveSpeed = 14f;
-
-        [Header("Overrides")]
-        public Transform focusTarget;
-        public GameObject prefabOverride;
-    }
-
-    [Serializable]
-    public class FleetWave
-    {
-        public List<FleetWaveEntry> entries = new List<FleetWaveEntry>();
-        public float spawnSpacing = 0f;
-        public float timeToNextWaveAfterClear = 2f;
-    }
-
-    public enum SpawnMode
-    {
-        Manual,
-        SetWaves
-    }
-
     public static FleetSpawner Instance { get; private set; }
 
     public event Action<int, int> OnTeamAliveCountChanged;
     public event Action<int> OnAliveEnemiesChanged;
-    public event Action<int> OnWaveChanged;
-    public event Action AllWavesCompleted;
     public event Action<ReinforcementRequest> OnReinforcementRequested;
 
     [Header("Team Config")]
@@ -96,24 +58,8 @@ public class FleetSpawner : MonoBehaviour
     [SerializeField] private float defaultRequestDelaySeconds = 2f;
     [SerializeField] private float defaultRequestCooldownSeconds = 8f;
 
-    [Header("Wave Mode (Optional)")]
-    [SerializeField] private SpawnMode spawnMode = SpawnMode.Manual;
-    [SerializeField] private float initialWaveSpawnDelay = 2f;
-    [SerializeField] private bool waitForTrackedEnemyTeamsToClear = true;
+    [Header("Tracked Enemies")]
     [SerializeField] private List<int> trackedEnemyTeamIds = new List<int> { 1 };
-    [SerializeField] private List<FleetWave> waves = new List<FleetWave>();
-
-    [Header("Startup Spawn (Manual Mode)")]
-    [SerializeField] private bool autoSpawnConfiguredTeamsOnStart = false;
-    [SerializeField] private bool startupSpawnAsSquads = true;
-    [SerializeField] [Range(1, 10)] private int startupShipsPerTeam = 5;
-    [SerializeField] private bool includePlayerTeamInStartup = false;
-    [SerializeField] private float startupTeamSpacing = 20f;
-    [SerializeField] private Vector2 startupShipJitter = new Vector2(6f, 6f);
-
-    [Header("Spawn Area")]
-    [SerializeField] private Vector2 fallbackMinSpawnAreaSize = new Vector2(40f, 40f);
-    [SerializeField] private Vector2 fallbackMaxSpawnAreaSize = new Vector2(80f, 80f);
 
     [Header("Pooling")]
     [SerializeField] private int defaultPoolCapacity = 40;
@@ -131,13 +77,10 @@ public class FleetSpawner : MonoBehaviour
     private readonly List<ReinforcementRequest> pendingReinforcementRequests = new(64);
 
     private GameObject player;
-    private Coroutine waveRoutine;
-    private int currentWave;
     private int cachedTrackedEnemyCount;
 
     public int PendingReinforcementRequestCount => pendingReinforcementRequests.Count;
     public IReadOnlyList<ReinforcementRequest> PendingReinforcementRequests => pendingReinforcementRequests;
-    public int CurrentWave => currentWave;
     public int AliveTrackedEnemies => cachedTrackedEnemyCount;
 
     private void Awake()
@@ -162,13 +105,10 @@ public class FleetSpawner : MonoBehaviour
             player = GameObject.FindGameObjectWithTag("Player");
 
         EmitTrackedEnemyCount(force: true);
-        TryStartWaveMode();
-        TryStartupSpawnFromTeamConfigs();
     }
 
     private void OnDisable()
     {
-        StopWaveMode();
         UnregisterAllReinforcementSquads();
         pendingReinforcementRequests.Clear();
     }
@@ -203,33 +143,6 @@ public class FleetSpawner : MonoBehaviour
     {
         trackedEnemyTeamIds = teamIds ?? new List<int>();
         EmitTrackedEnemyCount(force: true);
-    }
-
-    public void StartWaveMode(bool restart = false)
-    {
-        if (spawnMode != SpawnMode.SetWaves)
-            spawnMode = SpawnMode.SetWaves;
-
-        if (waveRoutine != null)
-        {
-            if (!restart)
-                return;
-
-            StopCoroutine(waveRoutine);
-            waveRoutine = null;
-        }
-
-        currentWave = 0;
-        waveRoutine = StartCoroutine(RunWaves());
-    }
-
-    public void StopWaveMode()
-    {
-        if (waveRoutine == null)
-            return;
-
-        StopCoroutine(waveRoutine);
-        waveRoutine = null;
     }
 
     public GameObject SpawnShipForTeam(
@@ -326,7 +239,7 @@ public class FleetSpawner : MonoBehaviour
         squadObject.transform.SetParent(activeShipsRoot, true);
         squadObject.transform.position = anchorPosition;
 
-        EnemySquadController squad = squadObject.AddComponent<SquadController>();
+        EnemySquadController squad = squadObject.AddComponent<EnemySquadController>();
         Transform resolvedFocus = ResolveFocusTarget(teamId, focusTarget);
         squad.Initialize(
             resolvedFocus,
@@ -357,7 +270,7 @@ public class FleetSpawner : MonoBehaviour
 
             EnemySquadMember member = ship.GetComponent<EnemySquadMember>();
             if (member == null)
-                member = ship.AddComponent<SquadMember>();
+                member = ship.AddComponent<EnemySquadMember>();
 
             squad.RegisterMember(member, ResolveRole(ship, i));
         }
@@ -496,7 +409,7 @@ public class FleetSpawner : MonoBehaviour
 
         EnemySquadMember member = ship.GetComponent<EnemySquadMember>();
         if (member == null)
-            member = ship.AddComponent<SquadMember>();
+            member = ship.AddComponent<EnemySquadMember>();
 
         if (member.Squad != null)
             return;
@@ -555,7 +468,7 @@ public class FleetSpawner : MonoBehaviour
         squadObject.transform.SetParent(activeShipsRoot, true);
         squadObject.transform.position = anchorPos;
 
-        EnemySquadController squad = squadObject.AddComponent<SquadController>();
+        EnemySquadController squad = squadObject.AddComponent<EnemySquadController>();
         squad.Initialize(
             resolvedFocus,
             formation,
@@ -629,7 +542,7 @@ public class FleetSpawner : MonoBehaviour
 
             EnemySquadMember member = ship.GetComponent<EnemySquadMember>();
             if (member == null)
-                member = ship.AddComponent<SquadMember>();
+                member = ship.AddComponent<EnemySquadMember>();
 
             squad.RegisterMember(member, ResolveRole(ship, squad.MemberCount));
             if (!squad.IsUnderStrength)
@@ -763,205 +676,6 @@ public class FleetSpawner : MonoBehaviour
         return null;
     }
 
-    private void TryStartWaveMode()
-    {
-        if (spawnMode != SpawnMode.SetWaves)
-            return;
-
-        StartWaveMode(restart: true);
-    }
-
-    private void TryStartupSpawnFromTeamConfigs()
-    {
-        if (GetComponent<SimpleTeamSpawner>() != null)
-            return;
-
-        if (spawnMode != SpawnMode.Manual || !autoSpawnConfiguredTeamsOnStart)
-            return;
-
-        if (teamConfigs == null || teamConfigs.Count == 0)
-            return;
-
-        int playerTeamId = ResolvePlayerTeamId();
-        int spawnedTeams = 0;
-
-        for (int i = 0; i < teamConfigs.Count; i++)
-        {
-            TeamSpawnConfig config = teamConfigs[i];
-            if (config == null)
-                continue;
-
-            if (!includePlayerTeamInStartup && config.teamId == playerTeamId)
-                continue;
-
-            int shipCount = Mathf.Clamp(startupShipsPerTeam, 1, 10);
-            Vector3 anchorPos = GetStartupAnchorPosition(spawnedTeams);
-            Transform focus = ResolveFocusTarget(config.teamId, config.defaultFocusTarget);
-
-            if (startupSpawnAsSquads)
-            {
-                SpawnSquadForTeam(
-                    config.teamId,
-                    shipCount,
-                    anchorPos,
-                    config.autoFormationType,
-                    config.squadSpacing,
-                    config.autoSquadState,
-                    config.squadEngageDistance,
-                    config.squadAnchorMoveSpeed,
-                    focus,
-                    prefabOverride: null);
-            }
-            else
-            {
-                for (int shipIndex = 0; shipIndex < shipCount; shipIndex++)
-                {
-                    Vector2 jitter = new Vector2(
-                        Random.Range(-Mathf.Abs(startupShipJitter.x), Mathf.Abs(startupShipJitter.x)),
-                        Random.Range(-Mathf.Abs(startupShipJitter.y), Mathf.Abs(startupShipJitter.y)));
-
-                    SpawnShipForTeam(
-                        config.teamId,
-                        anchorPos + (Vector3)jitter,
-                        prefabOverride: null,
-                        assignAutoSquad: true,
-                        focusTargetOverride: focus);
-                }
-            }
-
-            spawnedTeams++;
-        }
-
-        if (spawnedTeams == 0)
-        {
-            Debug.LogWarning(
-                "FleetSpawner: startup spawn is enabled but no eligible teams were spawned. " +
-                "Check team configs and includePlayerTeamInStartup.");
-        }
-    }
-
-    private Vector3 GetStartupAnchorPosition(int teamIndex)
-    {
-        Vector2 center = player != null ? (Vector2)player.transform.position : Vector2.zero;
-
-        if (teamIndex <= 0)
-            return center + Random.insideUnitCircle * Mathf.Max(1f, startupTeamSpacing * 0.3f);
-
-        int ringSize = 6;
-        int ring = ((teamIndex - 1) / ringSize) + 1;
-        int indexInRing = (teamIndex - 1) % ringSize;
-        float angleDeg = (360f / ringSize) * indexInRing;
-        float radius = Mathf.Max(1f, startupTeamSpacing) * ring;
-
-        Vector2 offset = Quaternion.Euler(0f, 0f, angleDeg) * Vector2.right * radius;
-        return center + offset;
-    }
-
-    private IEnumerator RunWaves()
-    {
-        if (initialWaveSpawnDelay > 0f)
-            yield return new WaitForSeconds(initialWaveSpawnDelay);
-
-        if (waves == null || waves.Count == 0)
-        {
-            waveRoutine = null;
-            yield break;
-        }
-
-        currentWave = 0;
-
-        for (int waveIndex = 0; waveIndex < waves.Count; waveIndex++)
-        {
-            FleetWave wave = waves[waveIndex];
-            if (wave == null)
-                continue;
-
-            currentWave++;
-            OnWaveChanged?.Invoke(currentWave);
-
-            List<FleetWaveEntry> entries = wave.entries;
-            if (entries != null)
-            {
-                for (int entryIndex = 0; entryIndex < entries.Count; entryIndex++)
-                {
-                    FleetWaveEntry entry = entries[entryIndex];
-                    if (entry == null)
-                        continue;
-
-                    int requestedCount = Mathf.Max(0, entry.count);
-                    if (requestedCount <= 0)
-                        continue;
-
-                    if (entry.spawnAsSquad)
-                    {
-                        int remaining = requestedCount;
-                        while (remaining > 0)
-                        {
-                            int squadSize = PickWaveSquadSize(entry, remaining);
-                            Vector3 anchorPos = GetRandomSpawnPosition();
-
-                            SpawnSquadForTeam(
-                                entry.teamId,
-                                squadSize,
-                                anchorPos,
-                                entry.formationType,
-                                entry.squadSpacing,
-                                entry.initialSquadState,
-                                entry.squadEngageDistance,
-                                entry.squadAnchorMoveSpeed,
-                                entry.focusTarget,
-                                entry.prefabOverride);
-
-                            remaining -= squadSize;
-
-                            if (wave.spawnSpacing > 0f)
-                                yield return new WaitForSeconds(wave.spawnSpacing);
-                        }
-                    }
-                    else
-                    {
-                        for (int spawnIndex = 0; spawnIndex < requestedCount; spawnIndex++)
-                        {
-                            SpawnShipForTeam(
-                                entry.teamId,
-                                GetRandomSpawnPosition(),
-                                entry.prefabOverride,
-                                assignAutoSquad: true,
-                                focusTargetOverride: entry.focusTarget);
-
-                            if (wave.spawnSpacing > 0f)
-                                yield return new WaitForSeconds(wave.spawnSpacing);
-                        }
-                    }
-                }
-            }
-
-            if (waitForTrackedEnemyTeamsToClear)
-            {
-                while (ComputeTrackedEnemyCount() > 0)
-                    yield return null;
-            }
-
-            if (wave.timeToNextWaveAfterClear > 0f)
-                yield return new WaitForSeconds(wave.timeToNextWaveAfterClear);
-        }
-
-        AllWavesCompleted?.Invoke();
-        waveRoutine = null;
-    }
-
-    private static int PickWaveSquadSize(FleetWaveEntry entry, int remaining)
-    {
-        int minSize = Mathf.Clamp(entry.minSquadSize, 2, 10);
-        int maxSize = Mathf.Clamp(entry.maxSquadSize, minSize, 10);
-        int requested = Random.Range(minSize, maxSize + 1);
-
-        if (remaining >= 2)
-            return Mathf.Min(requested, remaining);
-
-        return 1;
-    }
-
     private int ComputeTrackedEnemyCount()
     {
         if (trackedEnemyTeamIds == null || trackedEnemyTeamIds.Count == 0)
@@ -982,28 +696,6 @@ public class FleetSpawner : MonoBehaviour
 
         cachedTrackedEnemyCount = next;
         OnAliveEnemiesChanged?.Invoke(cachedTrackedEnemyCount);
-    }
-
-    private Vector3 GetRandomSpawnPosition()
-    {
-        float minWidth = Mathf.Min(fallbackMinSpawnAreaSize.x, fallbackMaxSpawnAreaSize.x);
-        float maxWidth = Mathf.Max(fallbackMinSpawnAreaSize.x, fallbackMaxSpawnAreaSize.x);
-        float minHeight = Mathf.Min(fallbackMinSpawnAreaSize.y, fallbackMaxSpawnAreaSize.y);
-        float maxHeight = Mathf.Max(fallbackMinSpawnAreaSize.y, fallbackMaxSpawnAreaSize.y);
-
-        float spawnAreaWidth = Random.Range(minWidth, maxWidth);
-        float spawnAreaHeight = Random.Range(minHeight, maxHeight);
-
-        float randomX = Random.Range(-spawnAreaWidth * 0.5f, spawnAreaWidth * 0.5f);
-        float randomY = Random.Range(-spawnAreaHeight * 0.5f, spawnAreaHeight * 0.5f);
-
-        if (player == null)
-            return new Vector3(randomX, randomY, 0f);
-
-        return new Vector3(
-            randomX + player.transform.position.x,
-            randomY + player.transform.position.y,
-            player.transform.position.z);
     }
 
     private GameObject ResolveShipPrefab(int teamId, GameObject prefabOverride)
@@ -1159,3 +851,5 @@ public class FleetSpawner : MonoBehaviour
         return offset;
     }
 }
+
+

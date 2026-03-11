@@ -19,7 +19,7 @@ public class SpaceArenaBoundaryController : MonoBehaviour
     [SerializeField] private float checkInterval = 0.25f;
 
     [Header("Debug")]
-    [SerializeField] private bool drawDebugRadius = true;
+    [SerializeField] private bool drawDebugRadius = false;
     [SerializeField] private Color debugRadiusColor = new Color(0.2f, 0.95f, 0.95f, 0.9f);
 
     private readonly Dictionary<SpaceshipHealthComponent, float> outsideTimers = new Dictionary<SpaceshipHealthComponent, float>(256);
@@ -139,4 +139,5 @@ public class SpaceArenaBoundaryController : MonoBehaviour
         Gizmos.DrawWireSphere(centerPos, safeRadius);
     }
 }
+
 

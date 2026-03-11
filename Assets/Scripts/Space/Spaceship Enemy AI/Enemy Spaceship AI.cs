@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 
 #if UNITY_EDITOR
@@ -65,7 +65,7 @@ public class EnemySpaceshipAI : MonoBehaviour
     [SerializeField] [Range(0f, 1f)] private float flagshipNoFlyMaxBlend = 0.9f;
 
     [Header("Debug")]
-    [SerializeField] private bool drawDebug = true;
+    [SerializeField] private bool drawDebug = false;
     [SerializeField] private bool drawOnlyWhenSelected = true;
     [SerializeField] private bool drawAvoidanceDebug = false;
     [SerializeField] private bool drawLineOfSightDebug = false;
@@ -830,6 +830,7 @@ public class EnemySpaceshipAI : MonoBehaviour
 #endif
     }
 }
+
 
 
 

@@ -200,7 +200,7 @@ MonoBehaviour:
     canFire: 1
   cam: {fileID: 0}
   projectileSpawn: {fileID: 8310198182133585324}
-  drawDebug: 1
+  drawDebug: 0
   debugLineLen: 3
 --- !u!114 &7396577382986853205
 MonoBehaviour:
@@ -924,3 +924,4 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3923952683678712364, guid: dd0b6246c62efdf44a17fca969cadc57, type: 3}
   m_PrefabInstance: {fileID: 7088203346701794813}
   m_PrefabAsset: {fileID: 0}
+

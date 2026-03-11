@@ -32,17 +32,17 @@ public class FlagshipSlowMovement : MonoBehaviour
     [SerializeField] private float innerExclusionPadding = 8f;
 
     [Header("Debug")]
-    [SerializeField] private bool drawRoamRadiusDebug = true;
+    [SerializeField] private bool drawRoamRadiusDebug = false;
     [SerializeField] private bool drawRoamRadiusOnlyWhenSelected = false;
     [SerializeField] private Color roamRadiusDebugColor = new Color(0.2f, 1f, 0.2f, 0.95f);
 
     [Header("Path Debug")]
-    [SerializeField] private bool drawPathTrailDebug = true;
+    [SerializeField] private bool drawPathTrailDebug = false;
     [SerializeField] private bool drawPathForNonPlayerTeamsOnly = true;
     [SerializeField] [Range(8, 256)] private int maxPathSamples = 96;
     [SerializeField] private float pathSampleInterval = 0.2f;
     [SerializeField] private float minPathSampleDistance = 0.35f;
-    [SerializeField] private bool drawCurrentTargetDebug = true;
+    [SerializeField] private bool drawCurrentTargetDebug = false;
     [SerializeField] private float targetMarkerRadius = 1.2f;
     [SerializeField] private Color pathTrailColor = new Color(1f, 0.45f, 0.15f, 0.95f);
     [SerializeField] private Color targetLinkColor = new Color(1f, 0.9f, 0.2f, 0.9f);
@@ -396,3 +396,4 @@ public class FlagshipSlowMovement : MonoBehaviour
             pathSamples.RemoveAt(0);
     }
 }
+
