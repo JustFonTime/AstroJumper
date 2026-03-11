@@ -20,18 +20,19 @@ These scripts are attached to active Space prefabs in the flagship mode:
 - `Assets/Scripts/Space/Component/SpaceshipHealthComponent.cs`
 - `Assets/Scripts/Space/Spaceship Enemy AI/Enemy Spaceship AI.cs`
 - `Assets/Scripts/Space/Spaceship Enemy AI/Enemy Spaceship Combat AI.cs`
-- `Assets/Scripts/Space/Spaceship Enemy AI/TriggerRelay2D.cs`
+- `Assets/Scripts/Space/Spaceship Enemy AI/EnemyShipProfileSO.cs`
 - `Assets/Scripts/Space/Spaceship Enemy AI/Kamakazy.cs`
 - `Assets/Scripts/Space/Spaceship Enemy AI/Shield Giver.cs`
+- `Assets/Scripts/Space/Spaceship Enemy AI/TriggerRelay2D.cs`
+- `Assets/Scripts/Space/Extra/TetherLine.cs`
 - `Assets/Scripts/Space/Flagship/FlagshipController.cs`
 - `Assets/Scripts/Space/Flagship/FlagshipShieldNode.cs`
 - `Assets/Scripts/Space/Flagship/FlagshipNoFlyZone.cs`
 - `Assets/Scripts/Space/Flagship/FlagshipSlowMovement.cs`
 - `Assets/Scripts/Space/Weapons/SpaceshipLaser.cs`
-- `Assets/Scripts/Space/Weapons/Spaceship Spinning Mine.cs`
 
 ## Flagship-Only Refactor (Complete)
-Wave/infinite game mode paths were removed. `FleetSpawner` now only handles:
+Wave/infinite and legacy alternate ship pipelines were removed. `FleetSpawner` now only handles:
 
 - Team-based ship/squad spawning
 - Reinforcement request queue + optional auto-fulfill
@@ -39,7 +40,7 @@ Wave/infinite game mode paths were removed. `FleetSpawner` now only handles:
 - Pooling via `PooledFleetShip`
 
 ## Removed In Cleanup
-The following Space scripts/assets were removed as legacy or non-flagship mode:
+The following Space scripts/assets were removed as legacy or unused in the flagship mode:
 
 - `Assets/Scripts/Space/Component/EnemyCount.cs`
 - `Assets/Scripts/Space/Flagship/FlagshipBoardingTrigger.cs`
@@ -56,12 +57,18 @@ The following Space scripts/assets were removed as legacy or non-flagship mode:
 - `Assets/Scripts/Space/Component/PooledEnemy.cs`
 - `Assets/Scripts/Space/Squads/SquadController.cs`
 - `Assets/Scripts/Space/Squads/SquadMember.cs`
+- `Assets/Scripts/Space/Weapons/Spaceship Spinning Mine.cs`
 - `Assets/Scripts/SO/EnemySpaceshipSpawnerSettingsSO.asset`
+- `Assets/Scripts/SO/Normal Enemy Ship Profile 1.asset`
+- `Assets/Level/Prefabs/Space/Enemy Ships/OLD Enemy Spaceship.prefab`
+- `Assets/Level/Prefabs/Space/TeamMate Ship/Teamship Easy.prefab`
+- `Assets/Level/Prefabs/Space/Projectiles/Spaceship Spinny Mine.prefab`
 
 ## Inspector + Debug Cleanup
 - Focused custom inspectors are in `Assets/Editor/Space/SpaceFocusedInspectors.cs`.
-- FleetSpawner and SimpleTeamSpawner inspectors now surface flagship-mode fields only.
+- FleetSpawner and SimpleTeamSpawner inspectors surface flagship-mode fields.
 - Active Level 1 debug overlays/radius gizmos default to off.
 - Flagship movement/no-fly debug gizmos default to off on the prefab.
-- Player and teammate prefab debug toggles default to off.
+- Player and enemy ship debug toggles default to off.
+
 
