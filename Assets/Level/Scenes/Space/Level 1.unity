@@ -718,30 +718,41 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad6b7ae9a54d48ee9a6ea07487b046c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SimpleTeamSpawner
-  teamAId: 1
-  teamBId: 2
-  squadsPerFleet: 7
-  shipsPerSquad: 4
-  sharedShipPrefab: {fileID: 5549628142487207619, guid: 66b35331de539834f819bbbac8b67800, type: 3}
-  teamAShipPrefab: {fileID: 0}
-  teamBShipPrefab: {fileID: 0}
-  formationType: 0
-  squadState: 1
-  squadSpacing: 5
-  squadEngageDistance: 18
-  squadAnchorMoveSpeed: 14
-  squadClusterSpacing: 14
-  squadJitter: {x: 4, y: 4}
-  teamASpawnPoint: {fileID: 1793985341}
-  teamBSpawnPoint: {fileID: 913081958}
-  defaultFleetSeparation: 220
   autoSpawnOnStart: 1
-  clearExistingTeamsBeforeSpawn: 1
+  clearExistingBattleOnSpawn: 1
   disableOtherSpawnersOnStart: 1
-  updateFleetFocusFromLiveCenters: 1
+  updateObjectiveProxies: 1
   enableSpawnHotkey: 1
   spawnBattleKey: 98
-  setTrackedEnemyTeamsOnFleetSpawner: 1
+  flagshipPrefab: {fileID: 5549628142487207619, guid: 51f5d574addb7084cabc5b0bfe0d0bdc, type: 3}
+  sharedShipPrefab: {fileID: 5549628142487207619, guid: 66b35331de539834f819bbbac8b67800, type: 3}
+  playerTeamShipPrefab: {fileID: 0}
+  enemyTeamShipPrefab: {fileID: 0}
+  squadsPerTeam: 6
+  shipsPerSquad: 4
+  formationType: 0
+  squadState: 1
+  squadSpacing: 10
+  squadEngageDistance: 20
+  squadAnchorMoveSpeed: 20
+  playerFlagshipSpawnPoint: {fileID: 0}
+  enemyFlagshipSpawnPoint: {fileID: 0}
+  useArenaBoundaryIfAvailable: 1
+  boundarySpawnRadiusRatio: 0.82
+  fallbackFlagshipSeparation: 1400
+  fleetSpawnRadiusAroundFlagship: 120
+  squadSpawnJitter: {x: 20, y: 20}
+  defendRatio: 0.34
+  attackRatio: 0.43
+  defendOrbitRadius: 180
+  attackOrbitRadius: 220
+  objectiveOrbitSpeedDegPerSec: 14
+  roamCorridorHalfWidth: 140
+  roamProgressSpeed: 0.18
+  hookReinforcementRequests: 1
+  disableFleetSpawnerAutoFulfill: 1
+  reinforcementSpawnRadius: 75
+  maxReinforcementsPerRequest: 5
 --- !u!114 &1055831341
 MonoBehaviour:
   m_ObjectHideFlags: 0

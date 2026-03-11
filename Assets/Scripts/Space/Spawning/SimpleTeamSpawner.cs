@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -80,6 +80,12 @@ public class SimpleTeamSpawner : MonoBehaviour
     [SerializeField] private bool disableFleetSpawnerAutoFulfill = true;
     [SerializeField] private float reinforcementSpawnRadius = 75f;
     [SerializeField] [Range(1, 10)] private int maxReinforcementsPerRequest = 5;
+
+    [Header("Debug")]
+    [SerializeField] private bool drawSpawnRadiusDebug = true;
+    [SerializeField] private bool drawSpawnRadiusOnlyWhenSelected = false;
+    [SerializeField] private Color fleetSpawnRadiusDebugColor = new Color(0.2f, 0.55f, 1f, 0.95f);
+    [SerializeField] private Color reinforcementSpawnRadiusDebugColor = new Color(0.2f, 0.55f, 1f, 0.5f);
 
     private FleetSpawner fleetSpawner;
     private Transform playerFlagshipTransform;
@@ -632,5 +638,47 @@ public class SimpleTeamSpawner : MonoBehaviour
                 spawner.enabled = false;
         }
 #pragma warning restore CS0618
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (!drawSpawnRadiusDebug || drawSpawnRadiusOnlyWhenSelected)
+            return;
+
+        DrawSpawnRadiusDebugGizmos();
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (!drawSpawnRadiusDebug)
+            return;
+
+        DrawSpawnRadiusDebugGizmos();
+    }
+
+    private void DrawSpawnRadiusDebugGizmos()
+    {
+        DrawSpawnRings(playerFlagshipTransform != null ? playerFlagshipTransform : playerFlagshipSpawnPoint);
+        DrawSpawnRings(enemyFlagshipTransform != null ? enemyFlagshipTransform : enemyFlagshipSpawnPoint);
+    }
+
+    private void DrawSpawnRings(Transform anchor)
+    {
+        if (anchor == null)
+            return;
+
+        float fleetRadius = Mathf.Max(0f, fleetSpawnRadiusAroundFlagship);
+        if (fleetRadius > 0.01f)
+        {
+            Gizmos.color = fleetSpawnRadiusDebugColor;
+            Gizmos.DrawWireSphere(anchor.position, fleetRadius);
+        }
+
+        float reinforceRadius = Mathf.Max(0f, reinforcementSpawnRadius);
+        if (reinforceRadius > 0.01f)
+        {
+            Gizmos.color = reinforcementSpawnRadiusDebugColor;
+            Gizmos.DrawWireSphere(anchor.position, reinforceRadius);
+        }
     }
 }

@@ -293,7 +293,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HealthComponent
   isPlayer: 0
   playerUpgradeState: {fileID: 0}
-  shipProfile: {fileID: 11400000, guid: 8bd50cbd59634a2448b1c6805ea7ad4d, type: 2}
+  shipProfile: {fileID: 11400000, guid: 81357e49726fbf240b1daaadd1ddbd89, type: 2}
   shieldVFX: {fileID: 5700664030587308242}
   deathSfx: {fileID: 8300000, guid: fd9d2439687099945bd16cb5b176f80c, type: 3}
   deathVolume: 1
@@ -318,15 +318,56 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpaceshipAI
   player: {fileID: 0}
-  shipProfile: {fileID: 11400000, guid: 7cb50b4815f20ef4282368cef3ebe528, type: 2}
+  shipProfile: {fileID: 11400000, guid: 81357e49726fbf240b1daaadd1ddbd89, type: 2}
   fallbackChaseDistance: 18
   fallbackArriveDistance: 1.25
   fallbackFullThrottleDistance: 8
   minimumThrottleWhenMoving: 0.2
+  useLocalAvoidance: 0
+  avoidFriendlyShips: 1
+  avoidHostileShips: 1
+  localAvoidanceRadius: 10
+  localAvoidanceStrength: 0.95
+  localAvoidanceLookAheadTime: 0.55
+  localAvoidanceClosingSpeed: 0.6
+  localAvoidanceHardSeparationDistance: 4
+  localAvoidanceMaxBlend: 0.8
+  localAvoidanceMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  reduceThrottleDuringAvoidance: 0
+  avoidanceThrottleMinScale: 0.65
+  avoidanceThrottleResponse: 0.85
+  useLineOfSightSteering: 1
+  lineOfSightProbeCount: 5
+  lineOfSightProbeArcDegrees: 80
+  lineOfSightProbeRange: 55
+  lineOfSightProbeRadius: 1.4
+  lineOfSightSteeringStrength: 1.2
+  lineOfSightCenterBlockThreshold: 0.88
+  lineOfSightSideLockSeconds: 0.65
+  lineOfSightMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  useFlagshipNoFlyZones: 1
+  avoidFriendlyFlagshipZones: 1
+  avoidHostileFlagshipZones: 1
+  flagshipNoFlyExtraPadding: 12
+  flagshipNoFlyInfluenceDistance: 45
+  flagshipNoFlySteeringStrength: 1.35
+  flagshipNoFlyMaxBlend: 0.9
   drawDebug: 1
   drawOnlyWhenSelected: 0
+  drawAvoidanceDebug: 0
+  drawLineOfSightDebug: 0
   goalLineColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   targetLineColor: {r: 0, g: 1, b: 0, a: 1}
+  avoidanceLineColor: {r: 1, g: 0.25, b: 0.9, a: 0.9}
+  lineOfSightBlockedColor: {r: 1, g: 0.25, b: 0.2, a: 0.95}
+  lineOfSightClearColor: {r: 0.2, g: 1, b: 0.6, a: 0.95}
+  lineOfSightSteerColor: {r: 0.2, g: 0.95, b: 1, a: 0.95}
+  drawFlagshipNoFlySteeringDebug: 0
+  flagshipNoFlySteerColor: {r: 1, g: 0.2, b: 0.2, a: 0.95}
 --- !u!114 &3664788354145895835
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -340,8 +381,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpaceshipCombatAI
   firePoint: {fileID: 3234909650482045839}
-  shipProfile: {fileID: 11400000, guid: 7cb50b4815f20ef4282368cef3ebe528, type: 2}
+  turretPivots: []
+  shipProfile: {fileID: 11400000, guid: 81357e49726fbf240b1daaadd1ddbd89, type: 2}
   laserPrefab: {fileID: 659358672219713016, guid: 0f075aa575b24054d9af932f0af45de2, type: 3}
+  orbitFirePointAroundShip: 1
+  rotateTurretPivotsTowardAim: 1
+  autoUseFirePointChildrenAsTurretPivots: 1
+  autoFindTurretPivotsInChildren: 1
+  useFirePointAsTurretPivotFallback: 1
+  requireTargetToRotateTurrets: 0
+  turretTurnSpeedDegPerSec: 720
   avoidFriendlyFire: 1
   retargetIfUnsafe: 1
   lineOfFireMask:
@@ -353,6 +402,8 @@ MonoBehaviour:
   safeRayColor: {r: 0.2, g: 1, b: 0.2, a: 0.75}
   blockedRayColor: {r: 1, g: 0.7, b: 0.15, a: 0.95}
   firePointLineColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  drawTurretAimLines: 0
+  turretAimLineColor: {r: 0, g: 1, b: 1, a: 1}
 --- !u!50 &3101948059298077492
 Rigidbody2D:
   serializedVersion: 5
