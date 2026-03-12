@@ -144,7 +144,8 @@ public class Player : Unit
 
         if (Health <= 0)
         {
-            Reset();
+            onPlayerDeath?.Invoke(this);
+            //Reset();
             return;
         }
 
