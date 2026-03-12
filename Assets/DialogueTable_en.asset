@@ -30,6 +30,10 @@ MonoBehaviour:
     m_Localized: We're under attack by an unidentified force! We need your help!
     m_Metadata:
       m_Items: []
+  - m_Id: 52512588554240
+    m_Localized: ???
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []
