@@ -41,6 +41,8 @@ public class SimpleTeamSpawner : MonoBehaviour
 
     [Header("Prefabs")]
     [SerializeField] private GameObject flagshipPrefab;
+    [SerializeField] private GameObject playerTeamFlagshipPrefab;
+    [SerializeField] private GameObject enemyTeamFlagshipPrefab;
     [SerializeField] private GameObject sharedShipPrefab;
     [SerializeField] private GameObject playerTeamShipPrefab;
     [SerializeField] private GameObject enemyTeamShipPrefab;
@@ -172,9 +174,11 @@ public class SimpleTeamSpawner : MonoBehaviour
 
     private bool SpawnFlagships()
     {
-        if (flagshipPrefab == null)
+        GameObject playerFlagshipPrefab = ResolveFlagshipPrefabForTeam(PlayerTeamId);
+        GameObject enemyFlagshipPrefab = ResolveFlagshipPrefabForTeam(EnemyTeamId);
+        if (playerFlagshipPrefab == null || enemyFlagshipPrefab == null)
         {
-            Debug.LogError("SimpleTeamSpawner: flagshipPrefab is not assigned.");
+            Debug.LogError("SimpleTeamSpawner: flagship prefab is missing for one or both teams. Assign a shared flagshipPrefab or a team-specific override.");
             return false;
         }
 
@@ -183,13 +187,13 @@ public class SimpleTeamSpawner : MonoBehaviour
         Vector2 axisDir = axis.sqrMagnitude > 0.0001f ? axis.normalized : Vector2.right;
 
         GameObject playerObj = Instantiate(
-            flagshipPrefab,
+            playerFlagshipPrefab,
             playerSpawnPos,
             Quaternion.FromToRotation(Vector3.up, axisDir),
             transform);
 
         GameObject enemyObj = Instantiate(
-            flagshipPrefab,
+            enemyFlagshipPrefab,
             enemySpawnPos,
             Quaternion.FromToRotation(Vector3.up, -axisDir),
             transform);
@@ -203,7 +207,6 @@ public class SimpleTeamSpawner : MonoBehaviour
 
         return playerFlagshipTransform != null && enemyFlagshipTransform != null;
     }
-
     private void ResolveFlagshipPositions(out Vector3 playerPos, out Vector3 enemyPos)
     {
         float separation = Mathf.Max(300f, fallbackFlagshipSeparation);
@@ -480,6 +483,18 @@ public class SimpleTeamSpawner : MonoBehaviour
         return sharedShipPrefab;
     }
 
+
+    private GameObject ResolveFlagshipPrefabForTeam(int teamId)
+    {
+        if (teamId == PlayerTeamId)
+            return playerTeamFlagshipPrefab != null ? playerTeamFlagshipPrefab : flagshipPrefab;
+
+        if (teamId == EnemyTeamId)
+            return enemyTeamFlagshipPrefab != null ? enemyTeamFlagshipPrefab : flagshipPrefab;
+
+        return flagshipPrefab;
+    }
+
     private Transform GetOwnFlagshipTransform(int teamId)
     {
         return teamId == PlayerTeamId ? playerFlagshipTransform : enemyFlagshipTransform;
@@ -667,6 +682,7 @@ public class SimpleTeamSpawner : MonoBehaviour
         }
     }
 }
+
 
 
 

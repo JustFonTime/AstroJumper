@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -38,7 +38,8 @@ public class EnemySpaceshipCombatAI : MonoBehaviour
     [SerializeField] private Color safeRayColor = new Color(0.2f, 1f, 0.2f, 0.75f);
     [SerializeField] private Color blockedRayColor = new Color(1f, 0.7f, 0.15f, 0.95f);
 
-    [Header("Debug")] [SerializeField] private Color firePointLineColor = Color.red;
+    [Header("Debug")] [SerializeField] private bool drawFirePointLine = false;
+    [SerializeField] private Color firePointLineColor = Color.red;
     [SerializeField] private bool drawTurretAimLines = false;
     [SerializeField] private Color turretAimLineColor = Color.cyan;
 
@@ -402,12 +403,14 @@ public class EnemySpaceshipCombatAI : MonoBehaviour
 
     private void DrawDebug()
     {
-        if (firePoint != null)
+        if (!drawFirePointLine && !drawTurretAimLines)
+            return;
+
+        if (drawFirePointLine && firePoint != null)
             Debug.DrawLine(transform.position, firePoint.position, firePointLineColor, 0f, false);
 
         if (!drawTurretAimLines || cachedTurretPivots == null)
             return;
-
         for (int i = 0; i < cachedTurretPivots.Length; i++)
         {
             Transform pivot = cachedTurretPivots[i];
@@ -418,5 +421,7 @@ public class EnemySpaceshipCombatAI : MonoBehaviour
         }
     }
 }
+
+
 
 

@@ -240,7 +240,7 @@ public class EnemySpaceshipAI : MonoBehaviour
         ApplyFlightAssist(throttle01 > 0.05f);
         ClampSpeed();
 
-        if (focusTarget != null)
+        if (drawDebug && focusTarget != null)
             Debug.DrawLine(transform.position, focusTarget.position, targetLineColor, 0f, false);
     }
 
@@ -830,6 +830,8 @@ public class EnemySpaceshipAI : MonoBehaviour
 #endif
     }
 }
+
+
 
 
 

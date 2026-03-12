@@ -55,7 +55,7 @@ GameObject:
   - component: {fileID: 3101948059298077492}
   - component: {fileID: 3252553446457875857}
   m_Layer: 12
-  m_Name: Flagship Beta
+  m_Name: Enemy Flagship Beta
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

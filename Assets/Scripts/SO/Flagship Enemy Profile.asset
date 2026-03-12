@@ -43,20 +43,16 @@ MonoBehaviour:
     m_RotationOrder: 4
   alignStrength: 6
   dampStrength: 1.2
-  useRandomSpeed: 1
-  minSpeedMultiplier: 0.6
-  maxSpeedMultiplier: 1.4
-  oscillationHz: 0.8
-  useRandomBarrelRoll: 1
-  barrelRollDistance: 15
-  barrelRollDuration: 0.5
-  barrelRollSpinDegrees: 360
-  barrelRollMinTime: 4
-  barrelRollMaxTime: 10
+  focusDistance: 18
+  arriveDistance: 1.25
+  fullThrottleDistance: 8
   combatRange: 167
   minFireRate: 0.3
   maxFireRate: 0.6
+  useWeaponSpread: 0
+  minSpreadAngle: -2.5
+  maxSpreadAngle: 2.5
   maxHealth: 50
-  maxShields: 10000
-  startingShields: 10000
+  maxShields: 1000
+  startingShields: 1000
   canSelfRechargeShields: 0

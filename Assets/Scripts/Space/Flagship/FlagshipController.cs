@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [DisallowMultipleComponent]
 [RequireComponent(typeof(TeamAgent))]
@@ -30,6 +31,10 @@ public class FlagshipController : MonoBehaviour
     [SerializeField] private string boardingSceneName = "";
     [SerializeField] private bool boardWhenShieldsFail = true;
 
+    [Header("Shield Failure Scenes")]
+    [SerializeField] private string playerFlagshipShieldFailureSceneName = "GameOver";
+    [SerializeField] private string enemyFlagshipShieldFailureSceneName = "GameOver";
+
     [Header("Shield Nodes")]
     [SerializeField] private bool autoCollectShieldNodes = true;
     [SerializeField] private List<FlagshipShieldNode> shieldNodes = new List<FlagshipShieldNode>();
@@ -37,6 +42,8 @@ public class FlagshipController : MonoBehaviour
     private SpaceshipHealthComponent health;
     private TeamAgent teamAgent;
     private BattleState currentState;
+    private bool hasStateBeenInitialized;
+    private bool shieldFailureSceneLoaded;
 
     public SpaceshipHealthComponent Health => health;
     public TeamAgent TeamAgent => teamAgent;
@@ -79,6 +86,9 @@ public class FlagshipController : MonoBehaviour
 
     private void OnEnable()
     {
+        hasStateBeenInitialized = false;
+        shieldFailureSceneLoaded = false;
+
         if (health != null)
         {
             health.HealthChanged += OnHealthChanged;
@@ -134,8 +144,48 @@ public class FlagshipController : MonoBehaviour
             nextState = BattleState.Vulnerable;
         }
 
+        if (!hasStateBeenInitialized)
+        {
+            currentState = nextState;
+            hasStateBeenInitialized = true;
+            return;
+        }
+
         if (nextState == currentState) return;
+
+        bool shieldsJustFailed = !shieldFailureSceneLoaded &&
+                                 currentState == BattleState.Shielded &&
+                                 nextState != BattleState.Shielded &&
+                                 health != null &&
+                                 health.Health > 0 &&
+                                 !health.HasShields;
+
         currentState = nextState;
         StateChanged?.Invoke(currentState);
+
+        if (shieldsJustFailed)
+            LoadShieldFailureScene();
+    }
+
+    private void LoadShieldFailureScene()
+    {
+        shieldFailureSceneLoaded = true;
+
+        string sceneName = ResolveShieldFailureSceneName();
+        if (string.IsNullOrWhiteSpace(sceneName))
+        {
+            Debug.LogWarning($"FlagshipController on {name} has no shield failure scene configured.");
+            return;
+        }
+
+        SceneManager.LoadScene(sceneName);
+    }
+
+    private string ResolveShieldFailureSceneName()
+    {
+        const int playerTeamId = 0;
+        return teamAgent != null && teamAgent.TeamId == playerTeamId
+            ? playerFlagshipShieldFailureSceneName
+            : enemyFlagshipShieldFailureSceneName;
     }
 }

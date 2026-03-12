@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -28,8 +27,11 @@ public class RadarUI : MonoBehaviour
 
     [Header("Flagship Marker")]
     [SerializeField] private bool highlightFlagships = true;
+    [SerializeField] private bool alwaysShowFlagships = true;
+    [SerializeField] private bool pinFlagshipsToEdge = true;
     [SerializeField] private float flagshipScaleMultiplier = 1.9f;
     [SerializeField] private Color flagshipDotColor = new Color(0.22f, 0.03f, 0.03f, 1f);
+    [SerializeField] private Color friendlyFlagshipDotColor = new Color(0.14f, 0.82f, 0.31f, 1f);
 
     private readonly Collider2D[] hits = new Collider2D[256];
     private readonly List<DotVisual> dotPool = new List<DotVisual>();
@@ -51,7 +53,6 @@ public class RadarUI : MonoBehaviour
     {
         get
         {
-            //asume radarRect is a square, so we take the smaller of width and height, divide by 2 for radius, and subtract edge padding
             return Mathf.Min(radarRect.rect.width, radarRect.rect.height) / 2f - edgePaddingPixels;
         }
     }
@@ -74,76 +75,234 @@ public class RadarUI : MonoBehaviour
 
     private void RefreshDots()
     {
-        Vector2 p = player.position;
+        Vector2 playerPosition = player.position;
         TeamAgent playerTeamAgent = player.GetComponentInParent<TeamAgent>();
         int playerTeamId = playerTeamAgent != null ? playerTeamAgent.TeamId : 0;
 
-        int count = Physics2D.OverlapCircleNonAlloc(p, radarRangeWorld, hits, enemyMasl);
+        ResolveFlagships(playerTeamId, out FlagshipController friendlyFlagship, out FlagshipController hostileFlagship);
 
-        EnsurePool(Mathf.Min(count, maxEnemies));
+        int hitCount = Physics2D.OverlapCircleNonAlloc(playerPosition, radarRangeWorld, hits, enemyMasl);
+        int regularEnemyCount = CountRegularEnemyDots(hitCount, playerTeamId);
+        int flagshipCount = GetVisibleFlagshipCount(friendlyFlagship, hostileFlagship);
 
-        //Reset all dots to inactive before we set the active ones, this way we can reuse the pool without worrying about leftover active dots from previous frames
+        EnsurePool(Mathf.Min(regularEnemyCount, maxEnemies) + flagshipCount);
+
         for (int i = 0; i < dotPool.Count; i++)
             dotPool[i].Root.SetActive(false);
 
         float radiusPx = RadarRadiusPixels;
         float range = Mathf.Max(0.0001f, radarRangeWorld);
-
         float playerYaw = rotateWithPlayer ? player.eulerAngles.z : 0f;
         Quaternion invRot = Quaternion.Euler(0f, 0f, -playerYaw);
 
         int dotIndex = 0;
-        for (int i = 0; i < count && dotIndex < maxEnemies; i++)
+        int enemyDotsShown = 0;
+        for (int i = 0; i < hitCount && enemyDotsShown < maxEnemies; i++)
         {
-            Collider2D c = hits[i];
-            if (!c) continue;
-
-            Transform t = c.transform;
-            if (t == player) continue;
-
-            TeamAgent targetTeamAgent = c.GetComponentInParent<TeamAgent>();
-            if (targetTeamAgent == null)
+            if (!TryGetRegularEnemyTarget(hits[i], playerTeamId, out Transform targetTransform))
                 continue;
 
-            int targetTeamId = targetTeamAgent.TeamId;
-            if (limitToSingleEnemyTeam && targetTeamId != trackedEnemyTeamId)
-                continue;
-
-            if (!TeamRegistry.IsHostile(playerTeamId, targetTeamId))
-                continue;
-
-            Vector2 offset = (Vector2)t.position - p;
+            Vector2 offset = (Vector2)targetTransform.position - playerPosition;
             float dist = offset.magnitude;
+            bool clampToEdge = false;
 
-            //if enemy is out of radar range, we clamp the offset to the edge of the radar
-            if (dist > radarRangeWorld)
+            if (dist > range)
             {
                 if (!showOUtOfRangeEdg) continue;
-
-                offset = offset.normalized * radarRangeWorld;
-                dist = radarRangeWorld;
+                clampToEdge = true;
+                dist = range;
             }
 
-            Vector2 rotOffset = (Vector2)(invRot * (Vector3)offset);
-            Vector2 normalized = rotOffset / range;
-            Vector2 posPx = normalized * radiusPx;
+            float baseScale = clampToEdge ? 0.75f : Mathf.Lerp(1.15f, 0.75f, dist / range);
+            AddDot(ref dotIndex, offset, range, radiusPx, invRot, false, clampToEdge, baseScale, false, Color.clear);
+            enemyDotsShown++;
+        }
 
-            DotVisual dot = dotPool[dotIndex];
-            dotIndex++;
-            dot.Root.SetActive(true);
+        AddFlagshipDot(ref dotIndex, friendlyFlagship, playerPosition, range, radiusPx, invRot, friendlyFlagshipDotColor);
+        AddFlagshipDot(ref dotIndex, hostileFlagship, playerPosition, range, radiusPx, invRot, flagshipDotColor);
+    }
 
-            if (dot.Rect != null)
-                dot.Rect.anchoredPosition = posPx;
-            else if (dot.Transform != null)
-                dot.Transform.localPosition = posPx;
+    private int CountRegularEnemyDots(int hitCount, int playerTeamId)
+    {
+        int regularEnemyCount = 0;
 
-            float baseScale = Mathf.Lerp(1.15f, 0.75f, dist / range);
-            bool isFlagship = highlightFlagships && targetTeamAgent.GetComponentInParent<FlagshipController>() != null;
-            ApplyDotStyle(dot, isFlagship, baseScale);
+        for (int i = 0; i < hitCount; i++)
+        {
+            if (TryGetRegularEnemyTarget(hits[i], playerTeamId, out _))
+                regularEnemyCount++;
+        }
+
+        return regularEnemyCount;
+    }
+
+    private int GetVisibleFlagshipCount(FlagshipController friendlyFlagship, FlagshipController hostileFlagship)
+    {
+        if (!highlightFlagships || !alwaysShowFlagships)
+            return 0;
+
+        int count = 0;
+        if (friendlyFlagship != null)
+            count++;
+        if (hostileFlagship != null)
+            count++;
+        return count;
+    }
+
+    private bool TryGetRegularEnemyTarget(Collider2D colliderHit, int playerTeamId, out Transform targetTransform)
+    {
+        targetTransform = null;
+        if (!colliderHit)
+            return false;
+
+        TeamAgent targetTeamAgent = colliderHit.GetComponentInParent<TeamAgent>();
+        if (targetTeamAgent == null)
+            return false;
+
+        targetTransform = targetTeamAgent.transform;
+        if (targetTransform == player)
+            return false;
+
+        int targetTeamId = targetTeamAgent.TeamId;
+        if (limitToSingleEnemyTeam && targetTeamId != trackedEnemyTeamId)
+            return false;
+
+        if (!TeamRegistry.IsHostile(playerTeamId, targetTeamId))
+            return false;
+
+        if (alwaysShowFlagships && highlightFlagships && targetTeamAgent.GetComponentInParent<FlagshipController>() != null)
+            return false;
+
+        return true;
+    }
+
+    private void ResolveFlagships(int playerTeamId, out FlagshipController friendlyFlagship, out FlagshipController hostileFlagship)
+    {
+        friendlyFlagship = null;
+        hostileFlagship = null;
+
+        if (!highlightFlagships)
+            return;
+
+        FlagshipController[] flagships = FindObjectsOfType<FlagshipController>(true);
+        for (int i = 0; i < flagships.Length; i++)
+        {
+            FlagshipController flagship = flagships[i];
+            if (flagship == null || !flagship.isActiveAndEnabled)
+                continue;
+
+            int flagshipTeamId = GetFlagshipTeamId(flagship);
+            if (flagshipTeamId < 0)
+                continue;
+
+            if (flagshipTeamId == playerTeamId)
+            {
+                friendlyFlagship = ChoosePreferredFlagship(friendlyFlagship, flagship);
+                continue;
+            }
+
+            if (!TeamRegistry.IsHostile(playerTeamId, flagshipTeamId))
+                continue;
+
+            if (limitToSingleEnemyTeam && flagshipTeamId != trackedEnemyTeamId)
+                continue;
+
+            hostileFlagship = ChoosePreferredFlagship(hostileFlagship, flagship);
         }
     }
 
-    private void ApplyDotStyle(DotVisual dot, bool isFlagship, float baseScale)
+    private int GetFlagshipTeamId(FlagshipController flagship)
+    {
+        if (flagship == null)
+            return -1;
+
+        if (flagship.TeamAgent != null)
+            return flagship.TeamAgent.TeamId;
+
+        return flagship.TryGetComponent(out TeamAgent teamAgent) ? teamAgent.TeamId : -1;
+    }
+
+    private FlagshipController ChoosePreferredFlagship(FlagshipController current, FlagshipController candidate)
+    {
+        if (candidate == null)
+            return current;
+
+        if (current == null)
+            return candidate;
+
+        if (current.CurrentState == FlagshipController.BattleState.Destroyed &&
+            candidate.CurrentState != FlagshipController.BattleState.Destroyed)
+        {
+            return candidate;
+        }
+
+        return current;
+    }
+
+    private void AddFlagshipDot(
+        ref int dotIndex,
+        FlagshipController flagship,
+        Vector2 playerPosition,
+        float range,
+        float radiusPx,
+        Quaternion invRot,
+        Color dotColor)
+    {
+        if (!highlightFlagships || !alwaysShowFlagships || flagship == null)
+            return;
+
+        Vector2 offset = (Vector2)flagship.transform.position - playerPosition;
+        bool clampToEdge = pinFlagshipsToEdge;
+        float dist = offset.magnitude;
+
+        if (!clampToEdge && dist > range)
+        {
+            if (!showOUtOfRangeEdg)
+                return;
+
+            clampToEdge = true;
+        }
+
+        AddDot(ref dotIndex, offset, range, radiusPx, invRot, true, clampToEdge, 1f, true, dotColor);
+    }
+
+    private void AddDot(
+        ref int dotIndex,
+        Vector2 worldOffset,
+        float range,
+        float radiusPx,
+        Quaternion invRot,
+        bool isFlagship,
+        bool clampToEdge,
+        float baseScale,
+        bool useCustomColor,
+        Color customColor)
+    {
+        if (dotIndex >= dotPool.Count)
+            return;
+
+        Vector2 mappedOffset = worldOffset;
+        if (clampToEdge)
+        {
+            Vector2 direction = worldOffset.sqrMagnitude > 0.0001f ? worldOffset.normalized : Vector2.up;
+            mappedOffset = direction * range;
+        }
+
+        Vector2 rotOffset = (Vector2)(invRot * (Vector3)mappedOffset);
+        Vector2 posPx = (rotOffset / range) * radiusPx;
+
+        DotVisual dot = dotPool[dotIndex];
+        dotIndex++;
+        dot.Root.SetActive(true);
+
+        if (dot.Rect != null)
+            dot.Rect.anchoredPosition = posPx;
+        else if (dot.Transform != null)
+            dot.Transform.localPosition = posPx;
+
+        ApplyDotStyle(dot, isFlagship, baseScale, useCustomColor, customColor);
+    }
+
+    private void ApplyDotStyle(DotVisual dot, bool isFlagship, float baseScale, bool useCustomColor, Color customColor)
     {
         if (dot == null || dot.Transform == null)
             return;
@@ -154,16 +313,23 @@ public class RadarUI : MonoBehaviour
 
         dot.Transform.localScale = new Vector3(scale, scale, 1f);
 
+        Color imageColor = useCustomColor
+            ? customColor
+            : isFlagship ? flagshipDotColor : dot.ImageBaseColor;
+        Color spriteColor = useCustomColor
+            ? customColor
+            : isFlagship ? flagshipDotColor : dot.SpriteBaseColor;
+
         if (dot.Image != null)
-            dot.Image.color = isFlagship ? flagshipDotColor : dot.ImageBaseColor;
+            dot.Image.color = imageColor;
 
         if (dot.Sprite != null)
-            dot.Sprite.color = isFlagship ? flagshipDotColor : dot.SpriteBaseColor;
+            dot.Sprite.color = spriteColor;
     }
 
     private void EnsurePool(int needed)
     {
-        while (dotPool.Count < needed && dotPool.Count < maxEnemies)
+        while (dotPool.Count < needed)
         {
             GameObject dot = Instantiate(dotPrefab, dotsRoot);
 

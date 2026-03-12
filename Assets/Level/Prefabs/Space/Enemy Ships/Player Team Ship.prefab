@@ -55,7 +55,7 @@ GameObject:
   - component: {fileID: 3101948059298077492}
   - component: {fileID: 3252553446457875857}
   m_Layer: 12
-  m_Name: Easy Enemy SHip
+  m_Name: Player Team Ship
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -129,7 +129,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: 6a5bd31e3c49da14fb3ea14b25e9b5a4, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 1, b: 0.27685833, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
