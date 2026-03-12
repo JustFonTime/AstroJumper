@@ -31,7 +31,7 @@ public class DialogueTextManager : MonoBehaviour
     [SerializeField] private float duration = 1f;
     public GameObject TextContainer;
     public bool isInDialouge;
-    
+    public bool isDialogueBoxOnScreen = false;
     public static event Action onDialogueStart;
     public static event Action onDialogueEnd;
     public Player player;
@@ -78,15 +78,22 @@ public class DialogueTextManager : MonoBehaviour
     }
     private void Start()
     {
+
+        offscreenPosition.x = Screen.width /2 + TextContainer.GetComponent<RectTransform>().rect.width / 2;
+        onscreenPosition.x = Screen.width /2 + TextContainer.GetComponent<RectTransform>().rect.width / 2;
+        offscreenPosition.y = (Screen.height/2 + TextContainer.GetComponent<RectTransform>().rect.height / 2 )* -1;
+        onscreenPosition.y = SetToBottomOfScreen(TextContainer).y;
+
         TextContainer.GetComponent<RectTransform>().position = offscreenPosition;
         dialogueText.enabled = false;
 
-        //nameText = nameTextGO.GetComponent<TextMeshProUGUI>();
         nameTextGO.SetActive(true);
         nameText.enabled = false;
 
         
         DisableTextClick();
+
+        StartDialouge();
     }
 
     private void Update()
@@ -205,19 +212,24 @@ public class DialogueTextManager : MonoBehaviour
 
     private IEnumerator moveDialogueBox()
     {
+        DisableTextClick();
+        offscreenPosition.x = 0f;
+        onscreenPosition.x = 0f;
+        onscreenPosition.y =  -1 *(Screen.height / 2 - TextContainer.GetComponent<RectTransform>().rect.height) + 40;
+        print(onscreenPosition.y);
         float timeElapsed = 0f;
-        if (TextContainer.GetComponent<RectTransform>().position == offscreenPosition)
+        if (!isDialogueBoxOnScreen)
         {
             // move it on screen
             timeElapsed = 0f;
             while (timeElapsed < duration)
             {
-                TextContainer.GetComponent<RectTransform>().position = Vector3.Lerp(offscreenPosition, onscreenPosition, timeElapsed / duration);
+                TextContainer.GetComponent<RectTransform>().anchoredPosition = Vector3.Lerp(offscreenPosition, onscreenPosition, timeElapsed / duration);
                 timeElapsed += Time.deltaTime;
                 yield return null; 
             }
 
-            TextContainer.GetComponent<RectTransform>().position = onscreenPosition; 
+            TextContainer.GetComponent<RectTransform>().anchoredPosition = onscreenPosition; 
             EnableTextClick();
         }
         else
@@ -226,16 +238,40 @@ public class DialogueTextManager : MonoBehaviour
              timeElapsed = 0f;
             while (timeElapsed < duration)
             {
-                TextContainer.GetComponent<RectTransform>().position = Vector3.Lerp(onscreenPosition, offscreenPosition, timeElapsed / duration);
+                TextContainer.GetComponent<RectTransform>().anchoredPosition = Vector3.Lerp(onscreenPosition, offscreenPosition, timeElapsed / duration);
                 timeElapsed += Time.deltaTime;
                 yield return null; 
             }
-            isInDialouge = false;
-            TextContainer.GetComponent<RectTransform>().position = offscreenPosition; 
-            DisableTextClick();
+            TextContainer.GetComponent<RectTransform>().anchoredPosition = offscreenPosition; 
+            
         }
+        isDialogueBoxOnScreen = !isDialogueBoxOnScreen;
     }
+    private Vector3 SetToBottomOfScreen(GameObject go)
+    {
+        RectTransform[] children = go.GetComponentsInChildren<RectTransform>();
 
+        float lowestY = float.MaxValue;
+
+        foreach (RectTransform child in children)
+        {
+            if (child == go.GetComponent<RectTransform>()) continue;
+
+            Vector3[] corners = new Vector3[4];
+            child.GetWorldCorners(corners);
+
+            float childBottom = child.anchoredPosition.y - (child.rect.height * child.pivot.y);
+ // bottom-left corner
+
+            if (childBottom < lowestY)
+                lowestY = childBottom;
+        }
+
+        float offset = -lowestY;
+
+        return new Vector3(0, offset, 0);
+
+    }
     
 }
 

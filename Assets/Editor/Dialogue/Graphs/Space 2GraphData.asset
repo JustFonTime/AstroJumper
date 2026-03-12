@@ -49,7 +49,7 @@ MonoBehaviour:
       <Requirements>k__BackingField: 
       <NodeID>k__BackingField: 09b52e1c-c526-47ec-9bbd-e9b4ca4e236b
     <DialougeType>k__BackingField: 0
-    <Position>k__BackingField: {x: 50.666668, y: 266}
+    <Position>k__BackingField: {x: 74, y: 354}
   <OldUngroupedNodeNames>k__BackingField:
   - D1Space2
   - D3Space2

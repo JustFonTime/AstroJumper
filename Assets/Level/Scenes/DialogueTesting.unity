@@ -1094,6 +1094,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1082594529}
     - target: {fileID: 5873998244472221692, guid: d6562edf502f3364589e55703c281cf7, type: 3}
+      propertyPath: currentDialouge
+      value: 
+      objectReference: {fileID: 11400000, guid: 6a2e532c0b6abc5428bbaf1bc6c011af, type: 2}
+    - target: {fileID: 5873998244472221692, guid: d6562edf502f3364589e55703c281cf7, type: 3}
       propertyPath: onscreenPosition.x
       value: 0.4618345
       objectReference: {fileID: 0}
