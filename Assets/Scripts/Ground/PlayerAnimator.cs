@@ -1,9 +1,9 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Animator), typeof(GroundMovement), typeof(Rigidbody2D))]
-// mangages player animations based on movement and grounded state
-// uses the animator 
-// can make the landing animation more smooth but for now is good
+// Mangages player animations based on movement and grounded state
+// Uses the animator 
+// can make the landing animation more smooth but for now is good(JumpLand can tweak to become shorter or make it so that you can't move when landing)
 public class PlayerAnimator : MonoBehaviour
 {
     private Animator animator;
