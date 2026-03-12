@@ -25,7 +25,7 @@ public class DialogueTextManager : MonoBehaviour
     public TextMeshProUGUI dialogueText;
     [SerializeField] private GameObject nameTextGO;
     [SerializeField] private TextMeshProUGUI nameText;
-    [SerializeField] private SpriteRenderer characterIconSpriteRenderer;
+    [SerializeField] private Image characterIconRenderer;
     [SerializeField] public Vector3 offscreenPosition;
     [SerializeField] public Vector3 onscreenPosition;
     [SerializeField] private float duration = 1f;
@@ -35,6 +35,20 @@ public class DialogueTextManager : MonoBehaviour
     public static event Action onDialogueStart;
     public static event Action onDialogueEnd;
     public Player player;
+    private bool _IsInDialouge = false;
+    public bool IsInDialouge
+    {
+        get => _IsInDialouge;
+        set
+        {
+            _IsInDialouge = value;
+            if (characterIconRenderer.sprite != null)
+            {
+                characterIconRenderer.enabled = value;
+            }
+        }
+    }
+
 
     private void Awake() 
     {
@@ -105,7 +119,16 @@ public class DialogueTextManager : MonoBehaviour
     {
         dialogueText.text = currentDialouge.Text;
         nameText.text = currentDialouge.CharacterName;
-        characterIconSpriteRenderer.sprite = currentDialouge.CharacterIcon;
+        characterIconRenderer.sprite = currentDialouge.CharacterIcon;
+        if (currentDialouge.CharacterIcon != null)
+        {
+            characterIconRenderer.enabled = true;
+        }
+        else
+        {
+            characterIconRenderer.enabled = false;
+        }
+
     }
 
     private void OnClick(InputAction.CallbackContext ctx)
@@ -123,9 +146,17 @@ public class DialogueTextManager : MonoBehaviour
         nameText.enabled = true;
         nameText.text = currentDialouge.CharacterName;
         
-        characterIconSpriteRenderer.sprite = currentDialouge.CharacterIcon;
+        characterIconRenderer.sprite = currentDialouge.CharacterIcon;
 
         isInDialouge = true;
+        if(characterIconRenderer.sprite != null)
+        {
+            characterIconRenderer.enabled = true;
+        }
+        else
+        {
+            characterIconRenderer.enabled = false;
+        }
         
         onDialogueStart?.Invoke();
         StartCoroutine(moveDialogueBox());
@@ -216,7 +247,6 @@ public class DialogueTextManager : MonoBehaviour
         offscreenPosition.x = 0f;
         onscreenPosition.x = 0f;
         onscreenPosition.y =  -1 *(Screen.height / 2 - TextContainer.GetComponent<RectTransform>().rect.height) + 60;
-        print(onscreenPosition.y);
         float timeElapsed = 0f;
         if (!isDialogueBoxOnScreen)
         {
@@ -242,6 +272,7 @@ public class DialogueTextManager : MonoBehaviour
                 timeElapsed += Time.deltaTime;
                 yield return null; 
             }
+            IsInDialouge = false;
             TextContainer.GetComponent<RectTransform>().anchoredPosition = offscreenPosition; 
             
         }
