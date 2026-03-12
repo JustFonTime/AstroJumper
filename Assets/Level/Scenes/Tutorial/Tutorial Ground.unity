@@ -445,7 +445,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1559904618933067775, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
       propertyPath: targetLayer.m_Bits
-      value: 2048
+      value: 65536
       objectReference: {fileID: 0}
     - target: {fileID: 2916840892436311964, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
       propertyPath: homePoint
@@ -463,18 +463,6 @@ PrefabInstance:
       propertyPath: hitBoxPrefab
       value: 
       objectReference: {fileID: 174109804372061078, guid: b454596e713e44f4daefd355156d1fcf, type: 3}
-    - target: {fileID: 4255045886575685431, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
-      propertyPath: groundMask.m_Bits
-      value: 8192
-      objectReference: {fileID: 0}
-    - target: {fileID: 4255045886575685431, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
-      propertyPath: playerMask.m_Bits
-      value: 2048
-      objectReference: {fileID: 0}
-    - target: {fileID: 4255045886575685431, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
-      propertyPath: sightBlockMask.m_Bits
-      value: 8192
-      objectReference: {fileID: 0}
     - target: {fileID: 5862821998221709667, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
       propertyPath: m_FlipX
       value: 0
@@ -684,7 +672,7 @@ GameObject:
   - component: {fileID: 332980529}
   - component: {fileID: 332980531}
   - component: {fileID: 332980530}
-  m_Layer: 13
+  m_Layer: 18
   m_Name: Ground
   m_TagString: Terrain
   m_Icon: {fileID: 0}
@@ -129074,7 +129062,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1559904618933067775, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
       propertyPath: targetLayer.m_Bits
-      value: 2048
+      value: 65536
       objectReference: {fileID: 0}
     - target: {fileID: 2916840892436311964, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
       propertyPath: homePoint
@@ -129092,18 +129080,6 @@ PrefabInstance:
       propertyPath: hitBoxPrefab
       value: 
       objectReference: {fileID: 174109804372061078, guid: b454596e713e44f4daefd355156d1fcf, type: 3}
-    - target: {fileID: 4255045886575685431, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
-      propertyPath: groundMask.m_Bits
-      value: 8192
-      objectReference: {fileID: 0}
-    - target: {fileID: 4255045886575685431, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
-      propertyPath: playerMask.m_Bits
-      value: 2048
-      objectReference: {fileID: 0}
-    - target: {fileID: 4255045886575685431, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
-      propertyPath: sightBlockMask.m_Bits
-      value: 8192
-      objectReference: {fileID: 0}
     - target: {fileID: 5862821998221709667, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
       propertyPath: m_FlipX
       value: 0
@@ -129201,7 +129177,7 @@ GameObject:
   - component: {fileID: 1028606210}
   - component: {fileID: 1028606209}
   - component: {fileID: 1028606208}
-  m_Layer: 14
+  m_Layer: 19
   m_Name: OneWays
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -130350,7 +130326,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6577929641708287723, guid: 0386b52ded88e344d8bdb8cb69e044e7, type: 3}
       propertyPath: targetLayer.m_Bits
-      value: 0
+      value: 65536
       objectReference: {fileID: 0}
     - target: {fileID: 8477802174989769030, guid: 0386b52ded88e344d8bdb8cb69e044e7, type: 3}
       propertyPath: m_Sprite
@@ -130774,10 +130750,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 235914197}
     m_Modifications:
-    - target: {fileID: 1559904618933067775, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
-      propertyPath: targetLayer.m_Bits
-      value: 2048
-      objectReference: {fileID: 0}
     - target: {fileID: 2916840892436311964, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
       propertyPath: homePoint
       value: 
@@ -130794,18 +130766,6 @@ PrefabInstance:
       propertyPath: hitBoxPrefab
       value: 
       objectReference: {fileID: 174109804372061078, guid: b454596e713e44f4daefd355156d1fcf, type: 3}
-    - target: {fileID: 4255045886575685431, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
-      propertyPath: groundMask.m_Bits
-      value: 8192
-      objectReference: {fileID: 0}
-    - target: {fileID: 4255045886575685431, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
-      propertyPath: playerMask.m_Bits
-      value: 2048
-      objectReference: {fileID: 0}
-    - target: {fileID: 4255045886575685431, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
-      propertyPath: sightBlockMask.m_Bits
-      value: 8192
-      objectReference: {fileID: 0}
     - target: {fileID: 5862821998221709667, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
       propertyPath: m_FlipX
       value: 0
@@ -131284,7 +131244,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6577929641708287723, guid: 0386b52ded88e344d8bdb8cb69e044e7, type: 3}
       propertyPath: targetLayer.m_Bits
-      value: 0
+      value: 65536
       objectReference: {fileID: 0}
     - target: {fileID: 8477802174989769030, guid: 0386b52ded88e344d8bdb8cb69e044e7, type: 3}
       propertyPath: m_Sprite
@@ -131445,15 +131405,15 @@ PrefabInstance:
       objectReference: {fileID: 8161714451627024827, guid: f46646881042575428aea186ba5920dd, type: 3}
     - target: {fileID: 8290834329959521489, guid: 332ecf6d81038f149b3267de2f549a21, type: 3}
       propertyPath: groundMask.m_Bits
-      value: 8192
+      value: 262144
       objectReference: {fileID: 0}
     - target: {fileID: 8290834329959521489, guid: 332ecf6d81038f149b3267de2f549a21, type: 3}
       propertyPath: playerMask.m_Bits
-      value: 2048
+      value: 65536
       objectReference: {fileID: 0}
     - target: {fileID: 8290834329959521489, guid: 332ecf6d81038f149b3267de2f549a21, type: 3}
       propertyPath: sightBlockMask.m_Bits
-      value: 8192
+      value: 262144
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -131587,7 +131547,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6577929641708287723, guid: 0386b52ded88e344d8bdb8cb69e044e7, type: 3}
       propertyPath: targetLayer.m_Bits
-      value: 0
+      value: 65536
       objectReference: {fileID: 0}
     - target: {fileID: 8477802174989769030, guid: 0386b52ded88e344d8bdb8cb69e044e7, type: 3}
       propertyPath: m_Sprite
@@ -131844,15 +131804,15 @@ PrefabInstance:
       objectReference: {fileID: 8161714451627024827, guid: f46646881042575428aea186ba5920dd, type: 3}
     - target: {fileID: 8290834329959521489, guid: 332ecf6d81038f149b3267de2f549a21, type: 3}
       propertyPath: groundMask.m_Bits
-      value: 8192
+      value: 262144
       objectReference: {fileID: 0}
     - target: {fileID: 8290834329959521489, guid: 332ecf6d81038f149b3267de2f549a21, type: 3}
       propertyPath: playerMask.m_Bits
-      value: 2048
+      value: 65536
       objectReference: {fileID: 0}
     - target: {fileID: 8290834329959521489, guid: 332ecf6d81038f149b3267de2f549a21, type: 3}
       propertyPath: sightBlockMask.m_Bits
-      value: 8192
+      value: 262144
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -132019,10 +131979,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 235914197}
     m_Modifications:
-    - target: {fileID: 1559904618933067775, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
-      propertyPath: targetLayer.m_Bits
-      value: 2048
-      objectReference: {fileID: 0}
     - target: {fileID: 2916840892436311964, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
       propertyPath: homePoint
       value: 
@@ -132034,18 +131990,6 @@ PrefabInstance:
     - target: {fileID: 4124021642724615479, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
       propertyPath: m_LocalPosition.y
       value: -0.15
-      objectReference: {fileID: 0}
-    - target: {fileID: 4255045886575685431, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
-      propertyPath: groundMask.m_Bits
-      value: 8192
-      objectReference: {fileID: 0}
-    - target: {fileID: 4255045886575685431, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
-      propertyPath: playerMask.m_Bits
-      value: 2048
-      objectReference: {fileID: 0}
-    - target: {fileID: 4255045886575685431, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
-      propertyPath: sightBlockMask.m_Bits
-      value: 8192
       objectReference: {fileID: 0}
     - target: {fileID: 7415500675629748956, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
       propertyPath: m_LocalPosition.x
@@ -132307,7 +132251,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1559904618933067775, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
       propertyPath: targetLayer.m_Bits
-      value: 2048
+      value: 65536
       objectReference: {fileID: 0}
     - target: {fileID: 2916840892436311964, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
       propertyPath: homePoint
@@ -132325,18 +132269,6 @@ PrefabInstance:
       propertyPath: hitBoxPrefab
       value: 
       objectReference: {fileID: 174109804372061078, guid: b454596e713e44f4daefd355156d1fcf, type: 3}
-    - target: {fileID: 4255045886575685431, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
-      propertyPath: groundMask.m_Bits
-      value: 8192
-      objectReference: {fileID: 0}
-    - target: {fileID: 4255045886575685431, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
-      propertyPath: playerMask.m_Bits
-      value: 2048
-      objectReference: {fileID: 0}
-    - target: {fileID: 4255045886575685431, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
-      propertyPath: sightBlockMask.m_Bits
-      value: 8192
-      objectReference: {fileID: 0}
     - target: {fileID: 5862821998221709667, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
       propertyPath: m_FlipX
       value: 0
@@ -132435,7 +132367,7 @@ GameObject:
   - component: {fileID: 2014226424}
   - component: {fileID: 2014226425}
   - component: {fileID: 2014226426}
-  m_Layer: 11
+  m_Layer: 16
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -132503,10 +132435,10 @@ MonoBehaviour:
   groundCheckSize: {x: 0.6, y: 0.1}
   groundMask:
     serializedVersion: 2
-    m_Bits: 24576
+    m_Bits: 786432
   oneWayMask:
     serializedVersion: 2
-    m_Bits: 16384
+    m_Bits: 524288
   dropDuration: 0.5
   actionsAsset: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   actionMapName: Player
@@ -132684,7 +132616,7 @@ MonoBehaviour:
   groundCheckSize: {x: 0.6, y: 0.1}
   groundMask:
     serializedVersion: 2
-    m_Bits: 24576
+    m_Bits: 786432
 --- !u!1 &2021980397
 GameObject:
   m_ObjectHideFlags: 0
@@ -132898,15 +132830,15 @@ PrefabInstance:
       objectReference: {fileID: 8161714451627024827, guid: f46646881042575428aea186ba5920dd, type: 3}
     - target: {fileID: 8290834329959521489, guid: 332ecf6d81038f149b3267de2f549a21, type: 3}
       propertyPath: groundMask.m_Bits
-      value: 8192
+      value: 262144
       objectReference: {fileID: 0}
     - target: {fileID: 8290834329959521489, guid: 332ecf6d81038f149b3267de2f549a21, type: 3}
       propertyPath: playerMask.m_Bits
-      value: 2048
+      value: 65536
       objectReference: {fileID: 0}
     - target: {fileID: 8290834329959521489, guid: 332ecf6d81038f149b3267de2f549a21, type: 3}
       propertyPath: sightBlockMask.m_Bits
-      value: 8192
+      value: 262144
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -132929,7 +132861,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1559904618933067775, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
       propertyPath: targetLayer.m_Bits
-      value: 2048
+      value: 65536
       objectReference: {fileID: 0}
     - target: {fileID: 2916840892436311964, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
       propertyPath: homePoint
@@ -132943,18 +132875,6 @@ PrefabInstance:
       propertyPath: hitBoxPrefab
       value: 
       objectReference: {fileID: 174109804372061078, guid: b454596e713e44f4daefd355156d1fcf, type: 3}
-    - target: {fileID: 4255045886575685431, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
-      propertyPath: groundMask.m_Bits
-      value: 8192
-      objectReference: {fileID: 0}
-    - target: {fileID: 4255045886575685431, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
-      propertyPath: playerMask.m_Bits
-      value: 2048
-      objectReference: {fileID: 0}
-    - target: {fileID: 4255045886575685431, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
-      propertyPath: sightBlockMask.m_Bits
-      value: 8192
-      objectReference: {fileID: 0}
     - target: {fileID: 5862821998221709667, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
       propertyPath: m_FlipX
       value: 0

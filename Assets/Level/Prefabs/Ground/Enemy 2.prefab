@@ -111,10 +111,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemySensors
   groundMask:
     serializedVersion: 2
-    m_Bits: 8192
+    m_Bits: 0
   playerMask:
     serializedVersion: 2
-    m_Bits: 2048
+    m_Bits: 0
   wallCheck: {fileID: 4352336119248971437}
   wallCheckDistance: 0.2
   ledgeCheck: {fileID: 3011895998120404585}
@@ -123,7 +123,7 @@ MonoBehaviour:
   detectRadius: 7
   sightBlockMask:
     serializedVersion: 2
-    m_Bits: 24576
+    m_Bits: 0
 --- !u!1 &2676203520584879081
 GameObject:
   m_ObjectHideFlags: 0
