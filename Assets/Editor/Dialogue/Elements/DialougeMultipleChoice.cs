@@ -28,10 +28,12 @@ public class DialougeMultipleChoice : DialougeNode
             DialougeChoiceSavaData choiceData = new DialougeChoiceSavaData()
             {
                 Text = "New Choice",
+                Requirements = "",
             };
 
             Choices.Add(choiceData);
             Port choicePort = CreateChoicePort(choiceData);
+
 
 
             outputContainer.Add(choicePort);
@@ -79,7 +81,13 @@ public class DialougeMultipleChoice : DialougeNode
             choiceData.Text = callback.newValue;
             choicePort.portName = callback.newValue;
         });
+
+        TextField choiceRequirementsField = DialougeElementUtility.CreateTextField(choiceData.Requirements, null, callback =>
+        {
+            choiceData.Requirements = callback.newValue;
+        });
         choicePort.Add(choiceTextField);
+        choicePort.Add(choiceRequirementsField);
         choicePort.Add(deleteChoiceButton);
 
         return choicePort;

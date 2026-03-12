@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using UnityEngine.Audio;
 using TMPro;
 using System;
+using UnityEngine.Localization.Settings;
 
 public class Menu_Manager : MonoBehaviour
 {
@@ -21,6 +22,9 @@ public class Menu_Manager : MonoBehaviour
     void Start()
     {
         ShowMainMenu();
+
+        string savedLanguage = PlayerPrefs.GetString("SelectedLanguage", "en");
+        StartCoroutine(LoadSavedLanguage(savedLanguage));
 
         if (volumeSlider != null && volumeText != null)
         {
@@ -84,5 +88,21 @@ public class Menu_Manager : MonoBehaviour
         mainMenuPanel.SetActive(false);
         optionsPanel.SetActive(false);
         creditsPanel.SetActive(true);
+    }
+
+    System.Collections.IEnumerator LoadSavedLanguage(string savedLanguage)
+    {
+        yield return LocalizationSettings.InitializationOperation;
+
+        var locale = LocalizationSettings.AvailableLocales.GetLocale(savedLanguage);
+        if (locale != null)
+        {
+            LocalizationSettings.SelectedLocale = locale;
+            Debug.Log("Loaded saved language: " + savedLanguage);
+        }
+        else
+        {
+            Debug.LogWarning("Saved language not found: " + savedLanguage);
+        }
     }
 }

@@ -62,10 +62,14 @@ public class PauseManager : MonoBehaviour
 
     public void ResumeGame()
     {
-        SceneManager.UnloadSceneAsync("PauseMenu"); // Unload the pause menu scene
-        Time.timeScale = 1f; // Resume the game
+        GamePauseTrigger pauseTrigger = FindFirstObjectByType<GamePauseTrigger>();
+    
+        if (pauseTrigger != null)
+        {
+            pauseTrigger.ResumeGame();
+        }
     }
-
+    
     public void QuitToMainMenu()
     {
         Time.timeScale = 1f; // Ensure time scale is reset

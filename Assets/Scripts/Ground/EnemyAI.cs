@@ -41,9 +41,13 @@ public class EnemyAI : MonoBehaviour
 
     [Header("Ranged Attack")]
     [SerializeField] private Transform firePoint;
-    [SerializeField] private EnemyProjectile projectilePrefab;
+    [SerializeField] private EnemyProjectilePool projectilePool;
     [SerializeField] private float projectileSpeed = 8f;
     [SerializeField] private float minShootRange = 0.0f;
+
+
+    [Header("Knockback")]
+    [SerializeField] private float knockbackDuration = 0.2f;
 
     //leash distance that makes the enemy give up and return back to home point
     [Header("Return")]
@@ -62,6 +66,31 @@ public class EnemyAI : MonoBehaviour
     // Tracks the last time we had clear LOS drives the grace window separately from lastSeenTime
     private float lastLOSTime = -999f;
 
+
+    private Unit unit;
+
+
+    private void Awake()
+    {
+        unit = GetComponent<Unit>();
+        lastSeenTime = Time.time;
+        lastLOSTime = Time.time;
+
+        // knockback event and only react if it's own unit
+        Unit.onKnockedBack += OnKnockedBack;
+    }
+
+    private void OnDestroy()
+    {
+        Unit.onKnockedBack -= OnKnockedBack;
+    }
+
+    private void OnKnockedBack(Unit damagedUnit, Vector2 force)
+    {
+        // Filter - only respond if this is our own unit
+        if (damagedUnit != unit) return;
+        EnterKnockback(force, knockbackDuration);
+    }
 
     private void Reset()
     {
@@ -114,7 +143,7 @@ public class EnemyAI : MonoBehaviour
 
         //Check for Player
         Transform seen = sensors.DetectPlayer();
-        if (seen && Mathf.Abs(seen.position.x - transform.position.x) <= chaseRange)
+        if (seen) //&& Mathf.Abs(seen.position.x - transform.position.x) <= chaseRange)
         {
             player = seen;
             lastSeenPos = player.position;
@@ -155,6 +184,7 @@ public class EnemyAI : MonoBehaviour
             {
                 // Grace window expired drop the target and investigate last seen pos
                 player = null;
+                lastSeenTime = Time.time;
             }
         }
         //if we have the player (seen or cached)
@@ -352,17 +382,20 @@ public class EnemyAI : MonoBehaviour
 
     private void DoMeleeAttack()
     {
-        // Placeholder
-        Debug.Log($"{name} performs MELEE attack");
+        if (unit != null && unit.hitBoxPrefab != null)
+            unit.BeginAttack(unit.hitBoxPrefab);
+        else
+            Debug.LogWarning($"{name}: No Unit or hitBoxPrefab assigned for melee attack");
+        //Debug.Log($"{name} performs MELEE attack");
     }
 
     private void DoRangedAttack()
     {
-        if (!projectilePrefab || !firePoint) return;
+        //changed to use pooling instead 
+        if (!firePoint || projectilePool == null) return;
 
-        Vector2 dir = (player.position - firePoint.position).normalized;
-        EnemyProjectile proj = Instantiate(projectilePrefab, firePoint.position, Quaternion.identity);
-        proj.Fire(dir * projectileSpeed);
+        Vector2 dir = ((Vector2)player.position - (Vector2)firePoint.position).normalized;
+        projectilePool.Fire(firePoint.position, dir * projectileSpeed);
     }
 
 
@@ -414,11 +447,11 @@ public class EnemyAI : MonoBehaviour
     }
 
     // Call this from dmg system
-    public void EnterKnockback(Vector2 force, float knockbackTime = 0.2f)
+    public void EnterKnockback(Vector2 force, float duration)
     {
         ChangeState(State.Knockback, "Entered knockback");
         motor.ApplyKnockback(force);
-        Invoke(nameof(ExitKnockback), knockbackTime);
+        Invoke(nameof(ExitKnockback), duration);
     }
 
     private void ExitKnockback()

@@ -20,9 +20,14 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Level/Scenes/Game Over/GameOver.unity
     guid: 6168794fc4c184e2ea64f885b43506fd
-  - enabled: 0
+  - enabled: 1
     path: Assets/Level/Scenes/PauseMenu/PauseMenu.unity
     guid: bfc273e08ec8949db93ada19b15b5e1f
+  - enabled: 1
+    path: Assets/Level/Scenes/You Win/YouWin.unity
+    guid: 1842be48908d64e1c962eda39e481db9
   m_configObjects:
+    com.unity.addressableassets: {fileID: 11400000, guid: 795312e927ba943bd96421b21c2ea4f0, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+    com.unity.localization.settings: {fileID: 11400000, guid: 4f868eb75661349ed89a44750c61d8d5, type: 2}
   m_UseUCBPForAssetBundles: 0

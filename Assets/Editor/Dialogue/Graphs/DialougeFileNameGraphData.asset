@@ -14,33 +14,38 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp-Editor::DialougeGraphSavaDataSO
   <FileName>k__BackingField: DialougeFileName
   <Nodes>k__BackingField:
-  - <Name>k__BackingField: Branching OUt
-    <Text>k__BackingField: New Text
-    <ID>k__BackingField: 13605601-8c37-42c7-9202-c7604a6d2ed8
+  - <Name>k__BackingField: D1
+    <CharacterName>k__BackingField: 
+    <CharacterIcon>k__BackingField: insert file path here
+    <Text>k__BackingField: This is the first thing that should appear when the game
+      starts
+    <ID>k__BackingField: eafa7efc-4668-4e66-9e36-b545abe89ba7
     <Choices>k__BackingField:
-    - <Text>k__BackingField: Choice 1
-      <NodeID>k__BackingField: 5cbdebad-7244-4e0a-9f9a-80538290ee50
-    - <Text>k__BackingField: Choice 2
-      <NodeID>k__BackingField: 633ee74d-f450-4d15-9f06-cde9a5cb48d5
-    <DialougeType>k__BackingField: 1
-    <Position>k__BackingField: {x: 67.333336, y: 224}
-  - <Name>k__BackingField: Choice1
-    <Text>k__BackingField: New Text
-    <ID>k__BackingField: 5cbdebad-7244-4e0a-9f9a-80538290ee50
+    - <Text>k__BackingField: Next Dialouge
+      <NodeID>k__BackingField: dac9a73d-2e11-4e9b-939a-848b67be7652
+    <DialougeType>k__BackingField: 0
+    <Position>k__BackingField: {x: 33.333336, y: 117.33333}
+  - <Name>k__BackingField: D2
+    <CharacterName>k__BackingField: 
+    <CharacterIcon>k__BackingField: insert file path here
+    <Text>k__BackingField: Insert introduction to player character and first target
+    <ID>k__BackingField: dac9a73d-2e11-4e9b-939a-848b67be7652
+    <Choices>k__BackingField:
+    - <Text>k__BackingField: Next Dialouge
+      <NodeID>k__BackingField: 031dd2eb-23d7-42b1-baab-155c8c59cc01
+    <DialougeType>k__BackingField: 0
+    <Position>k__BackingField: {x: 87.33333, y: 307.33334}
+  - <Name>k__BackingField: D3
+    <CharacterName>k__BackingField: 
+    <CharacterIcon>k__BackingField: insert file path here
+    <Text>k__BackingField: Begin the training stage now!
+    <ID>k__BackingField: 031dd2eb-23d7-42b1-baab-155c8c59cc01
     <Choices>k__BackingField:
     - <Text>k__BackingField: Next Dialouge
       <NodeID>k__BackingField: 
     <DialougeType>k__BackingField: 0
-    <Position>k__BackingField: {x: 434.66666, y: 125.33333}
-  - <Name>k__BackingField: Choice 2
-    <Text>k__BackingField: New Text
-    <ID>k__BackingField: 633ee74d-f450-4d15-9f06-cde9a5cb48d5
-    <Choices>k__BackingField:
-    - <Text>k__BackingField: Next Dialouge
-      <NodeID>k__BackingField: 
-    <DialougeType>k__BackingField: 0
-    <Position>k__BackingField: {x: 434.66666, y: 328.66666}
+    <Position>k__BackingField: {x: 87.33333, y: 490}
   <OldUngroupedNodeNames>k__BackingField:
-  - Branching OUt
-  - Choice1
-  - Choice 2
+  - D1
+  - D2
+  - D3
