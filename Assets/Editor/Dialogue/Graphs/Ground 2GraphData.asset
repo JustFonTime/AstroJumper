@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0339091ce14bb0640878a4b65c6c98e9, type: 3}
+  m_Name: Ground 2GraphData
+  m_EditorClassIdentifier: Assembly-CSharp-Editor::DialougeGraphSavaDataSO
+  <FileName>k__BackingField: Ground 2
+  <Nodes>k__BackingField:
+  - <Name>k__BackingField: D1Ground2
+    <CharacterName>k__BackingField: ???
+    <CharacterIcon>k__BackingField: {fileID: 0}
+    <Text>k__BackingField: ???
+    <ID>k__BackingField: 89c50c67-f174-46a5-b8eb-b5e9ddb3570b
+    <Choices>k__BackingField:
+    - <Text>k__BackingField: Next Dialouge
+      <Requirements>k__BackingField: 
+      <NodeID>k__BackingField: 
+    <DialougeType>k__BackingField: 0
+    <Position>k__BackingField: {x: 171.33334, y: 109.33333}
+  - <Name>k__BackingField: D1Ground2p2
+    <CharacterName>k__BackingField: General Hayes
+    <CharacterIcon>k__BackingField: {fileID: 0}
+    <Text>k__BackingField: Come in Vanguard!
+    <ID>k__BackingField: 6d564ffb-8265-486e-b3c6-4e8b7faf6a06
+    <Choices>k__BackingField:
+    - <Text>k__BackingField: Next Dialouge
+      <Requirements>k__BackingField: 
+      <NodeID>k__BackingField: a16a93f5-707f-4e8e-ab12-4188a8798afc
+    <DialougeType>k__BackingField: 0
+    <Position>k__BackingField: {x: 171.33334, y: 342.66666}
+  - <Name>k__BackingField: D2Ground2p2
+    <CharacterName>k__BackingField: General Hayes
+    <CharacterIcon>k__BackingField: {fileID: 0}
+    <Text>k__BackingField: More signals have been detected!
+    <ID>k__BackingField: a16a93f5-707f-4e8e-ab12-4188a8798afc
+    <Choices>k__BackingField:
+    - <Text>k__BackingField: Next Dialouge
+      <Requirements>k__BackingField: 
+      <NodeID>k__BackingField: 
+    <DialougeType>k__BackingField: 0
+    <Position>k__BackingField: {x: 171.33334, y: 568.6667}
+  <OldUngroupedNodeNames>k__BackingField:
+  - D1Ground2
+  - D1Ground2p2
+  - D2Ground2p2

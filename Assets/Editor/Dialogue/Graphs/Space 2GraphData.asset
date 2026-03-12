@@ -1,0 +1,79 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0339091ce14bb0640878a4b65c6c98e9, type: 3}
+  m_Name: Space 2GraphData
+  m_EditorClassIdentifier: Assembly-CSharp-Editor::DialougeGraphSavaDataSO
+  <FileName>k__BackingField: Space 2
+  <Nodes>k__BackingField:
+  - <Name>k__BackingField: D1Space2
+    <CharacterName>k__BackingField: General Hayes
+    <CharacterIcon>k__BackingField: {fileID: 0}
+    <Text>k__BackingField: Greetings solider
+    <ID>k__BackingField: 0e44d21f-d9a4-4cfd-a1dc-91ec57d152cf
+    <Choices>k__BackingField:
+    - <Text>k__BackingField: Next Dialouge
+      <Requirements>k__BackingField: 
+      <NodeID>k__BackingField: 0383ef12-4de3-45c5-a368-c528fc33ba96
+    <DialougeType>k__BackingField: 0
+    <Position>k__BackingField: {x: 117.33333, y: 132}
+  - <Name>k__BackingField: D2Space2
+    <CharacterName>k__BackingField: General Hayes
+    <CharacterIcon>k__BackingField: {fileID: 0}
+    <Text>k__BackingField: We are now begining the strike on the lead ship
+    <ID>k__BackingField: 0383ef12-4de3-45c5-a368-c528fc33ba96
+    <Choices>k__BackingField:
+    - <Text>k__BackingField: Next Dialouge
+      <Requirements>k__BackingField: 
+      <NodeID>k__BackingField: 09b52e1c-c526-47ec-9bbd-e9b4ca4e236b
+    <DialougeType>k__BackingField: 0
+    <Position>k__BackingField: {x: 117.33333, y: 350}
+  - <Name>k__BackingField: D3Space2
+    <CharacterName>k__BackingField: General Hayes
+    <CharacterIcon>k__BackingField: {fileID: 0}
+    <Text>k__BackingField: 'We want you to sneak on board and destroy the ship from
+      within '
+    <ID>k__BackingField: 09b52e1c-c526-47ec-9bbd-e9b4ca4e236b
+    <Choices>k__BackingField:
+    - <Text>k__BackingField: Next Dialouge
+      <Requirements>k__BackingField: 
+      <NodeID>k__BackingField: 983aab9f-401d-4591-ad7d-2d85066092e2
+    <DialougeType>k__BackingField: 0
+    <Position>k__BackingField: {x: 117.33333, y: 564}
+  - <Name>k__BackingField: D4Space2
+    <CharacterName>k__BackingField: General Hayes
+    <CharacterIcon>k__BackingField: {fileID: 0}
+    <Text>k__BackingField: We have launched an attack on the main fleet to give you
+      the time to get onboard
+    <ID>k__BackingField: 983aab9f-401d-4591-ad7d-2d85066092e2
+    <Choices>k__BackingField:
+    - <Text>k__BackingField: Next Dialouge
+      <Requirements>k__BackingField: 
+      <NodeID>k__BackingField: 9871ffdf-dd6d-4661-8297-c4b92400235e
+    <DialougeType>k__BackingField: 0
+    <Position>k__BackingField: {x: 135.33334, y: 846.6667}
+  - <Name>k__BackingField: D5Space2
+    <CharacterName>k__BackingField: General Hayes
+    <CharacterIcon>k__BackingField: {fileID: 0}
+    <Text>k__BackingField: Good luck solider
+    <ID>k__BackingField: 9871ffdf-dd6d-4661-8297-c4b92400235e
+    <Choices>k__BackingField:
+    - <Text>k__BackingField: Next Dialouge
+      <Requirements>k__BackingField: 
+      <NodeID>k__BackingField: 
+    <DialougeType>k__BackingField: 0
+    <Position>k__BackingField: {x: 141.33334, y: 1125.3334}
+  <OldUngroupedNodeNames>k__BackingField:
+  - D1Space2
+  - D2Space2
+  - D3Space2
+  - D4Space2
+  - D5Space2
