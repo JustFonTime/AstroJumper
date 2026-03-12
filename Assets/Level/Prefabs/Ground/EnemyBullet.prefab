@@ -169,5 +169,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0514fbbd38ebba34e91ac6dbb1e18bcc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyProjectile
-  lifetime: 5
-  projectileDamage: 10
+  damage: 10
+  knockbackForce: 4
+  knockbackVerticalForce: 2
+  maxLifetime: 5
+  hitLayers:
+    serializedVersion: 2
+    m_Bits: 327680

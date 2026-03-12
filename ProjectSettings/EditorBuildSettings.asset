@@ -15,15 +15,12 @@ EditorBuildSettings:
     path: Assets/Level/Scenes/Tutorial/Tutorial Ground.unity
     guid: d96961fbd627a584ebdea0993b68c5c6
   - enabled: 1
-<<<<<<< Updated upstream
-=======
     path: Assets/Level/Scenes/Space/Space Level 1.unity
     guid: 18851b618b925b443be2c40a40da73e2
-  - enabled: 1
->>>>>>> Stashed changes
+  - enabled: 0
     path: Assets/Level/Scenes/Tutorial/Tutorial Space.unity
     guid: 0d1a6170d45014642acec9ac34f9dc57
-  - enabled: 1
+  - enabled: 0
     path: Assets/Level/Scenes/Game Over/GameOver.unity
     guid: 6168794fc4c184e2ea64f885b43506fd
   - enabled: 1

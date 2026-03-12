@@ -32,7 +32,7 @@ public class FlagshipController : MonoBehaviour
     [SerializeField] private bool boardWhenShieldsFail = true;
 
     [Header("Shield Failure Scenes")]
-    [SerializeField] private string playerFlagshipShieldFailureSceneName = "GameOver";
+    [SerializeField] private string playerFlagshipShieldFailureSceneName = "YouWin";
     [SerializeField] private string enemyFlagshipShieldFailureSceneName = "GameOver";
 
     [Header("Shield Nodes")]
@@ -184,6 +184,7 @@ public class FlagshipController : MonoBehaviour
     private string ResolveShieldFailureSceneName()
     {
         const int playerTeamId = 0;
+        // If the flagship belongs to the player's team, load the player-specific scene; otherwise, load the enemy-specific scene.
         return teamAgent != null && teamAgent.TeamId == playerTeamId
             ? playerFlagshipShieldFailureSceneName
             : enemyFlagshipShieldFailureSceneName;
