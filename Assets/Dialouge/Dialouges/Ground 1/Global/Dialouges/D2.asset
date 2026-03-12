@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: D2
   m_EditorClassIdentifier: Assembly-CSharp::DialougeSO
   <DialougeName>k__BackingField: D2
-  <CharacterNameKey>k__BackingField: 
+  <CharacterNameKey>k__BackingField: CHAR_GENERAL_HAYES
   <CharacterIcon>k__BackingField: {fileID: 0}
-  <TextKey>k__BackingField: 
+  <TextKey>k__BackingField: DIALOG_URGENT_1
   <Choices>k__BackingField:
   - <Name>k__BackingField: 
     <TextKey>k__BackingField: 
