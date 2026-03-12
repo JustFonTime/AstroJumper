@@ -149,10 +149,10 @@ MonoBehaviour:
   deathVolume: 1
   deathVfxPrefab: {fileID: 0}
   deathVfxDestroyPadding: 0.25
-  currentHealth: 100
-  maxHealth: 100
-  maxShileds: 200
-  currentShields: 200
+  currentHealth: 75
+  maxHealth: 75
+  maxShileds: 50
+  currentShields: 50
   canRechargeShield: 1
   rechargeShieldDelay: 2
   rechargeShieldRatePerHalfSecond: 5
