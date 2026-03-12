@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3f16d7a533c7254d91e3cc1eef0a590, type: 3}
   m_Name: Scrap
   m_EditorClassIdentifier: Assembly-CSharp::Scrap
-  itemName: 
-  itemIcon: {fileID: 0}
+  itemName: Scrap
+  itemIcon: {fileID: -1454010366, guid: dfadb386740b7d740b942af9b80caaaa, type: 3}
