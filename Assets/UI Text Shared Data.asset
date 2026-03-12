@@ -123,6 +123,10 @@ MonoBehaviour:
     m_Key: HUD_ENEMIES_LEFT
     m_Metadata:
       m_Items: []
+  - m_Id: 3929366412124160
+    m_Key: Flagship_Shields
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
