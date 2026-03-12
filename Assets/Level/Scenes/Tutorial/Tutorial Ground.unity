@@ -445,7 +445,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1559904618933067775, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
       propertyPath: targetLayer.m_Bits
-      value: 65536
+      value: 2048
       objectReference: {fileID: 0}
     - target: {fileID: 2916840892436311964, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
       propertyPath: homePoint
@@ -465,15 +465,15 @@ PrefabInstance:
       objectReference: {fileID: 174109804372061078, guid: b454596e713e44f4daefd355156d1fcf, type: 3}
     - target: {fileID: 4255045886575685431, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
       propertyPath: groundMask.m_Bits
-      value: 262144
+      value: 8192
       objectReference: {fileID: 0}
     - target: {fileID: 4255045886575685431, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
       propertyPath: playerMask.m_Bits
-      value: 65536
+      value: 2048
       objectReference: {fileID: 0}
     - target: {fileID: 4255045886575685431, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
       propertyPath: sightBlockMask.m_Bits
-      value: 262144
+      value: 8192
       objectReference: {fileID: 0}
     - target: {fileID: 5862821998221709667, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
       propertyPath: m_FlipX
@@ -684,7 +684,7 @@ GameObject:
   - component: {fileID: 332980529}
   - component: {fileID: 332980531}
   - component: {fileID: 332980530}
-  m_Layer: 18
+  m_Layer: 13
   m_Name: Ground
   m_TagString: Terrain
   m_Icon: {fileID: 0}
@@ -7064,16 +7064,16 @@ RectTransform:
   m_GameObject: {fileID: 576469195}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.225, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1359725785}
   m_Father: {fileID: 832337149}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -587.2, y: 191.9}
-  m_SizeDelta: {x: 160, y: 30}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 148, y: 37}
+  m_SizeDelta: {x: 200, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &576469197
 MonoBehaviour:
@@ -129058,8 +129058,8 @@ Transform:
   m_GameObject: {fileID: 919925893}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.8, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: -0.282, z: 0}
+  m_LocalScale: {x: 2.5, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2014226423}
@@ -129074,7 +129074,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1559904618933067775, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
       propertyPath: targetLayer.m_Bits
-      value: 65536
+      value: 2048
       objectReference: {fileID: 0}
     - target: {fileID: 2916840892436311964, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
       propertyPath: homePoint
@@ -129094,15 +129094,15 @@ PrefabInstance:
       objectReference: {fileID: 174109804372061078, guid: b454596e713e44f4daefd355156d1fcf, type: 3}
     - target: {fileID: 4255045886575685431, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
       propertyPath: groundMask.m_Bits
-      value: 262144
+      value: 8192
       objectReference: {fileID: 0}
     - target: {fileID: 4255045886575685431, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
       propertyPath: playerMask.m_Bits
-      value: 65536
+      value: 2048
       objectReference: {fileID: 0}
     - target: {fileID: 4255045886575685431, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
       propertyPath: sightBlockMask.m_Bits
-      value: 262144
+      value: 8192
       objectReference: {fileID: 0}
     - target: {fileID: 5862821998221709667, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
       propertyPath: m_FlipX
@@ -129201,7 +129201,7 @@ GameObject:
   - component: {fileID: 1028606210}
   - component: {fileID: 1028606209}
   - component: {fileID: 1028606208}
-  m_Layer: 19
+  m_Layer: 14
   m_Name: OneWays
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -130776,7 +130776,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1559904618933067775, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
       propertyPath: targetLayer.m_Bits
-      value: 65536
+      value: 2048
       objectReference: {fileID: 0}
     - target: {fileID: 2916840892436311964, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
       propertyPath: homePoint
@@ -130796,15 +130796,15 @@ PrefabInstance:
       objectReference: {fileID: 174109804372061078, guid: b454596e713e44f4daefd355156d1fcf, type: 3}
     - target: {fileID: 4255045886575685431, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
       propertyPath: groundMask.m_Bits
-      value: 262144
+      value: 8192
       objectReference: {fileID: 0}
     - target: {fileID: 4255045886575685431, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
       propertyPath: playerMask.m_Bits
-      value: 65536
+      value: 2048
       objectReference: {fileID: 0}
     - target: {fileID: 4255045886575685431, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
       propertyPath: sightBlockMask.m_Bits
-      value: 262144
+      value: 8192
       objectReference: {fileID: 0}
     - target: {fileID: 5862821998221709667, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
       propertyPath: m_FlipX
@@ -130959,7 +130959,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0.0001669, y: -0.00011504}
-  m_SizeDelta: {x: 159.38, y: 27.638}
+  m_SizeDelta: {x: 200, y: 27.638}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1359725786
 MonoBehaviour:
@@ -131445,15 +131445,15 @@ PrefabInstance:
       objectReference: {fileID: 8161714451627024827, guid: f46646881042575428aea186ba5920dd, type: 3}
     - target: {fileID: 8290834329959521489, guid: 332ecf6d81038f149b3267de2f549a21, type: 3}
       propertyPath: groundMask.m_Bits
-      value: 262144
+      value: 8192
       objectReference: {fileID: 0}
     - target: {fileID: 8290834329959521489, guid: 332ecf6d81038f149b3267de2f549a21, type: 3}
       propertyPath: playerMask.m_Bits
-      value: 65536
+      value: 2048
       objectReference: {fileID: 0}
     - target: {fileID: 8290834329959521489, guid: 332ecf6d81038f149b3267de2f549a21, type: 3}
       propertyPath: sightBlockMask.m_Bits
-      value: 0
+      value: 8192
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -131844,15 +131844,15 @@ PrefabInstance:
       objectReference: {fileID: 8161714451627024827, guid: f46646881042575428aea186ba5920dd, type: 3}
     - target: {fileID: 8290834329959521489, guid: 332ecf6d81038f149b3267de2f549a21, type: 3}
       propertyPath: groundMask.m_Bits
-      value: 262144
+      value: 8192
       objectReference: {fileID: 0}
     - target: {fileID: 8290834329959521489, guid: 332ecf6d81038f149b3267de2f549a21, type: 3}
       propertyPath: playerMask.m_Bits
-      value: 65536
+      value: 2048
       objectReference: {fileID: 0}
     - target: {fileID: 8290834329959521489, guid: 332ecf6d81038f149b3267de2f549a21, type: 3}
       propertyPath: sightBlockMask.m_Bits
-      value: 0
+      value: 8192
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -132019,10 +132019,34 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 235914197}
     m_Modifications:
+    - target: {fileID: 1559904618933067775, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
+      propertyPath: targetLayer.m_Bits
+      value: 2048
+      objectReference: {fileID: 0}
     - target: {fileID: 2916840892436311964, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
       propertyPath: homePoint
       value: 
       objectReference: {fileID: 255962626}
+    - target: {fileID: 4124021642724615479, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.84
+      objectReference: {fileID: 0}
+    - target: {fileID: 4124021642724615479, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 4255045886575685431, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
+      propertyPath: groundMask.m_Bits
+      value: 8192
+      objectReference: {fileID: 0}
+    - target: {fileID: 4255045886575685431, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
+      propertyPath: playerMask.m_Bits
+      value: 2048
+      objectReference: {fileID: 0}
+    - target: {fileID: 4255045886575685431, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
+      propertyPath: sightBlockMask.m_Bits
+      value: 8192
+      objectReference: {fileID: 0}
     - target: {fileID: 7415500675629748956, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
       propertyPath: m_LocalPosition.x
       value: -5.58
@@ -132283,7 +132307,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1559904618933067775, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
       propertyPath: targetLayer.m_Bits
-      value: 65536
+      value: 2048
       objectReference: {fileID: 0}
     - target: {fileID: 2916840892436311964, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
       propertyPath: homePoint
@@ -132303,15 +132327,15 @@ PrefabInstance:
       objectReference: {fileID: 174109804372061078, guid: b454596e713e44f4daefd355156d1fcf, type: 3}
     - target: {fileID: 4255045886575685431, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
       propertyPath: groundMask.m_Bits
-      value: 262144
+      value: 8192
       objectReference: {fileID: 0}
     - target: {fileID: 4255045886575685431, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
       propertyPath: playerMask.m_Bits
-      value: 65536
+      value: 2048
       objectReference: {fileID: 0}
     - target: {fileID: 4255045886575685431, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
       propertyPath: sightBlockMask.m_Bits
-      value: 262144
+      value: 8192
       objectReference: {fileID: 0}
     - target: {fileID: 5862821998221709667, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
       propertyPath: m_FlipX
@@ -132409,7 +132433,9 @@ GameObject:
   - component: {fileID: 2014226419}
   - component: {fileID: 2014226420}
   - component: {fileID: 2014226424}
-  m_Layer: 16
+  - component: {fileID: 2014226425}
+  - component: {fileID: 2014226426}
+  m_Layer: 11
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -132450,8 +132476,8 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
-  m_Size: {x: 1.4, y: 1.55}
+  m_Offset: {x: -0.040754702, y: 0.01944275}
+  m_Size: {x: 0.569162, y: 0.569162}
   m_Direction: 0
 --- !u!114 &2014226420
 MonoBehaviour:
@@ -132477,10 +132503,10 @@ MonoBehaviour:
   groundCheckSize: {x: 0.6, y: 0.1}
   groundMask:
     serializedVersion: 2
-    m_Bits: 786432
+    m_Bits: 24576
   oneWayMask:
     serializedVersion: 2
-    m_Bits: 524288
+    m_Bits: 16384
   dropDuration: 0.5
   actionsAsset: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   actionMapName: Player
@@ -132565,7 +132591,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 929755403, guid: ead0f2db8582a7c43b113402fcba8681, type: 3}
+  m_Sprite: {fileID: 919809108, guid: 25c533fa299a15640a3943272284f1f3, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -132584,13 +132610,14 @@ Transform:
   m_GameObject: {fileID: 2014226418}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -112.5, y: -18, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: -113.28, y: -18.15, z: 0}
+  m_LocalScale: {x: 2.5, y: 2.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 919925894}
   - {fileID: 1284879303}
   - {fileID: 798771941}
+  - {fileID: 2021980398}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2014226424
@@ -132619,6 +132646,90 @@ MonoBehaviour:
   maxProjectile: 3
   playerSpawn: {fileID: 1496235292}
   damageCooldown: 0.5
+--- !u!95 &2014226425
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2014226418}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: f09066684d6c16f468fe02b12f25a5d0, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &2014226426
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2014226418}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26ced18b7e6ce6a459a3998190012be0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerAnimator
+  groundCheck: {fileID: 919925894}
+  groundCheckSize: {x: 0.6, y: 0.1}
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 24576
+--- !u!1 &2021980397
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2021980398}
+  - component: {fileID: 2021980399}
+  m_Layer: 0
+  m_Name: PlayerDeathGround
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2021980398
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2021980397}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -3.9061952, y: 0.27145615, z: 0}
+  m_LocalScale: {x: 0.4, y: 0.4, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2014226423}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2021980399
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2021980397}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89a4be16be80976418dfe3ddd1f3c20f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerDeathGround
+  gameOverScene: GameOver
 --- !u!1 &2101975265
 GameObject:
   m_ObjectHideFlags: 0
@@ -132787,15 +132898,15 @@ PrefabInstance:
       objectReference: {fileID: 8161714451627024827, guid: f46646881042575428aea186ba5920dd, type: 3}
     - target: {fileID: 8290834329959521489, guid: 332ecf6d81038f149b3267de2f549a21, type: 3}
       propertyPath: groundMask.m_Bits
-      value: 262144
+      value: 8192
       objectReference: {fileID: 0}
     - target: {fileID: 8290834329959521489, guid: 332ecf6d81038f149b3267de2f549a21, type: 3}
       propertyPath: playerMask.m_Bits
-      value: 65536
+      value: 2048
       objectReference: {fileID: 0}
     - target: {fileID: 8290834329959521489, guid: 332ecf6d81038f149b3267de2f549a21, type: 3}
       propertyPath: sightBlockMask.m_Bits
-      value: 0
+      value: 8192
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -132818,7 +132929,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1559904618933067775, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
       propertyPath: targetLayer.m_Bits
-      value: 65536
+      value: 2048
       objectReference: {fileID: 0}
     - target: {fileID: 2916840892436311964, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
       propertyPath: homePoint
@@ -132834,15 +132945,15 @@ PrefabInstance:
       objectReference: {fileID: 174109804372061078, guid: b454596e713e44f4daefd355156d1fcf, type: 3}
     - target: {fileID: 4255045886575685431, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
       propertyPath: groundMask.m_Bits
-      value: 262144
+      value: 8192
       objectReference: {fileID: 0}
     - target: {fileID: 4255045886575685431, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
       propertyPath: playerMask.m_Bits
-      value: 65536
+      value: 2048
       objectReference: {fileID: 0}
     - target: {fileID: 4255045886575685431, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
       propertyPath: sightBlockMask.m_Bits
-      value: 262144
+      value: 8192
       objectReference: {fileID: 0}
     - target: {fileID: 5862821998221709667, guid: 62fa248fbaa615f4a833c82547c3ed48, type: 3}
       propertyPath: m_FlipX
