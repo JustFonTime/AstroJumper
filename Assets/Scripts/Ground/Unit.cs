@@ -37,7 +37,7 @@ public class Unit : MonoBehaviour
 
     public ProjectilePool unitProjectilePool;
     private bool useProjectilePool = true;
-
+    public GameObject DeathDrop;
 
     void Start()
     {
@@ -101,6 +101,11 @@ public class Unit : MonoBehaviour
         // Eventually add death animation, sound, etc. For now just destroy the game object.
         onDeath?.Invoke(this);
         Destroy(gameObject);
+
+        if (gameObject.CompareTag("Enemy"))
+        {
+            Instantiate(DeathDrop, transform.position, Quaternion.identity);
+        }
     }
 
     
@@ -132,9 +137,15 @@ public class Unit : MonoBehaviour
             Vector3 offsetDirection = IsFacingRight() ? Vector3.right : Vector3.left;
             Vector3 offset = new Vector3(hitBoxInfo.GetOffset().x * offsetDirection.x, hitBoxInfo.GetOffset().y, hitBoxInfo.GetOffset().z);
             projectile.transform.position = transform.position + offset;
-            projectile.GetComponent<Projectile>().SetDirection(IsFacingRight() ? 1 : -1);
-            projectile.GetComponent<Projectile>().SetYValue(transform.position.y);
-            projectile.GetComponent<Projectile>().SetSpeed(hitBoxInfo.GetProjectileSpeed());
+
+            Projectile proj = projectile.GetComponent<Projectile>();
+            proj.SetDirection(IsFacingRight() ? 1 : -1);
+            proj.SetYValue(transform.position.y);
+            proj.SetSpeed(hitBoxInfo.GetProjectileSpeed());
+
+            proj.SetWallLayers(LayerMask.GetMask("Ground"));
+            //Debug.Log("WallLayer mask value: " + LayerMask.GetMask("Ground")); 
+
             return projectile;
         }
 

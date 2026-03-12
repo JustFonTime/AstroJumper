@@ -29,7 +29,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2.3075, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -110,11 +110,12 @@ MonoBehaviour:
   isPermanent: 0
   duration: 0.3
   knockbackForce: 5
+  knockbackVerticalForce: 3
   isMelee: 1
   projectileSpeed: 5
   targetLayer:
     serializedVersion: 2
-    m_Bits: 65536
+    m_Bits: 0
   ignoreLayer:
     serializedVersion: 2
     m_Bits: 4096

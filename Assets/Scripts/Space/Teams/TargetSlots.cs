@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 [DisallowMultipleComponent]
 public class TargetSlots : MonoBehaviour
@@ -23,6 +24,25 @@ public class TargetSlots : MonoBehaviour
         if (attackers.Contains(attacker)) return true; // already clkaimed
         if (attackers.Count >= maxAttackers) return false; // full
 
+        attackers.Add(attacker);
+        return true;
+    }
+
+    public bool UltimateClaim(TeamAgent attacker, bool respectMaxAttackers = false)
+    {
+        if (attacker == null) return false;
+        if (attackers.Contains(attacker)) return true; // already claimed
+
+        if (respectMaxAttackers)
+        {
+            if (attackers.Count + 1 >=
+                maxAttackers) //remove 1 from max to allow this attacker to claim, otherwise it would always be full and never allow claiming
+                attackers.Remove(attackers.Count > 0
+                    ? attackers.First()
+                    : null); //remove random attacker to make room for this one
+        }
+
+        //claim even if full, this can be used for special attacks that ignore target slots
         attackers.Add(attacker);
         return true;
     }

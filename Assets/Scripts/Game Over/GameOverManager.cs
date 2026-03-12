@@ -3,11 +3,9 @@ using UnityEngine.SceneManagement;
 
 public class GameOverManager : MonoBehaviour
 {
-    [Header("UI Panels")]
-    public GameObject gameOverPanel;
+    [Header("UI Panels")] public GameObject gameOverPanel;
 
-    [Header("Buttons")]
-    public string levelSelectScene = "LevelSelector";
+    [Header("Buttons")] public string levelSelectScene = "LevelSelector";
     public string mainMenuScene = "MainMenu";
 
     void Start()
@@ -15,7 +13,7 @@ public class GameOverManager : MonoBehaviour
         // Make sure game over panel is visible
         if (gameOverPanel != null)
             gameOverPanel.SetActive(true);
-        
+
         // Unpause the game if it was paused
         Time.timeScale = 1f;
     }

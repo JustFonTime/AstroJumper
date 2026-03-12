@@ -11,6 +11,8 @@ public class EnemyProjectile : MonoBehaviour
     [Header("Lifetime")]
     [SerializeField] private float maxLifetime = 5f;
 
+    [SerializeField] private LayerMask hitLayers;
+
     // Set by EnemyProjectilePool when fired
     private EnemyProjectilePool pool;
     private Rigidbody2D rb;
@@ -43,14 +45,13 @@ public class EnemyProjectile : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        // Try to damage a Unit on whatever we hit
+        if ((hitLayers.value & (1 << other.gameObject.layer)) == 0)
+            return; // ignore player projectiles and default layers
+
         Unit unit = other.GetComponent<Unit>();
         if (unit != null)
-        {
             unit.TakeDamage(damage, knockbackForce, knockbackVerticalForce, transform.position);
-        }
 
-        // Return on any solid hit 
         ReturnToPool();
     }
 

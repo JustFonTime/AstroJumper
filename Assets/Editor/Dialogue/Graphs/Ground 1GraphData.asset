@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0339091ce14bb0640878a4b65c6c98e9, type: 3}
+  m_Name: Ground 1GraphData
+  m_EditorClassIdentifier: Assembly-CSharp-Editor::DialougeGraphSavaDataSO
+  <FileName>k__BackingField: Ground 1
+  <Nodes>k__BackingField:
+  - <Name>k__BackingField: D1
+    <CharacterName>k__BackingField: General Hayes
+    <CharacterIcon>k__BackingField: {fileID: 0}
+    <Text>k__BackingField: Vanguard!
+    <ID>k__BackingField: 436da82a-416d-4d56-b257-e65459237d64
+    <Choices>k__BackingField:
+    - <Text>k__BackingField: Next Dialouge
+      <Requirements>k__BackingField: 
+      <NodeID>k__BackingField: 66146185-b43c-4c25-baa7-c667909f9b3b
+    <DialougeType>k__BackingField: 0
+    <Position>k__BackingField: {x: 23.333332, y: 176.66667}
+  - <Name>k__BackingField: D2
+    <CharacterName>k__BackingField: General Hayes
+    <CharacterIcon>k__BackingField: {fileID: 0}
+    <Text>k__BackingField: "We\u2019re under attack by an unidentified force! We
+      need your help! "
+    <ID>k__BackingField: 66146185-b43c-4c25-baa7-c667909f9b3b
+    <Choices>k__BackingField:
+    - <Text>k__BackingField: Next Dialouge
+      <Requirements>k__BackingField: 
+      <NodeID>k__BackingField: 
+    <DialougeType>k__BackingField: 0
+    <Position>k__BackingField: {x: 12.666667, y: 372.66666}
+  <OldUngroupedNodeNames>k__BackingField:
+  - D1
+  - D2

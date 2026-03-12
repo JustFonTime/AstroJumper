@@ -30,7 +30,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -22.149471, y: 0.054697905, z: 1000}
-  m_LocalScale: {x: 125, y: 125, z: 1}
+  m_LocalScale: {x: 293.38925, y: 162.99849, z: 2.0098808}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -47,8 +47,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10725fd56066c4c4c808fbfc7ae9e849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TiledBackgroundFollow
-  target: {fileID: 0}
-  parallax: 0.05
+  cam: {fileID: 0}
+  scrollTarget: {fileID: 0}
+  parallax: 0.037
+  zOffset: 10
+  extraScale: 1.2
 --- !u!33 &3198074357517106634
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -82,7 +85,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 3a70476aeeeea7242ad00d800dc2baac, type: 2}
+  - {fileID: 2100000, guid: 35df61baad803c64681b6bf03486c569, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

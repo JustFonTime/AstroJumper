@@ -110,6 +110,7 @@ MonoBehaviour:
   isPermanent: 0
   duration: 1
   knockbackForce: 1
+  knockbackVerticalForce: 2
   isMelee: 0
   projectileSpeed: 6
   targetLayer:

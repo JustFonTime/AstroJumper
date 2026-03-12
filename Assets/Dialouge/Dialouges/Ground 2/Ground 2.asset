@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8272b93dc3d77eb438eb50b775493e52, type: 3}
+  m_Name: Ground 2
+  m_EditorClassIdentifier: Assembly-CSharp::DialougeContainerSO
+  <FileName>k__BackingField: Ground 2
+  <Dialouges>k__BackingField:
+  - {fileID: 11400000, guid: 69b189e9ff8f5744fa5d478cb1cf6f27, type: 2}
+  - {fileID: 11400000, guid: 883ca6442723afc44aa4c9e6a0739b59, type: 2}
+  - {fileID: 11400000, guid: 89e407624f413d94ca1742c993775ab6, type: 2}

@@ -15,6 +15,7 @@ public class PlayerUpgradeState : MonoBehaviour
         FireRate,
         MaxHealth,
         MaxShields,
+        
     }
 
     [SerializeField] private PlayerSpaceshipUpgradesSO upgradesSO;

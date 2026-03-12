@@ -13,29 +13,42 @@ public class SpaceshipMovement : MonoBehaviour
 
     [SerializeField] private PlayerUpgradeState upgradeState;
 
-    [Header("Forward Thrusters (No Reverse / No Strafe)")] [SerializeField]
-    private float forwardThrust = 12f;
-
+    [Header("Forward Thrusters (No Reverse / No Strafe)")]
+    [SerializeField] private float forwardThrust = 12f;
     [SerializeField] private float maxSpeed = 12f;
 
-    [Header("Brake (S key)")] [Tooltip("Extra damping force when braking (S). Higher = stops faster.")] [SerializeField]
-    private float brakeStrength = 6f;
+    [Header("Brake (S key)")]
+    [Tooltip("Extra damping force when braking (S). Higher = stops faster.")]
+    [SerializeField] private float brakeStrength = 6f;
+
+    [Header("Flight Assist")]
+    [Tooltip("Removes sideways drift (higher = snappier)")]
+    [SerializeField] private float alignStrength = 6f;
+
+    [Tooltip("Damping when not thrusting (higher = stops coasting faster)")]
+    [SerializeField] private float coastDampStrength = 1.25f;
+
+    [Header("Turning (A/D)")]
+    [Tooltip("Degrees/sec when you have NO turning authority (usually 0).")]
+    [SerializeField] private float minTurnDegPerSec = 0f;
+
+    [Tooltip("Degrees/sec when you have FULL turning authority.")]
+    [SerializeField] private float maxTurnDegPerSec = 240f;
+
+    [Tooltip("How much turning authority you get based on forward speed (0..1).")]
+    [SerializeField] private AnimationCurve turnAuthorityBySpeed =
+        new AnimationCurve(
+            new Keyframe(0f, 0f),     // stopped -> no turn
+            new Keyframe(0.25f, 0.25f),
+            new Keyframe(1f, 1f)      // at max speed -> full turn
+        );
+
+    [Tooltip("Optional: make ship resist turning unless moving forward.")]
+    [SerializeField] private bool requireForwardSpeedToTurn = true;
 
 
-    [Header("Flight Assist")] [Tooltip("Removes sideways drift")] [SerializeField]
-    private float alignStrength = 6f;
-
-    [Tooltip("damping if no input")] [SerializeField]
-    private float coastDampStrength = 1.25f;
-
-    [Header("Rotation (Mouse Aim)")] [SerializeField]
-    private float rotationOffset = -90f;
-
-    [SerializeField] private float rotationLerp = 12f;
-
-    [Header("Barrel Roll (Dodge)")] [SerializeField]
-    private float barrellRollDistance = 10f;
-
+    [Header("Barrel Roll (Dodge)")]
+    [SerializeField] private float barrellRollDistance = 10f;
     [SerializeField] private float barrellRollDuration = 0.5f;
     [SerializeField] private float barrellRollSpinDegrees = 360f;
     [SerializeField] private KeyCode barrellRollKey = KeyCode.Space;
@@ -44,7 +57,8 @@ public class SpaceshipMovement : MonoBehaviour
     private bool canBarrellRoll = true;
     private bool isBarrellRolling = false;
 
-    [Header("Boost")] [SerializeField] private float boostForce = 20f;
+    [Header("Boost")]
+    [SerializeField] private float boostForce = 20f;
     [SerializeField] private float maxBoost = 100f;
     [SerializeField] private float currentBoost = 100f;
 
@@ -60,13 +74,12 @@ public class SpaceshipMovement : MonoBehaviour
     private bool isRecharging = false;
 
     // Input
-    private float throttle01;
-    private float brake01;
-    private float targetAngle;
+    private float throttle01;   // W only (0..1)
+    private float brake01;      // S only (0..1)
+    private float turnInput;    // A/D (-1..1)
 
-    [Header("Debug Gizmos")] [SerializeField]
-    private bool drawDebug = true;
-
+    [Header("Debug Gizmos")]
+    [SerializeField] private bool drawDebug = false;
     [SerializeField] private bool drawOnlyWhenSelected = true;
 
     [SerializeField] private float velocityGizmoScale = 0.25f;
@@ -79,7 +92,8 @@ public class SpaceshipMovement : MonoBehaviour
     private Vector2 dbgAlignForce;
     private Vector2 dbgDampForce;
     private Vector2 dbgThrustForce;
-
+    private float dbgTurnRate;
+    private float dbgForwardSpeed;
 
     private void Awake()
     {
@@ -89,21 +103,25 @@ public class SpaceshipMovement : MonoBehaviour
         rb.gravityScale = 0f;
         rb.linearDamping = 0f;
         rb.angularDamping = 0f;
-        
-        currentBoost= maxBoost;
+
+        currentBoost = maxBoost;
     }
 
     private void Update()
     {
+        // W/S for thrust/brake
         float v = Input.GetAxisRaw("Vertical");
         throttle01 = Mathf.Clamp01(v);
         brake01 = Mathf.Clamp01(-v);
 
-        UpdateTargetAngleToMouse();
+        // A/D for turn
+        turnInput = Input.GetAxisRaw("Horizontal");
 
+        // Barrel roll
         if (Input.GetKeyDown(barrellRollKey) && canBarrellRoll && !isBarrellRolling)
             StartCoroutine(BarrellRolly());
 
+        // Boost
         isBoosting = Input.GetKey(boostKey) && currentBoost > 0f;
 
         if (!isBoosting && !isRecharging && currentBoost < maxBoost)
@@ -111,16 +129,23 @@ public class SpaceshipMovement : MonoBehaviour
             isRecharging = true;
             StartCoroutine(RechargeBoost());
         }
+
+
     }
 
     private void FixedUpdate()
     {
+        if (!rb) return;
+
+        if (!isBarrellRolling)
+            rb.angularVelocity = 0f;
+
         if (isBarrellRolling) return;
 
         ApplyForwardThrust();
         ApplyBoost();
         ApplyFlightAssistAndBrake();
-        RotateShipPhysics();
+        ApplyTurn();
         ClampSpeed();
     }
 
@@ -152,18 +177,18 @@ public class SpaceshipMovement : MonoBehaviour
 
         Vector2 forward = transform.up;
 
-        // kill sideways drift
+        // remove sideways drift
         float forwardSpeed = Vector2.Dot(v, forward);
         Vector2 desiredVel = forward * forwardSpeed;
+
         Vector2 alignForce = (desiredVel - v) * alignStrength;
         rb.AddForce(alignForce, ForceMode2D.Force);
         dbgAlignForce = alignForce;
 
-        // damping when not throttling
+        // damping
         bool noThrottle = throttle01 < 0.001f;
         float damp = noThrottle ? coastDampStrength : 0f;
 
-        // braking increases dampiong
         if (brake01 > 0.001f)
             damp += brakeStrength * brake01;
 
@@ -177,10 +202,32 @@ public class SpaceshipMovement : MonoBehaviour
         dbgDampForce = dampForce;
     }
 
-    private void RotateShipPhysics()
+    private void ApplyTurn()
     {
-        float newAngle = Mathf.LerpAngle(rb.rotation, targetAngle, rotationLerp * Time.fixedDeltaTime);
-        rb.MoveRotation(newAngle);
+        if (Mathf.Abs(turnInput) < 0.001f) { dbgTurnRate = 0f; return; }
+
+        // turning authity depends on  speed
+        float forwardSpeed = Mathf.Max(0f, Vector2.Dot(rb.linearVelocity, transform.up));
+        dbgForwardSpeed = forwardSpeed;
+
+        float speed01 = Mathf.Clamp01(forwardSpeed / Mathf.Max(0.01f, maxSpeed));
+        float authority = turnAuthorityBySpeed != null ? turnAuthorityBySpeed.Evaluate(speed01) : speed01;
+
+        if (requireForwardSpeedToTurn && authority <= 0.001f)
+        {
+            dbgTurnRate = 0f;
+            return;
+        }
+
+        float turnRate = Mathf.Lerp(minTurnDegPerSec, maxTurnDegPerSec, authority);
+        dbgTurnRate = turnRate;
+
+        float maxStep = turnRate * Time.fixedDeltaTime;
+
+        // Unity 2D rotation
+        float step = -turnInput * maxStep;
+
+        rb.MoveRotation(rb.rotation + step);
     }
 
     private void ClampSpeed()
@@ -192,24 +239,7 @@ public class SpaceshipMovement : MonoBehaviour
             rb.linearVelocity = v.normalized * maxSpeedWithUpgrades;
     }
 
-    private void UpdateTargetAngleToMouse()
-    {
-        if (!cam) cam = Camera.main;
-        if (!cam) return;
 
-        Vector3 mouse = Input.mousePosition;
-
-        float zDist = Mathf.Abs(transform.position.z - cam.transform.position.z);
-        mouse.z = zDist;
-
-        Vector3 mouseWorld = cam.ScreenToWorldPoint(mouse);
-        Vector2 toMouse = (Vector2)(mouseWorld - transform.position);
-
-        if (toMouse.sqrMagnitude < 0.0001f) return;
-
-        float angle = Mathf.Atan2(toMouse.y, toMouse.x) * Mathf.Rad2Deg;
-        targetAngle = angle + rotationOffset;
-    }
 
     private void ApplyBoost()
     {
@@ -249,9 +279,10 @@ public class SpaceshipMovement : MonoBehaviour
         isBarrellRolling = true;
         canBarrellRoll = false;
 
-        //sideways dodge
+        // dodge sideways (based on turn input; default right)
         Vector2 right = transform.right;
-        Vector2 rollDir = right * (Input.GetAxisRaw("Horizontal") < 0f ? -1f : 1f);
+        float h = Input.GetAxisRaw("Horizontal");
+        Vector2 rollDir = right * (h < 0f ? -1f : 1f);
 
         float desiredDeltaV = dist / dur;
         float impulse = rb.mass * desiredDeltaV;
@@ -316,20 +347,17 @@ public class SpaceshipMovement : MonoBehaviour
 
         DrawArrow(pos, ClampVec3(v * velocityGizmoScale, maxVelocityGizmoLength), Color.cyan); // velocity
         DrawArrow(pos, ClampVec3(forwardV * velocityGizmoScale, maxVelocityGizmoLength), Color.green); // forward vel
-        DrawArrow(pos, ClampVec3(lateralV * velocityGizmoScale, maxVelocityGizmoLength),
-            Color.magenta); // lateral drift
+        DrawArrow(pos, ClampVec3(lateralV * velocityGizmoScale, maxVelocityGizmoLength), Color.magenta); // drift
 
         DrawArrow(pos, ClampVec3(dbgThrustForce * forceGizmoScale, maxForceGizmoLength), Color.white); // thrust
-        DrawArrow(pos, ClampVec3(dbgAlignForce * forceGizmoScale, maxForceGizmoLength),
-            new Color(1f, 0.6f, 0f)); // align
-        DrawArrow(pos, ClampVec3(dbgDampForce * forceGizmoScale, maxForceGizmoLength), Color.red); // damping/brake
-
+        DrawArrow(pos, ClampVec3(dbgAlignForce * forceGizmoScale, maxForceGizmoLength), new Color(1f, 0.6f, 0f)); // align
+        DrawArrow(pos, ClampVec3(dbgDampForce * forceGizmoScale, maxForceGizmoLength), Color.red); // brake/coast
 
         DrawArrow(pos, (Vector3)(forward * 2f), Color.yellow); // facing
 
 #if UNITY_EDITOR
         Handles.Label(pos + Vector3.up * 1.2f,
-            $"v={v.magnitude:0.0}  fwd={forwardSpeed:0.0}  lat={lateralV.magnitude:0.0}  thr={throttle01:0.0}  brk={brake01:0.0}");
+            $"v={v.magnitude:0.0} fwd={dbgForwardSpeed:0.0} turnRate={dbgTurnRate:0.0} thr={throttle01:0.0} brk={brake01:0.0}");
 #endif
     }
 
@@ -358,3 +386,5 @@ public class SpaceshipMovement : MonoBehaviour
         Gizmos.DrawLine(pos + vec, pos + vec + l * headLen);
     }
 }
+
+

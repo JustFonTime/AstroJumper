@@ -1,11 +1,11 @@
 using System.Collections.Generic;
-using NUnit.Framework;
 using UnityEngine;
 
 public class TeamRegistry : MonoBehaviour
 {
     //All active Agetns
     private static readonly List<TeamAgent> agents = new List<TeamAgent>(256);
+    public static IReadOnlyList<TeamAgent> Agents => agents;
 
     public static void Register(TeamAgent agent)
     {
@@ -39,7 +39,7 @@ public class TeamRegistry : MonoBehaviour
             if (!IsHostile(seeker.TeamId, agent.TeamId)) continue; //skip if not hositle
 
             Vector2 p = agent.transform.position;
-            float d2 = (p - seekerPos).magnitude;
+            float d2 = (p - seekerPos).sqrMagnitude;
 
             if (d2 > r2) continue; //skip if outside range
 
@@ -60,6 +60,14 @@ public class TeamRegistry : MonoBehaviour
         return nearest;
     }
 
+    
+    /// <summary>
+    ///  Finds nearest hostile target and tries to claim a slot if it has them, returns null if no valid targets or if claim failed
+    /// </summary>
+    /// <param name="attacker">  </param> 
+    /// <param name="attackerPos"></param>
+    /// <param name="radius"></param>
+    /// <returns></returns>
     public static TeamAgent FindAndClaim(TeamAgent attacker, Vector2 attackerPos, float radius)
     {
         if (attacker == null) return null;
@@ -97,4 +105,7 @@ public class TeamRegistry : MonoBehaviour
 
         return best;
     }
+    
+
 }
+

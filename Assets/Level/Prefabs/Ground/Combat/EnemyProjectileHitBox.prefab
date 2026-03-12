@@ -110,11 +110,12 @@ MonoBehaviour:
   isPermanent: 0
   duration: 1
   knockbackForce: 1
+  knockbackVerticalForce: 3
   isMelee: 0
   projectileSpeed: 1
   targetLayer:
     serializedVersion: 2
-    m_Bits: 2048
+    m_Bits: 0
   ignoreLayer:
     serializedVersion: 2
     m_Bits: 4096

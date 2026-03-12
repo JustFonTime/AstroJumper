@@ -77,10 +77,10 @@ public class HitBox : MonoBehaviour
         other.transform == transform.root)
             return;
 
-        print("hitbox: Hit " + other.name);
+        //print("hitbox: Hit " + other.name);
         if ((targetLayer.value & (1 << otherObject.layer)) == 0 || (ignoreLayer.value & (1 << otherObject.layer)) != 0) // Checks if objects layer is in the layer mask, found from https://discussions.unity.com/t/checking-if-a-layer-is-in-a-layer-mask/860331
         {
-            print("hit wrong layer, ignoring");
+            //print("hit wrong layer, ignoring");
             return;
         }
         Unit unit = other.GetComponent<Unit>();
@@ -113,7 +113,7 @@ public class HitBox : MonoBehaviour
     public float GetKnockbackForce() => knockbackForce;
     public float GetKnockbackVerticalForce() => knockbackVerticalForce;
 
-    private void DestroyAttack()
+    public void DestroyAttack()
     {
         onDurationOver?.Invoke(attackListIndex);
         if(!isMelee)
@@ -125,6 +125,12 @@ public class HitBox : MonoBehaviour
         Destroy(transform.parent.gameObject); 
         Destroy(gameObject);
     }
+    public void ForceDestroy()
+    {
+        DestroyAttack();
+    }
+
+
 
     public void setPool(ProjectilePool pool)
     {

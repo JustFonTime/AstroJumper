@@ -25,16 +25,32 @@ public class DialogueTextManager : MonoBehaviour
     public TextMeshProUGUI dialogueText;
     [SerializeField] private GameObject nameTextGO;
     [SerializeField] private TextMeshProUGUI nameText;
-    [SerializeField] private SpriteRenderer characterIconSpriteRenderer;
+    [SerializeField] private Image characterIconRenderer;
     [SerializeField] public Vector3 offscreenPosition;
     [SerializeField] public Vector3 onscreenPosition;
     [SerializeField] private float duration = 1f;
     public GameObject TextContainer;
     public bool isInDialouge;
-    
+    public bool isDialogueBoxOnScreen = false;
     public static event Action onDialogueStart;
     public static event Action onDialogueEnd;
     public Player player;
+    private bool _IsInDialouge = false;
+    public bool IsInDialouge
+    {
+        get => _IsInDialouge;
+        set
+        {
+            _IsInDialouge = value;
+            if (characterIconRenderer.sprite != null)
+            {
+                characterIconRenderer.enabled = value;
+            }
+        }
+    }
+    public GroundMovement playerMovement;
+    
+
 
     private void Awake() 
     {
@@ -78,15 +94,22 @@ public class DialogueTextManager : MonoBehaviour
     }
     private void Start()
     {
+
+        offscreenPosition.x = Screen.width /2 + TextContainer.GetComponent<RectTransform>().rect.width / 2;
+        onscreenPosition.x = Screen.width /2 + TextContainer.GetComponent<RectTransform>().rect.width / 2;
+        offscreenPosition.y = (Screen.height/2 + TextContainer.GetComponent<RectTransform>().rect.height / 2 )* -1;
+        onscreenPosition.y = SetToBottomOfScreen(TextContainer).y;
+
         TextContainer.GetComponent<RectTransform>().position = offscreenPosition;
         dialogueText.enabled = false;
 
-        //nameText = nameTextGO.GetComponent<TextMeshProUGUI>();
         nameTextGO.SetActive(true);
         nameText.enabled = false;
 
         
         DisableTextClick();
+
+        StartDialouge();
     }
 
     private void Update()
@@ -98,7 +121,16 @@ public class DialogueTextManager : MonoBehaviour
     {
         dialogueText.text = currentDialouge.Text;
         nameText.text = currentDialouge.CharacterName;
-        characterIconSpriteRenderer.sprite = currentDialouge.CharacterIcon;
+        characterIconRenderer.sprite = currentDialouge.CharacterIcon;
+        if (currentDialouge.CharacterIcon != null)
+        {
+            characterIconRenderer.enabled = true;
+        }
+        else
+        {
+            characterIconRenderer.enabled = false;
+        }
+
     }
 
     private void OnClick(InputAction.CallbackContext ctx)
@@ -110,15 +142,25 @@ public class DialogueTextManager : MonoBehaviour
     public void StartDialouge()
     {
         // display anything related to dialouge here
+        DisablePlayerInput();
+
         dialogueText.enabled = true;
         dialogueText.text = currentDialouge.Text;
         
         nameText.enabled = true;
         nameText.text = currentDialouge.CharacterName;
         
-        characterIconSpriteRenderer.sprite = currentDialouge.CharacterIcon;
+        characterIconRenderer.sprite = currentDialouge.CharacterIcon;
 
         isInDialouge = true;
+        if(characterIconRenderer.sprite != null)
+        {
+            characterIconRenderer.enabled = true;
+        }
+        else
+        {
+            characterIconRenderer.enabled = false;
+        }
         
         onDialogueStart?.Invoke();
         StartCoroutine(moveDialogueBox());
@@ -178,7 +220,7 @@ public class DialogueTextManager : MonoBehaviour
 
     private void EndDialogue()
     {
-        
+        EnablePlayerInput();   
         print("Dialogue ended" + isInDialouge);
         StartCoroutine(moveDialogueBox());
         onDialogueEnd?.Invoke();
@@ -205,19 +247,23 @@ public class DialogueTextManager : MonoBehaviour
 
     private IEnumerator moveDialogueBox()
     {
+        DisableTextClick();
+        offscreenPosition.x = 0f;
+        onscreenPosition.x = 0f;
+        onscreenPosition.y =  -1 *(Screen.height / 2 - TextContainer.GetComponent<RectTransform>().rect.height) + 140;
         float timeElapsed = 0f;
-        if (TextContainer.GetComponent<RectTransform>().position == offscreenPosition)
+        if (!isDialogueBoxOnScreen)
         {
             // move it on screen
             timeElapsed = 0f;
             while (timeElapsed < duration)
             {
-                TextContainer.GetComponent<RectTransform>().position = Vector3.Lerp(offscreenPosition, onscreenPosition, timeElapsed / duration);
+                TextContainer.GetComponent<RectTransform>().anchoredPosition = Vector3.Lerp(offscreenPosition, onscreenPosition, timeElapsed / duration);
                 timeElapsed += Time.deltaTime;
                 yield return null; 
             }
 
-            TextContainer.GetComponent<RectTransform>().position = onscreenPosition; 
+            TextContainer.GetComponent<RectTransform>().anchoredPosition = onscreenPosition; 
             EnableTextClick();
         }
         else
@@ -226,17 +272,54 @@ public class DialogueTextManager : MonoBehaviour
              timeElapsed = 0f;
             while (timeElapsed < duration)
             {
-                TextContainer.GetComponent<RectTransform>().position = Vector3.Lerp(onscreenPosition, offscreenPosition, timeElapsed / duration);
+                TextContainer.GetComponent<RectTransform>().anchoredPosition = Vector3.Lerp(onscreenPosition, offscreenPosition, timeElapsed / duration);
                 timeElapsed += Time.deltaTime;
                 yield return null; 
             }
-            isInDialouge = false;
-            TextContainer.GetComponent<RectTransform>().position = offscreenPosition; 
-            DisableTextClick();
+            IsInDialouge = false;
+            TextContainer.GetComponent<RectTransform>().anchoredPosition = offscreenPosition; 
+            
         }
+        isDialogueBoxOnScreen = !isDialogueBoxOnScreen;
+    }
+    private Vector3 SetToBottomOfScreen(GameObject go)
+    {
+        RectTransform[] children = go.GetComponentsInChildren<RectTransform>();
+
+        float lowestY = float.MaxValue;
+
+        foreach (RectTransform child in children)
+        {
+            if (child == go.GetComponent<RectTransform>()) continue;
+
+            Vector3[] corners = new Vector3[4];
+            child.GetWorldCorners(corners);
+
+            float childBottom = child.anchoredPosition.y - (child.rect.height * child.pivot.y);
+ // bottom-left corner
+
+            if (childBottom < lowestY)
+                lowestY = childBottom;
+        }
+
+        float offset = -lowestY;
+
+        return new Vector3(0, offset, 0);
+
     }
 
+    public void DisablePlayerInput()
+    {
+        playerMovement.enabled = false;
+        player.enabled = false;
+        player.GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero; // stop player movement immediately
+    }
     
+    public void EnablePlayerInput()
+    {
+        playerMovement.enabled = true;
+        player.enabled = true;  
+    }
 }
 
 #if UNITY_EDITOR
