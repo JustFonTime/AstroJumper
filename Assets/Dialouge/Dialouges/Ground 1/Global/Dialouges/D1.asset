@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: D1
   m_EditorClassIdentifier: Assembly-CSharp::DialougeSO
   <DialougeName>k__BackingField: D1
-  <CharacterName>k__BackingField: General Hayes
+  <CharacterNameKey>k__BackingField: 
   <CharacterIcon>k__BackingField: {fileID: 0}
-  <Text>k__BackingField: Vanguard!
+  <TextKey>k__BackingField: 
   <Choices>k__BackingField:
   - <Name>k__BackingField: 
-    <Text>k__BackingField: Next Dialouge
+    <TextKey>k__BackingField: 
     <Requirements>k__BackingField: 
     <NextDialouge>k__BackingField: {fileID: 11400000, guid: ef8379fc00c7f8f42b8d4b325d8c855a, type: 2}
   <DialougeTypes>k__BackingField: 0

@@ -13,13 +13,12 @@ MonoBehaviour:
   m_Name: D2
   m_EditorClassIdentifier: Assembly-CSharp::DialougeSO
   <DialougeName>k__BackingField: D2
-  <CharacterName>k__BackingField: General Hayes
+  <CharacterNameKey>k__BackingField: 
   <CharacterIcon>k__BackingField: {fileID: 0}
-  <Text>k__BackingField: "We\u2019re under attack by an unidentified force! We need
-    your help! "
+  <TextKey>k__BackingField: 
   <Choices>k__BackingField:
   - <Name>k__BackingField: 
-    <Text>k__BackingField: Next Dialouge
+    <TextKey>k__BackingField: 
     <Requirements>k__BackingField: 
     <NextDialouge>k__BackingField: {fileID: 0}
   <DialougeTypes>k__BackingField: 0

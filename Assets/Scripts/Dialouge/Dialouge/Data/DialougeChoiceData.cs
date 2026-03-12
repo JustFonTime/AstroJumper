@@ -4,7 +4,7 @@ using System.Collections.Generic;
 public class DialougeChoiceData 
 {
     [field: SerializeField] public string Name { get; set; }
-    [field: SerializeField] public string Text { get; set; }
+    [field: SerializeField] public string TextKey { get; set; }
     [field: SerializeField] public string Requirements { get; set; }
     [field: SerializeField] public DialougeSO NextDialouge { get; set; }    
 }

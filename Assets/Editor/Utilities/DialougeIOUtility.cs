@@ -263,7 +263,7 @@ public static class DialougeIOUtility
         {
             DialougeChoiceData choiceData = new DialougeChoiceData()
             {
-                Text = nodeChoice.Text,
+                TextKey = nodeChoice.Text,
                 Requirements = nodeChoice.Requirements,
             };
         
