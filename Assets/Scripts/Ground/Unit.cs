@@ -37,7 +37,7 @@ public class Unit : MonoBehaviour
 
     public ProjectilePool unitProjectilePool;
     private bool useProjectilePool = true;
-
+    public GameObject DeathDrop;
 
     void Start()
     {
@@ -101,6 +101,11 @@ public class Unit : MonoBehaviour
         // Eventually add death animation, sound, etc. For now just destroy the game object.
         onDeath?.Invoke(this);
         Destroy(gameObject);
+
+        if (gameObject.CompareTag("Enemy"))
+        {
+            Instantiate(DeathDrop, transform.position, Quaternion.identity);
+        }
     }
 
     
