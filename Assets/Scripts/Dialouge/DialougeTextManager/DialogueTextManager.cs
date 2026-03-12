@@ -215,7 +215,7 @@ public class DialogueTextManager : MonoBehaviour
         DisableTextClick();
         offscreenPosition.x = 0f;
         onscreenPosition.x = 0f;
-        onscreenPosition.y =  -1 *(Screen.height / 2 - TextContainer.GetComponent<RectTransform>().rect.height) + 40;
+        onscreenPosition.y =  -1 *(Screen.height / 2 - TextContainer.GetComponent<RectTransform>().rect.height) + 60;
         print(onscreenPosition.y);
         float timeElapsed = 0f;
         if (!isDialogueBoxOnScreen)
