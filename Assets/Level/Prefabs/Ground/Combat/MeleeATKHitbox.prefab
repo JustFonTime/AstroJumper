@@ -115,7 +115,7 @@ MonoBehaviour:
   projectileSpeed: 5
   targetLayer:
     serializedVersion: 2
-    m_Bits: 2048
+    m_Bits: 0
   ignoreLayer:
     serializedVersion: 2
     m_Bits: 4096
