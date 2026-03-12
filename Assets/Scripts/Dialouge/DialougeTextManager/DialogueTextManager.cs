@@ -10,6 +10,8 @@ using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 using System.Linq;
+using UnityEngine.Localization.Settings;
+using UnityEngine.Localization; 
 
 
 [RequireComponent(typeof(TextMeshProUGUI))]
@@ -119,8 +121,8 @@ public class DialogueTextManager : MonoBehaviour
 
     private void UpdateText()
     {
-        dialogueText.text = currentDialouge.Text;
-        nameText.text = currentDialouge.CharacterName;
+        dialogueText.text = GetTranslatedText(currentDialouge.TextKey);
+        nameText.text = GetTranslatedText(currentDialouge.CharacterNameKey);
         characterIconRenderer.sprite = currentDialouge.CharacterIcon;
         if (currentDialouge.CharacterIcon != null)
         {
@@ -145,10 +147,10 @@ public class DialogueTextManager : MonoBehaviour
         DisablePlayerInput();
 
         dialogueText.enabled = true;
-        dialogueText.text = currentDialouge.Text;
+        dialogueText.text = GetTranslatedText(currentDialouge.TextKey);
         
         nameText.enabled = true;
-        nameText.text = currentDialouge.CharacterName;
+        nameText.text = GetTranslatedText(currentDialouge.CharacterNameKey);
         
         characterIconRenderer.sprite = currentDialouge.CharacterIcon;
 
@@ -200,7 +202,7 @@ public class DialogueTextManager : MonoBehaviour
                 Vector2 buttonPos = new Vector2(optionButtonRect.anchoredPosition.x, optionButtonRect.anchoredPosition.y - (i * optionButtonPrefab.GetComponent<RectTransform>().rect.height)); 
                 
                 optionButton.GetComponent<RectTransform>().anchoredPosition = buttonPos;
-                optionButton.GetComponentInChildren<TextMeshProUGUI>().text = currentDialouge.Choices[i].Text + " Button";
+                optionButton.GetComponentInChildren<TextMeshProUGUI>().text = GetTranslatedText(currentDialouge.Choices[i].TextKey);
 
                 // Check if player has stats for option 
                 
@@ -211,6 +213,12 @@ public class DialogueTextManager : MonoBehaviour
         }
         UpdateText();
         return;
+    }
+
+    private string GetTranslatedText(string key)
+    {
+        if (string.IsNullOrEmpty(key)) return "";
+        return LocalizationSettings.StringDatabase.GetLocalizedString("DialogueTable", key);
     }
 
     private DialougeSO GetNextDialogue(DialougeSO dialougeSO, int choiceIndex)
@@ -282,6 +290,7 @@ public class DialogueTextManager : MonoBehaviour
         }
         isDialogueBoxOnScreen = !isDialogueBoxOnScreen;
     }
+    
     private Vector3 SetToBottomOfScreen(GameObject go)
     {
         RectTransform[] children = go.GetComponentsInChildren<RectTransform>();
