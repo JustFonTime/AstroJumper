@@ -48,6 +48,8 @@ public class DialogueTextManager : MonoBehaviour
             }
         }
     }
+    public GroundMovement playerMovement;
+    
 
 
     private void Awake() 
@@ -140,6 +142,8 @@ public class DialogueTextManager : MonoBehaviour
     public void StartDialouge()
     {
         // display anything related to dialouge here
+        DisablePlayerInput();
+
         dialogueText.enabled = true;
         dialogueText.text = currentDialouge.Text;
         
@@ -216,7 +220,7 @@ public class DialogueTextManager : MonoBehaviour
 
     private void EndDialogue()
     {
-        
+        EnablePlayerInput();   
         print("Dialogue ended" + isInDialouge);
         StartCoroutine(moveDialogueBox());
         onDialogueEnd?.Invoke();
@@ -246,7 +250,7 @@ public class DialogueTextManager : MonoBehaviour
         DisableTextClick();
         offscreenPosition.x = 0f;
         onscreenPosition.x = 0f;
-        onscreenPosition.y =  -1 *(Screen.height / 2 - TextContainer.GetComponent<RectTransform>().rect.height) + 60;
+        onscreenPosition.y =  -1 *(Screen.height / 2 - TextContainer.GetComponent<RectTransform>().rect.height) + 140;
         float timeElapsed = 0f;
         if (!isDialogueBoxOnScreen)
         {
@@ -303,7 +307,19 @@ public class DialogueTextManager : MonoBehaviour
         return new Vector3(0, offset, 0);
 
     }
+
+    public void DisablePlayerInput()
+    {
+        playerMovement.enabled = false;
+        player.enabled = false;
+        player.GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero; // stop player movement immediately
+    }
     
+    public void EnablePlayerInput()
+    {
+        playerMovement.enabled = true;
+        player.enabled = true;  
+    }
 }
 
 #if UNITY_EDITOR
