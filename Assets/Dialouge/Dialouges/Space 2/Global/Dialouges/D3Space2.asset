@@ -15,12 +15,12 @@ MonoBehaviour:
   <DialougeName>k__BackingField: D3Space2
   <CharacterName>k__BackingField: General Hayes
   <CharacterIcon>k__BackingField: {fileID: 0}
-  <Text>k__BackingField: 'We want you to sneak on board and destroy the ship from
-    within '
+  <Text>k__BackingField: "We\u2019re gonna disable that mothership of theirs. We
+    need your help."
   <Choices>k__BackingField:
   - <Name>k__BackingField: 
     <Text>k__BackingField: Next Dialouge
     <Requirements>k__BackingField: 
-    <NextDialouge>k__BackingField: {fileID: 11400000, guid: 106e75ec1bfe46343b720e701c10eeba, type: 2}
+    <NextDialouge>k__BackingField: {fileID: 0}
   <DialougeTypes>k__BackingField: 0
   <IsStartingDialouge>k__BackingField: 0

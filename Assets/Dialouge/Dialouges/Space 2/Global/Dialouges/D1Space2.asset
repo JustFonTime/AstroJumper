@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: D1Space2
   m_EditorClassIdentifier: Assembly-CSharp::DialougeSO
   <DialougeName>k__BackingField: D1Space2
-  <CharacterName>k__BackingField: General Hayes
+  <CharacterName>k__BackingField: Hayes
   <CharacterIcon>k__BackingField: {fileID: 0}
-  <Text>k__BackingField: Greetings solider
+  <Text>k__BackingField: "Vanguard. I don\u2019t know who or what these aliens are"
   <Choices>k__BackingField:
   - <Name>k__BackingField: 
     <Text>k__BackingField: Next Dialouge

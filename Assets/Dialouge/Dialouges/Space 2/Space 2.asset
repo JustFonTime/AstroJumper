@@ -15,7 +15,5 @@ MonoBehaviour:
   <FileName>k__BackingField: Space 2
   <Dialouges>k__BackingField:
   - {fileID: 11400000, guid: 1c5d5f6547f6afc43ae5167ae5df01bb, type: 2}
-  - {fileID: 11400000, guid: 748cb5c1e05414f4fad36e8e79ba99dc, type: 2}
   - {fileID: 11400000, guid: 9420e8c765d3b2b488762092b4d3dc1f, type: 2}
-  - {fileID: 11400000, guid: 106e75ec1bfe46343b720e701c10eeba, type: 2}
-  - {fileID: 11400000, guid: cfefc37a2fc97b140af825ecca03b7cb, type: 2}
+  - {fileID: 11400000, guid: 748cb5c1e05414f4fad36e8e79ba99dc, type: 2}
