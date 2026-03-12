@@ -128,24 +128,12 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1412570048484421713, guid: e5dc360da6c157940a327e3bdc1adb5b, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 215.35442
-      objectReference: {fileID: 0}
-    - target: {fileID: 1412570048484421713, guid: e5dc360da6c157940a327e3bdc1adb5b, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 153.67998
-      objectReference: {fileID: 0}
-    - target: {fileID: 1412570048484421713, guid: e5dc360da6c157940a327e3bdc1adb5b, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 1.9762716
-      objectReference: {fileID: 0}
-    - target: {fileID: 1412570048484421713, guid: e5dc360da6c157940a327e3bdc1adb5b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 4.4088
       objectReference: {fileID: 0}
     - target: {fileID: 1412570048484421713, guid: e5dc360da6c157940a327e3bdc1adb5b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.6478
       objectReference: {fileID: 0}
     - target: {fileID: 1412570048484421713, guid: e5dc360da6c157940a327e3bdc1adb5b, type: 3}
       propertyPath: m_LocalPosition.z
@@ -184,17 +172,9 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1354088537}
     - target: {fileID: 2986369485186554745, guid: e5dc360da6c157940a327e3bdc1adb5b, type: 3}
-      propertyPath: target
-      value: 
-      objectReference: {fileID: 1020784283}
-    - target: {fileID: 2986369485186554745, guid: e5dc360da6c157940a327e3bdc1adb5b, type: 3}
       propertyPath: scrollTarget
       value: 
       objectReference: {fileID: 1020784283}
-    - target: {fileID: 4141914376404912875, guid: e5dc360da6c157940a327e3bdc1adb5b, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 723ff58b39b10414ebad82a0ad835370, type: 2}
     - target: {fileID: 4994097748692252975, guid: e5dc360da6c157940a327e3bdc1adb5b, type: 3}
       propertyPath: m_Name
       value: SpaceBackground
@@ -288,6 +268,104 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &787467169
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 787467171}
+  - component: {fileID: 787467170}
+  - component: {fileID: 787467172}
+  m_Layer: 0
+  m_Name: BorderController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &787467170
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 787467169}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab89980fb16cf7f4d93a028a33f947f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpaceArenaBoundaryController
+  center: {fileID: 787467171}
+  centerTag: Player
+  autoFindCenterOnEnable: 0
+  safeRadius: 1000
+  graceSecondsOutside: 10
+  includePlayer: 1
+  lethalDamage: 1000000
+  checkInterval: 0.25
+  drawDebugRadius: 0
+  debugRadiusColor: {r: 0.2, g: 0.95, b: 0.95, a: 0.9}
+--- !u!4 &787467171
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 787467169}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &787467172
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 787467169}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd592fef57ce4f6993cacecbb4907061, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SquadDebugHotkeys
+  enableHotkeys: 1
+  controlScope: 0
+  cycleScopeKey: 9
+  veeKey: 49
+  lineKey: 50
+  diamondKey: 51
+  ringKey: 52
+  escortKey: 53
+  spacingDecreaseKey: 91
+  spacingIncreaseKey: 93
+  spacingStep: 0.5
+  formUpKey: 122
+  engageKey: 120
+  regroupKey: 99
+  retreatKey: 118
+  showOverlay: 0
+  toggleOverlayKey: 282
+  toggleControlsCategoryKey: 283
+  toggleSquadsCategoryKey: 284
+  toggleSystemCategoryKey: 285
+  toggleTeamsCategoryKey: 286
+  showControlsCategory: 1
+  showSquadsCategory: 1
+  showTeamsCategory: 1
+  showSystemCategory: 1
+  fontSize: 26
+  textColor: {r: 1, g: 1, b: 1, a: 1}
+  overlayPosition: {x: 14, y: 14}
+  overlayWidth: 900
+  maxSquadsToDisplay: 14
+  maxRequestsToDisplay: 5
 --- !u!1 &835516080
 GameObject:
   m_ObjectHideFlags: 0
@@ -299,6 +377,7 @@ GameObject:
   - component: {fileID: 835516083}
   - component: {fileID: 835516082}
   - component: {fileID: 835516084}
+  - component: {fileID: 835516085}
   m_Layer: 0
   m_Name: CinemachineCamera
   m_TagString: Untagged
@@ -330,8 +409,8 @@ MonoBehaviour:
     LookAtTarget: {fileID: 0}
     CustomLookAtTarget: 0
   Lens:
-    FieldOfView: 34
-    OrthographicSize: 50
+    FieldOfView: 50.77384
+    OrthographicSize: 70
     NearClipPlane: 0.3
     FarClipPlane: 1000
     Dutch: 0
@@ -358,7 +437,7 @@ Transform:
   m_GameObject: {fileID: 835516080}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.054762185, z: -10}
+  m_LocalPosition: {x: 0, y: 0, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -395,6 +474,22 @@ MonoBehaviour:
     Time: 0.2
     Smoothing: 5
     IgnoreY: 0
+--- !u!114 &835516085
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 835516080}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de5edbefa74008c498ae0b7d1ade1938, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpaceCameraZoom
+  minZoom: 10
+  maxZoom: 150
+  zoomSpeed: 15
+  virtualCamera: {fileID: 835516082}
 --- !u!1 &888911766
 GameObject:
   m_ObjectHideFlags: 0
@@ -474,6 +569,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &913081957
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 913081958}
+  m_Layer: 0
+  m_Name: Spawn B
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &913081958
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 913081957}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 598, y: -21, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1020784283 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7670360865814592282, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
@@ -488,51 +614,15 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1055831339}
-  - component: {fileID: 1055831338}
+  - component: {fileID: 1055831341}
+  - component: {fileID: 1055831340}
   m_Layer: 0
-  m_Name: Enemy SPawner
+  m_Name: Fleet SPawner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1055831338
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1055831337}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b0f199f077509c47bad15ab404b6ffb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemySpaceshipSpawner
-  spawnType: 1
-  spawnerSettings: {fileID: 11400000, guid: 3e818ecb229b1c84f9565281337883cc, type: 2}
-  waves:
-  - enemies:
-    - prefab: {fileID: 5549628142487207619, guid: 66b35331de539834f819bbbac8b67800, type: 3}
-      count: 1
-    spawnSpacing: 0.5
-    timeToSpawnAfterFinalDeath: 4
-  - enemies:
-    - prefab: {fileID: 5549628142487207619, guid: 66b35331de539834f819bbbac8b67800, type: 3}
-      count: 3
-    spawnSpacing: 1
-    timeToSpawnAfterFinalDeath: 4
-  - enemies:
-    - prefab: {fileID: 5549628142487207619, guid: 66b35331de539834f819bbbac8b67800, type: 3}
-      count: 5
-    spawnSpacing: 1
-    timeToSpawnAfterFinalDeath: 4
-  assignTeams: 1
-  enemyTeamIds: 01000000
-  fallbackEnemyTeamId: 1
-  defaultPoolCapacity: 50
-  maxPoolSize: 200
-  activeEnemiesRoot: {fileID: 0}
-  pooledRoot: {fileID: 0}
 --- !u!4 &1055831339
 Transform:
   m_ObjectHideFlags: 0
@@ -548,6 +638,92 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1055831340
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1055831337}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad6b7ae9a54d48ee9a6ea07487b046c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SimpleTeamSpawner
+  autoSpawnOnStart: 1
+  clearExistingBattleOnSpawn: 1
+  updateObjectiveProxies: 1
+  enableSpawnHotkey: 1
+  spawnBattleKey: 98
+  flagshipPrefab: {fileID: 5549628142487207619, guid: 51f5d574addb7084cabc5b0bfe0d0bdc, type: 3}
+  playerTeamFlagshipPrefab: {fileID: 5549628142487207619, guid: c26a24888d64f3745b7b41288853acf4, type: 3}
+  enemyTeamFlagshipPrefab: {fileID: 5549628142487207619, guid: 51f5d574addb7084cabc5b0bfe0d0bdc, type: 3}
+  sharedShipPrefab: {fileID: 0}
+  playerTeamShipPrefab: {fileID: 5549628142487207619, guid: 17deb750bba116f49b383467560f0c58, type: 3}
+  enemyTeamShipPrefab: {fileID: 5549628142487207619, guid: 66b35331de539834f819bbbac8b67800, type: 3}
+  squadsPerTeam: 12
+  shipsPerSquad: 3
+  formationType: 0
+  squadState: 1
+  squadSpacing: 10
+  squadEngageDistance: 20
+  squadAnchorMoveSpeed: 20
+  playerFlagshipSpawnPoint: {fileID: 0}
+  enemyFlagshipSpawnPoint: {fileID: 0}
+  useArenaBoundaryIfAvailable: 1
+  boundarySpawnRadiusRatio: 0.82
+  fallbackFlagshipSeparation: 1400
+  fleetSpawnRadiusAroundFlagship: 275
+  squadSpawnJitter: {x: 20, y: 20}
+  enableFlagshipSlowMovement: 1
+  defendRatio: 0.34
+  attackRatio: 0.43
+  defendOrbitRadius: 180
+  attackOrbitRadius: 220
+  objectiveOrbitSpeedDegPerSec: 14
+  roamCorridorHalfWidth: 140
+  roamProgressSpeed: 0.18
+  hookReinforcementRequests: 1
+  disableFleetSpawnerAutoFulfill: 1
+  reinforcementSpawnRadius: 245
+  maxReinforcementsPerRequest: 5
+  drawSpawnRadiusDebug: 0
+  drawSpawnRadiusOnlyWhenSelected: 0
+  fleetSpawnRadiusDebugColor: {r: 0.2, g: 0.55, b: 1, a: 0.95}
+  reinforcementSpawnRadiusDebugColor: {r: 0.2, g: 0.55, b: 1, a: 0.5}
+--- !u!114 &1055831341
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1055831337}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c660333a1d2648f1b1c204fd8b45bff9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FleetSpawner
+  teamConfigs: []
+  fallbackShipPrefab: {fileID: 0}
+  defaultFocusTarget: {fileID: 0}
+  autoAssignShipsToSquads: 1
+  defaultAutoSquadMaxMembers: 10
+  defaultAutoFormationType: 0
+  defaultAutoSquadState: 1
+  defaultAutoSquadSpacing: 5
+  defaultAutoSquadEngageDistance: 18
+  defaultAutoSquadAnchorMoveSpeed: 14
+  squadSeparationDistance: 12
+  enableReinforcementRequests: 1
+  autoFulfillReinforcementRequests: 0
+  maxPendingReinforcementRequests: 64
+  defaultRequestDelaySeconds: 2
+  defaultRequestCooldownSeconds: 8
+  trackedEnemyTeamIds: 01000000
+  defaultPoolCapacity: 40
+  maxPoolSize: 200
+  activeShipsRoot: {fileID: 0}
+  pooledRoot: {fileID: 0}
 --- !u!1 &1354088533
 GameObject:
   m_ObjectHideFlags: 0
@@ -685,9 +861,9 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 34
+  field of view: 50.77384
   orthographic: 1
-  orthographic size: 50
+  orthographic size: 70
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -712,7 +888,38 @@ Transform:
   m_GameObject: {fileID: 1354088533}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.054762185, z: -10}
+  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1793985340
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1793985341}
+  m_Layer: 0
+  m_Name: Spawn A
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1793985341
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1793985340}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -534, y: 4, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -730,37 +937,13 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player Spaceship
       objectReference: {fileID: 0}
-    - target: {fileID: 7396577382986853205, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
-      propertyPath: maxSpeed
-      value: 60
-      objectReference: {fileID: 0}
-    - target: {fileID: 7396577382986853205, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
-      propertyPath: drawDebug
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7396577382986853205, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
-      propertyPath: rotationLerp
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 7396577382986853205, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
-      propertyPath: alignStrength
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 7396577382986853205, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
-      propertyPath: forwardThrust
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 7396577382986853205, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
-      propertyPath: coastDampStrength
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 7670360865814592282, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7670360865814592282, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.054762185
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7670360865814592282, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
       propertyPath: m_LocalPosition.z
@@ -810,6 +993,14 @@ PrefabInstance:
     - target: {fileID: 1029587659160723094, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
       propertyPath: m_Name
       value: Spaceship Player HUD
+      objectReference: {fileID: 0}
+    - target: {fileID: 1548926147540261882, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1548926147540261882, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2295874869269274131, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
       propertyPath: m_Pivot.x
@@ -895,14 +1086,6 @@ PrefabInstance:
       propertyPath: player
       value: 
       objectReference: {fileID: 1020784283}
-    - target: {fileID: 3242227169495131606, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
-      propertyPath: maxEnemies
-      value: 67
-      objectReference: {fileID: 0}
-    - target: {fileID: 3242227169495131606, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
-      propertyPath: radarRangeWorld
-      value: 150
-      objectReference: {fileID: 0}
     - target: {fileID: 4709896190755064355, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -916,6 +1099,22 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5850687036317708674, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6455207047030142797, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6455207047030142797, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6498689746096383989, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6498689746096383989, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
@@ -994,3 +1193,6 @@ SceneRoots:
   - {fileID: 835516083}
   - {fileID: 1354088538}
   - {fileID: 245580821}
+  - {fileID: 787467171}
+  - {fileID: 1793985341}
+  - {fileID: 913081958}

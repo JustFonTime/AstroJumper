@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 
 
 /// <summary>
@@ -16,21 +17,27 @@ public class TeamAgent : MonoBehaviour
     private void Awake()
     {
         Slots = GetComponent<TargetSlots>();
-        Slots.SetTeam(teamId);
+        if (Slots != null)
+            Slots.SetTeam(teamId);
     }
 
     private void OnEnable()
     {
+        //Debug.Log($"TeamAgent OnEnable team={TeamId}\n{Environment.StackTrace}");
         TeamRegistry.Register(this);
     }
 
     private void OnDisable()
     {
+        //Debug.Log($"TeamAgent OnDisable team={TeamId}\n{Environment.StackTrace}");
+
         TeamRegistry.Unregister(this);
     }
 
     public void SetTeam(int newTeamId)
     {
         teamId = newTeamId;
+        if (Slots != null)
+            Slots.SetTeam(teamId);
     }
 }

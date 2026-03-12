@@ -1,31 +1,31 @@
-using System;
 using UnityEngine;
+using Unity.Cinemachine;
 
-public class SpaceCameraFollow : MonoBehaviour
+public class SpaceCameraZoom : MonoBehaviour
 {
-    public Transform playerTransform;
-    public Vector3 offset;
-    public float smoothSpeed = 0.125f; // For smooth following
-    private float z;
+    [Header("Zoom Limits")] [SerializeField]
+    private float minZoom = 10f;
 
-    private void Start()
-    {
-        z = transform.position.z;
-        if (playerTransform == null)
-            playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
-    }
+    [SerializeField] private float maxZoom = 300f;
 
-    // LateUpdate is called after all Update functions have been called
-    void LateUpdate()
+    [Header("Zoom Feel")] [SerializeField] private float zoomSpeed = 5f;
+
+    [Header("Refs")] [SerializeField] private CinemachineCamera virtualCamera;
+
+    private void LateUpdate()
     {
-        if (playerTransform != null)
-        {
-            // Calculate the desired position with an offset
-            Vector3 desiredPosition = playerTransform.position + offset;
-            desiredPosition.z = z;
-            // Use Lerp for smooth movement
-            Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed);
-            transform.position = smoothedPosition;
-        }
+        if (virtualCamera == null) return;
+
+        float scrollDelta = Input.GetAxis("Mouse ScrollWheel");
+        if (Mathf.Abs(scrollDelta) <= 0.0001f) return;
+
+        // Get current zoom level (orthographic size)
+        float current = virtualCamera.Lens.OrthographicSize;
+        float target = current - scrollDelta * zoomSpeed;
+
+        target = Mathf.Clamp(target, minZoom, maxZoom);
+
+        virtualCamera.Lens.OrthographicSize = target;
+
     }
 }

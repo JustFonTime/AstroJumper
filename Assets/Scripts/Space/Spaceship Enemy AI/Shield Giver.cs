@@ -28,7 +28,19 @@ public class ShieldGiver : MonoBehaviour
     {
         ShieldBuffingEnabled = false;
         StopAllCoroutines();
+        for (int i = tetheredEnemies.Count - 1; i >= 0; i--)
+        {
+            if (tetheredEnemies[i] != null)
+                tetheredEnemies[i].IsBuffedByShieldEnemy = false;
+        }
+
         tetheredEnemies.Clear();
+
+        if (tetherLineParent != null)
+        {
+            foreach (var tether in tetherLineParent.GetComponentsInChildren<TetherLine>())
+                Destroy(tether.gameObject);
+        }
     }
 
     void Awake()
@@ -68,7 +80,10 @@ public class ShieldGiver : MonoBehaviour
 
     private void AddTether(SpaceshipHealthComponent health)
     {
+        if (health == null || tetheredEnemies.Contains(health)) return;
+
         tetheredEnemies.Add(health);
+        health.IsBuffedByShieldEnemy = true;
 
         // Optionally, you can instantiate a tether line here and parent it to the tetherLineParent for visual effect
         GameObject tetherLine = Instantiate(tetherLinePrefab, tetherLineParent);
@@ -89,6 +104,9 @@ public class ShieldGiver : MonoBehaviour
 
     private void RemoveTether(SpaceshipHealthComponent health)
     {
+        if (health != null)
+            health.IsBuffedByShieldEnemy = false;
+
         tetheredEnemies.Remove(health);
 
         // Optionally, you can also destroy the corresponding tether line here if you instantiated one in AddTether

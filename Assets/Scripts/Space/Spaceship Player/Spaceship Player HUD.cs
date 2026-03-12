@@ -4,67 +4,179 @@ using UnityEngine.UI;
 
 public class SpaceshipPlayerHUD : MonoBehaviour
 {
+    [Header("Player HUD")]
     [SerializeField] private Slider healthSlider;
     [SerializeField] private Slider boostSlider;
     [SerializeField] private Slider shieldSlider;
     [SerializeField] private TextMeshProUGUI waveText;
     [SerializeField] private TextMeshProUGUI aliveEnemiesText;
 
+    [Header("Flagship Shields")]
+    [SerializeField] private Slider playerFlagshipShieldSlider;
+    [SerializeField] private Slider enemyFlagshipShieldSlider;
+    [SerializeField] private FlagshipController playerFlagship;
+    [SerializeField] private FlagshipController enemyFlagship;
+    [SerializeField] private int playerFlagshipTeamId = 0;
+    [SerializeField] private int enemyFlagshipTeamId = 1;
+    [SerializeField] private float flagshipLookupInterval = 0.5f;
+
     private GameObject player;
+    private SpaceshipHealthComponent playerHealth;
+    private SpaceshipMovement playerMovement;
+
+    private FleetSpawner fleetSpawner;
+    private float nextFlagshipLookupTime;
 
     private void Start()
     {
-        player = GameObject.FindGameObjectWithTag("Player");
+        ResolvePlayerReferences();
+        ResolveFlagshipReferences(true);
 
-        Debug.Log(EnemySpaceshipSpawner.Instance);
-        EnemySpaceshipSpawner.Instance.OnWaveChanged += SetWave;
-        EnemySpaceshipSpawner.Instance.OnAliveEnemiesChanged += SetAliveEnemies;
-        EnemySpaceshipSpawner.Instance.AllWavesCompleted += () =>
+        if (waveText != null)
+            waveText.text = "Flagship Battle";
+
+        fleetSpawner = FleetSpawner.Instance;
+        if (fleetSpawner != null)
         {
-            waveText.text = "All Waves Completed!";
-            aliveEnemiesText.text = "";
-        };
+            fleetSpawner.OnAliveEnemiesChanged += SetAliveEnemies;
+            SetAliveEnemies(fleetSpawner.AliveTrackedEnemies);
+        }
     }
 
+    private void OnDestroy()
+    {
+        if (fleetSpawner != null)
+        {
+            fleetSpawner.OnAliveEnemiesChanged -= SetAliveEnemies;
+            fleetSpawner = null;
+        }
+    }
 
     private void Update()
     {
-        if (player != null)
+        ResolvePlayerReferences();
+        ResolveFlagshipReferences();
+
+        if (playerHealth != null)
         {
             SetHealth();
-            SetBoost();
             SetShield();
         }
+
+        if (playerMovement != null)
+            SetBoost();
+
+        SetFlagshipShield(playerFlagshipShieldSlider, playerFlagship);
+        SetFlagshipShield(enemyFlagshipShieldSlider, enemyFlagship);
     }
 
     public void SetHealth()
     {
-        float health = player.GetComponent<SpaceshipHealthComponent>().Health;
-        float maxHealth = player.GetComponent<SpaceshipHealthComponent>().MaxHealth;
+        if (healthSlider == null || playerHealth == null) return;
+
+        float health = playerHealth.Health;
+        float maxHealth = Mathf.Max(1f, playerHealth.MaxHealth);
         healthSlider.value = health / maxHealth;
     }
 
     public void SetBoost()
     {
-        float boost = player.GetComponent<SpaceshipMovement>().CurrentBoost;
-        float maxBoost = player.GetComponent<SpaceshipMovement>().MaxBoost;
+        if (boostSlider == null || playerMovement == null) return;
+
+        float boost = playerMovement.CurrentBoost;
+        float maxBoost = Mathf.Max(1f, playerMovement.MaxBoost);
         boostSlider.value = boost / maxBoost;
     }
 
     public void SetShield()
     {
-        float shield = player.GetComponent<SpaceshipHealthComponent>().Shield;
-        float maxShield = player.GetComponent<SpaceshipHealthComponent>().MaxShield;
-        shieldSlider.value = shield / maxShield;
-    }
+        if (shieldSlider == null || playerHealth == null) return;
 
-    public void SetWave(int wave)
-    {
-        waveText.text = wave.ToString();
+        shieldSlider.value = playerHealth.ShieldRatio;
     }
 
     public void SetAliveEnemies(int aliveEnemies)
     {
-        aliveEnemiesText.text = aliveEnemies.ToString();
+        if (aliveEnemiesText != null)
+            aliveEnemiesText.text = "Enemies Left: " + aliveEnemies.ToString();
+    }
+
+    private void ResolvePlayerReferences()
+    {
+        if (player == null)
+            player = GameObject.FindGameObjectWithTag("Player");
+
+        if (player == null)
+        {
+            playerHealth = null;
+            playerMovement = null;
+            return;
+        }
+
+        if (playerHealth == null)
+            playerHealth = player.GetComponent<SpaceshipHealthComponent>();
+
+        if (playerMovement == null)
+            playerMovement = player.GetComponent<SpaceshipMovement>();
+    }
+
+    private void ResolveFlagshipReferences(bool forceLookup = false)
+    {
+        if (!forceLookup && Time.unscaledTime < nextFlagshipLookupTime)
+            return;
+
+        if (playerFlagship == null)
+            playerFlagship = FindFlagshipForTeam(playerFlagshipTeamId);
+
+        if (enemyFlagship == null)
+            enemyFlagship = FindFlagshipForTeam(enemyFlagshipTeamId);
+
+        nextFlagshipLookupTime = Time.unscaledTime + Mathf.Max(0.1f, flagshipLookupInterval);
+    }
+
+    private FlagshipController FindFlagshipForTeam(int teamId)
+    {
+        FlagshipController[] flagships = FindObjectsOfType<FlagshipController>(true);
+        FlagshipController bestMatch = null;
+
+        for (int i = 0; i < flagships.Length; i++)
+        {
+            FlagshipController flagship = flagships[i];
+            if (flagship == null || !flagship.isActiveAndEnabled)
+                continue;
+
+            int flagshipTeamId = -1;
+            if (flagship.TeamAgent != null)
+            {
+                flagshipTeamId = flagship.TeamAgent.TeamId;
+            }
+            else if (flagship.TryGetComponent(out TeamAgent teamAgent))
+            {
+                flagshipTeamId = teamAgent.TeamId;
+            }
+
+            if (flagshipTeamId != teamId)
+                continue;
+
+            if (bestMatch == null ||
+                (bestMatch.CurrentState == FlagshipController.BattleState.Destroyed &&
+                 flagship.CurrentState != FlagshipController.BattleState.Destroyed))
+            {
+                bestMatch = flagship;
+            }
+        }
+
+        return bestMatch;
+    }
+
+    private void SetFlagshipShield(Slider slider, FlagshipController flagship)
+    {
+        if (slider == null) return;
+
+        SpaceshipHealthComponent flagshipHealth = null;
+        if (flagship != null)
+            flagshipHealth = flagship.Health != null ? flagship.Health : flagship.GetComponent<SpaceshipHealthComponent>();
+
+        slider.value = flagshipHealth != null ? flagshipHealth.ShieldRatio : 0f;
     }
 }
