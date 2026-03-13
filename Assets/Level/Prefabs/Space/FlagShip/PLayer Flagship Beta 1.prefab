@@ -304,6 +304,8 @@ MonoBehaviour:
   objectiveMode: 0
   boardingSceneName: 
   boardWhenShieldsFail: 0
+  playerFlagshipShieldFailureSceneName: GameOver
+  enemyFlagshipShieldFailureSceneName: YouWin
   autoCollectShieldNodes: 1
   shieldNodes: []
 --- !u!114 &8529934722949041833
