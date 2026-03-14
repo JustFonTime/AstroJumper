@@ -4,6 +4,7 @@ using UnityEditor;
 
 using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class SpaceshipMovement : MonoBehaviour
@@ -51,7 +52,6 @@ public class SpaceshipMovement : MonoBehaviour
     [SerializeField] private float barrellRollDistance = 10f;
     [SerializeField] private float barrellRollDuration = 0.5f;
     [SerializeField] private float barrellRollSpinDegrees = 360f;
-    [SerializeField] private KeyCode barrellRollKey = KeyCode.Space;
     [SerializeField] private float barrellRollCooldown = 2f;
 
     private bool canBarrellRoll = true;
@@ -65,10 +65,22 @@ public class SpaceshipMovement : MonoBehaviour
     public float CurrentBoost => currentBoost;
     public float MaxBoost => maxBoost;
 
-    [SerializeField] private KeyCode boostKey = KeyCode.LeftShift;
     [SerializeField] private float boostConsumptionRate = 30f; // per second
     [SerializeField] private float rechargeDelay = 1f;
     [SerializeField] private float rechargeRate = 25f; // per second
+
+    [Header("Input Actions")]
+    [SerializeField] private InputActionAsset actionsAsset;
+    [SerializeField] private string actionMapName = "Player";
+
+    [SerializeField] private string moveActionName = "Move";
+    [SerializeField] private string boostActionName = "Boost";
+    [SerializeField] private string barrelRollActionName = "BarrelRoll";
+
+    private InputAction moveAction;
+    private InputAction boostAction;
+    private InputAction barrelRollAction;
+
 
     private bool isBoosting = false;
     private bool isRecharging = false;
@@ -105,24 +117,25 @@ public class SpaceshipMovement : MonoBehaviour
         rb.angularDamping = 0f;
 
         currentBoost = maxBoost;
+
+        var map = actionsAsset.FindActionMap(actionMapName, true);
+
+        moveAction = map.FindAction(moveActionName, true);
+        boostAction = map.FindAction(boostActionName, true);
+        barrelRollAction = map.FindAction(barrelRollActionName, true);
     }
 
     private void Update()
     {
-        // W/S for thrust/brake
-        float v = Input.GetAxisRaw("Vertical");
+        Vector2 move = moveAction.ReadValue<Vector2>();
+
+        float v = move.y;
         throttle01 = Mathf.Clamp01(v);
         brake01 = Mathf.Clamp01(-v);
 
-        // A/D for turn
-        turnInput = Input.GetAxisRaw("Horizontal");
+        turnInput = move.x;
 
-        // Barrel roll
-        if (Input.GetKeyDown(barrellRollKey) && canBarrellRoll && !isBarrellRolling)
-            StartCoroutine(BarrellRolly());
-
-        // Boost
-        isBoosting = Input.GetKey(boostKey) && currentBoost > 0f;
+        isBoosting = boostAction.IsPressed() && currentBoost > 0f;
 
         if (!isBoosting && !isRecharging && currentBoost < maxBoost)
         {
@@ -131,6 +144,12 @@ public class SpaceshipMovement : MonoBehaviour
         }
 
 
+    }
+
+    private void OnBarrelRoll(InputAction.CallbackContext ctx)
+    {
+        if (canBarrellRoll && !isBarrellRolling)
+            StartCoroutine(BarrellRolly());
     }
 
     private void FixedUpdate()
@@ -281,7 +300,7 @@ public class SpaceshipMovement : MonoBehaviour
 
         // dodge sideways (based on turn input; default right)
         Vector2 right = transform.right;
-        float h = Input.GetAxisRaw("Horizontal");
+        float h = moveAction.ReadValue<Vector2>().x;
         Vector2 rollDir = right * (h < 0f ? -1f : 1f);
 
         float desiredDeltaV = dist / dur;
@@ -384,6 +403,24 @@ public class SpaceshipMovement : MonoBehaviour
 
         Gizmos.DrawLine(pos + vec, pos + vec + r * headLen);
         Gizmos.DrawLine(pos + vec, pos + vec + l * headLen);
+    }
+
+    private void OnEnable()
+    {
+        moveAction.Enable();
+        boostAction.Enable();
+        barrelRollAction.Enable();
+
+        barrelRollAction.performed += OnBarrelRoll;
+    }
+
+    private void OnDisable()
+    {
+        barrelRollAction.performed -= OnBarrelRoll;
+
+        moveAction.Disable();
+        boostAction.Disable();
+        barrelRollAction.Disable();
     }
 }
 
