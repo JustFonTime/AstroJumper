@@ -105,7 +105,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: 061aa752a04b0304188252bbc70c24b3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -403,6 +403,7 @@ MonoBehaviour:
   drawSafetyRays: 0
   safeRayColor: {r: 0.2, g: 1, b: 0.2, a: 0.75}
   blockedRayColor: {r: 1, g: 0.7, b: 0.15, a: 0.95}
+  drawFirePointLine: 0
   firePointLineColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   drawTurretAimLines: 0
   turretAimLineColor: {r: 0, g: 1, b: 1, a: 1}
