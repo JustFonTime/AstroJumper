@@ -202,6 +202,10 @@ MonoBehaviour:
     canFire: 1
   cam: {fileID: 0}
   projectileSpawn: {fileID: 8310198182133585324}
+  actionsAsset: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  actionMapName: Player
+  primaryFireActionName: PrimaryFire
+  secondaryFireActionName: SecondaryFire
   drawDebug: 0
   debugLineLen: 3
 --- !u!114 &7396577382986853205
