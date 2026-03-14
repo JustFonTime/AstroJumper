@@ -304,6 +304,8 @@ MonoBehaviour:
   objectiveMode: 0
   boardingSceneName: 
   boardWhenShieldsFail: 0
+  playerFlagshipShieldFailureSceneName: GameOver
+  enemyFlagshipShieldFailureSceneName: YouWin
   autoCollectShieldNodes: 1
   shieldNodes: []
 --- !u!114 &8529934722949041833
@@ -822,4 +824,3 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5369244763913833518, guid: 23f4f240ea8ab3a4f8e6ea06d6fdf628, type: 3}
   m_PrefabInstance: {fileID: 9137882318850128525}
   m_PrefabAsset: {fileID: 0}
-

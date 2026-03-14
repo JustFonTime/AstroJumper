@@ -5,7 +5,6 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
-using UnityEditor.SceneManagement;
 using System;
 using System.Collections.Generic;
 using NUnit.Framework;
@@ -320,44 +319,44 @@ public class DialogueTextManager : MonoBehaviour
     public void DisablePlayerInput()
     {
         playerMovement.enabled = false;
-        player.enabled = false;
+        //player.enabled = false;
         player.GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero; // stop player movement immediately
     }
     
     public void EnablePlayerInput()
     {
         playerMovement.enabled = true;
-        player.enabled = true;  
+        //player.enabled = true;  
     }
 }
 
-#if UNITY_EDITOR
-[CustomEditor(typeof(DialogueTextManager))]
-public class DialogueTextManagerInspector : Editor 
-{
-    public override void OnInspectorGUI()
-    {
-        base.OnInspectorGUI();
+//#if UNITY_EDITOR
+//[CustomEditor(typeof(DialogueTextManager))]
+//public class DialogueTextManagerInspector : Editor 
+//{
+//    public override void OnInspectorGUI()
+//    {
+//        base.OnInspectorGUI();
         
-        if(GUILayout.Button("Set OffScreen Position"))
-        {
-            DialogueTextManager manager = (DialogueTextManager)target;
-            Undo.RecordObject(manager, "Set OffScreen Position");
-            manager.offscreenPosition = manager.TextContainer.GetComponent<RectTransform>().position;
+//        if(GUILayout.Button("Set OffScreen Position"))
+//        {
+//            DialogueTextManager manager = (DialogueTextManager)target;
+//            Undo.RecordObject(manager, "Set OffScreen Position");
+//            manager.offscreenPosition = manager.TextContainer.GetComponent<RectTransform>().position;
 
-            EditorUtility.SetDirty(manager);
-            EditorSceneManager.MarkSceneDirty(manager.gameObject.scene);
-        }
-        if(GUILayout.Button("Set OnScreen Position"))
-        {
-            DialogueTextManager manager = (DialogueTextManager)target;
-            Undo.RecordObject(manager, "Set OnScreen Position");
-            manager.onscreenPosition = manager.TextContainer.GetComponent<RectTransform>().position;
+//            EditorUtility.SetDirty(manager);
+//            EditorSceneManager.MarkSceneDirty(manager.gameObject.scene);
+//        }
+//        if(GUILayout.Button("Set OnScreen Position"))
+//        {
+//            DialogueTextManager manager = (DialogueTextManager)target;
+//            Undo.RecordObject(manager, "Set OnScreen Position");
+//            manager.onscreenPosition = manager.TextContainer.GetComponent<RectTransform>().position;
 
-            EditorUtility.SetDirty(manager);
-            EditorSceneManager.MarkSceneDirty(manager.gameObject.scene);
-        }
-    }
-}
+//            EditorUtility.SetDirty(manager);
+//            EditorSceneManager.MarkSceneDirty(manager.gameObject.scene);
+//        }
+//    }
+//}
 
-#endif 
+//#endif 

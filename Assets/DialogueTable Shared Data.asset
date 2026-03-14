@@ -27,6 +27,10 @@ MonoBehaviour:
     m_Key: DIALOG_URGENT_1
     m_Metadata:
       m_Items: []
+  - m_Id: 52512588554240
+    m_Key: D1Ground2_Text
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

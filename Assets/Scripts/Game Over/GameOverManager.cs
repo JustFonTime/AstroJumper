@@ -26,7 +26,7 @@ public class GameOverManager : MonoBehaviour
 
     public void RetrySpaceLevel()
     {
-        SceneLoader.Instance.LoadNextScene("Tutorial Space");
+        SceneLoader.Instance.LoadNextScene("Space Level 1");
     }
 
     // Called by Level Select button

@@ -1,6 +1,8 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Localization.Settings;
+using UnityEngine.Localization;
 
 public class SpaceshipPlayerHUD : MonoBehaviour
 {
@@ -33,7 +35,7 @@ public class SpaceshipPlayerHUD : MonoBehaviour
         ResolveFlagshipReferences(true);
 
         if (waveText != null)
-            waveText.text = "Flagship Battle";
+            waveText.text = GetTranslatedText("HUD_FLAGSHIP_BATTLE");
 
         fleetSpawner = FleetSpawner.Instance;
         if (fleetSpawner != null)
@@ -98,7 +100,35 @@ public class SpaceshipPlayerHUD : MonoBehaviour
     public void SetAliveEnemies(int aliveEnemies)
     {
         if (aliveEnemiesText != null)
-            aliveEnemiesText.text = "Enemies Left: " + aliveEnemies.ToString();
+        {
+            string label = GetTranslatedText("HUD_ENEMIES_LEFT");
+            aliveEnemiesText.text = label + " " + aliveEnemies.ToString();
+        }
+    }
+
+    private string GetTranslatedText(string textKey)
+    {
+        if (string.IsNullOrEmpty(textKey)) return "";
+        return LocalizationSettings.StringDatabase.GetLocalizedString("UI Text", textKey);
+    }
+
+    private void OnEnable()
+    {
+        LocalizationSettings.SelectedLocaleChanged += OnLanguageChanged;
+    }
+
+    private void OnDisable()
+    {
+        LocalizationSettings.SelectedLocaleChanged -= OnLanguageChanged;
+    }
+
+    private void OnLanguageChanged(Locale newLocale)
+    {
+        if (waveText != null)
+            waveText.text = GetTranslatedText("HUD_FLAGSHIP_BATTLE");
+    
+        if (fleetSpawner != null)
+            SetAliveEnemies(fleetSpawner.AliveTrackedEnemies);
     }
 
     private void ResolvePlayerReferences()
