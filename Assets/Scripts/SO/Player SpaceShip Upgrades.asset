@@ -14,13 +14,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerSpaceshipUpgradesSO
   moveForceStartingLevel: 1
   moveForceUpgradePerLevel: 5
+  moveForceCostPerLevel: 5
   maxSpeedStartingLevel: 1
   maxSpeedUpgradePerLevel: 7
+  maxSpeedCostPerLevel: 5
   boostForceStartingLevel: 1
   boostForceUpgradePerLevel: 5
+  boostForceCostPerLevel: 5
   barrelRollDistanceStartingLevel: 1
   barrelRollDistanceUpgradePerLevel: 2
+  barrelRollDistanceCostPerLevel: 5
   barrelRollSpeedStartingLevel: 1
   barrelRollSpeedUpgradePerLevel: 0.05
+  barrelRollSpeedCostPerLevel: 5
   fireRateStartingLevel: 1
   fireRateUpgradePerLevel: 0.05
+  fireRateCostPerLevel: 5
+  maxHealthStartingLevel: 1
+  maxHealthUpgradePerLevel: 15
+  maxHealthUpgradeCostPerLevel: 5
+  maxShieldsStartingLevel: 1
+  maxShieldsPerLevel: 7.5
+  maxShieldCostPerLevel: 5

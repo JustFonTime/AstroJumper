@@ -222,7 +222,7 @@ public class SaveManager : MonoBehaviour
             
         }
 
-        return -1;
+        return 0;
     }
 
     public void AddUpgradeLevel(PlayerUpgradeState.UpgradeType upgradeType)

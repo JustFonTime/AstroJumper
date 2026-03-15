@@ -178,6 +178,9 @@ public class FlagshipController : MonoBehaviour
             return;
         }
 
+        if (ShouldAwardSpaceCompletionReward(sceneName))
+            LevelCompletionRewards.AwardSpaceCompletionReward();
+
         SceneManager.LoadScene(sceneName);
     }
 
@@ -188,5 +191,14 @@ public class FlagshipController : MonoBehaviour
         return teamAgent != null && teamAgent.TeamId == playerTeamId
             ? playerFlagshipShieldFailureSceneName
             : enemyFlagshipShieldFailureSceneName;
+    }
+
+    private bool ShouldAwardSpaceCompletionReward(string sceneName)
+    {
+        const int playerTeamId = 0;
+
+        return teamAgent != null &&
+               teamAgent.TeamId != playerTeamId &&
+               string.Equals(sceneName, enemyFlagshipShieldFailureSceneName, StringComparison.Ordinal);
     }
 }

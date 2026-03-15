@@ -4,19 +4,22 @@ using UnityEngine;
 public class UIScrapCounter : MonoBehaviour
 {
     public TextMeshProUGUI scrapCountText;
+    private Inventory inventory;
+
     public void OnEnable()
     {
-        Inventory.OnItemAdded += UpdateScrapCount;
+        Inventory.OnInventoryChanged += RefreshScrapCount;
     }
 
     public void OnDisable()
     {
-        Inventory.OnItemAdded -= UpdateScrapCount;
+        Inventory.OnInventoryChanged -= RefreshScrapCount;
     }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        inventory = FindFirstObjectByType<Inventory>();
+        RefreshScrapCount();
     }
 
     // Update is called once per frame
@@ -25,13 +28,14 @@ public class UIScrapCounter : MonoBehaviour
         
     }
 
-    private void UpdateScrapCount(Item item)
+    private void RefreshScrapCount()
     {
-        if (item is Scrap)
-        {
-            // Update the UI to reflect the new scrap count
-            print("Scrap added: " + item.itemName);
-            scrapCountText.text = FindFirstObjectByType<Inventory>().items.FindAll(i => i is Scrap).Count.ToString();
-        }
+        if (scrapCountText == null)
+            return;
+
+        if (inventory == null)
+            inventory = FindFirstObjectByType<Inventory>();
+
+        scrapCountText.text = inventory != null ? inventory.GetScrapCount().ToString() : "0";
     }
 }
