@@ -1,5 +1,6 @@
 ﻿<Solution>
   <Project Path="Assembly-CSharp.csproj" />
+  <Project Path="Unity.InputSystem.RebindingUI.csproj" />
   <Project Path="CFXRDemo.csproj" />
   <Project Path="Assembly-CSharp-Editor.csproj" />
   <Project Path="CFXREditor.csproj" />

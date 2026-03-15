@@ -202,6 +202,10 @@ MonoBehaviour:
     canFire: 1
   cam: {fileID: 0}
   projectileSpawn: {fileID: 8310198182133585324}
+  actionsAsset: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  actionMapName: Player
+  primaryFireActionName: PrimaryFire
+  secondaryFireActionName: SecondaryFire
   drawDebug: 0
   debugLineLen: 3
 --- !u!114 &7396577382986853205
@@ -261,15 +265,18 @@ MonoBehaviour:
   barrellRollDistance: 10.37
   barrellRollDuration: 0.5
   barrellRollSpinDegrees: 360
-  barrellRollKey: 32
   barrellRollCooldown: 2
   boostForce: 600
   maxBoost: 100
   currentBoost: 100
-  boostKey: 304
   boostConsumptionRate: 20
   rechargeDelay: 2
   rechargeRate: 10
+  actionsAsset: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  actionMapName: Player
+  moveActionName: Move
+  boostActionName: Boost
+  barrelRollActionName: BarrelRoll
   drawDebug: 0
   drawOnlyWhenSelected: 0
   velocityGizmoScale: 0.25

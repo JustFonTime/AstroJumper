@@ -127,6 +127,8 @@ MonoBehaviour:
     m_Key: Flagship_Shields
     m_Metadata:
       m_Items: []
+  - m_Id: 4408636383789056
+    m_Key: Change Keybinds
   - m_Id: 4053708450029568
     m_Key: HUD_FLAGSHIP_BATTLE
     m_Metadata:
