@@ -44,6 +44,15 @@ public class PauseManager : MonoBehaviour
         optionsMenuPanel.SetActive(true);
     }
 
+    public void GoToMainMenuOptions()
+    {
+        Time.timeScale = 1f; // Unpause the game
+    
+        PlayerPrefs.SetInt("OpenOptionsOnLoad", 1);
+    
+        SceneManager.LoadScene("Menus");
+    }
+
     public void SetMasterVolume(float sliderValue)
     {
         AudioSource bgMusic = GameObject.FindObjectOfType<AudioSource>();

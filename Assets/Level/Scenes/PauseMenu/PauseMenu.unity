@@ -382,7 +382,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1706261359}
         m_TargetAssemblyTypeName: PauseManager, Assembly-CSharp
-        m_MethodName: ShowOptionsMenu
+        m_MethodName: GoToMainMenuOptions
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2144,7 +2144,7 @@ RectTransform:
   m_Father: {fileID: 1821777551}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0.749975, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -2203,7 +2203,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &894044531
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3366,7 +3366,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1464275719
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3718,8 +3718,8 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1345024870}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMin: {x: 0.749975, y: 0}
+  m_AnchorMax: {x: 0.749975, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -3793,8 +3793,8 @@ MonoBehaviour:
   pauseMenuPanel: {fileID: 894044530}
   optionsMenuPanel: {fileID: 1464275718}
   audioMixer: {fileID: 24100000, guid: af38ba69cdbdf49d487bf969fbeba72f, type: 2}
-  volumeSlider: {fileID: 410849817}
-  volumeText: {fileID: 1935329652}
+  volumeSlider: {fileID: 0}
+  volumeText: {fileID: 0}
 --- !u!4 &1706261360
 Transform:
   m_ObjectHideFlags: 0
