@@ -169,8 +169,66 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 4408636383789056
     m_Localized: Change Keybinds
+    m_Metadata:
+      m_Items: []
   - m_Id: 4053708450029568
     m_Localized: Flagship Battle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4792511208873984
+    m_Localized: Change Keybinds
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4794245209645056
+    m_Localized: Select a new bind
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4795454440071168
+    m_Localized: Move
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4795456935682048
+    m_Localized: Jump
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4795457845846016
+    m_Localized: Drop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4795458701484032
+    m_Localized: Attack
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4795460517617664
+    m_Localized: Attack2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4796640434053120
+    m_Localized: Click
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4796649640550400
+    m_Localized: Boost
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4796651704147968
+    m_Localized: Barrel Roll
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4799091262349312
+    m_Localized: LMB
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4799095913832448
+    m_Localized: RMB
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4799101018300416
+    m_Localized: Left Shift
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4799102641496064
+    m_Localized: Space
     m_Metadata:
       m_Items: []
   references:

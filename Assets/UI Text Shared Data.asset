@@ -129,8 +129,66 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 4408636383789056
     m_Key: Change Keybinds
+    m_Metadata:
+      m_Items: []
   - m_Id: 4053708450029568
     m_Key: HUD_FLAGSHIP_BATTLE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4792511208873984
+    m_Key: Keybinds
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4794245209645056
+    m_Key: Select_A_New_Bind
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4795454440071168
+    m_Key: KEYBIND_MOVE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4795456935682048
+    m_Key: KEYBIND_JUMP
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4795457845846016
+    m_Key: KEYBIND_DROP
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4795458701484032
+    m_Key: KEYBIND_ATTACK
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4795460517617664
+    m_Key: KEYBIND_ATTACK2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4796640434053120
+    m_Key: KEYBIND_CLICK
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4796649640550400
+    m_Key: KEYBIND_BOOST
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4796651704147968
+    m_Key: KEYBIND_BARRELROLL
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4799091262349312
+    m_Key: LMB
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4799095913832448
+    m_Key: RMB
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4799101018300416
+    m_Key: Left_Shift
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4799102641496064
+    m_Key: Space
     m_Metadata:
       m_Items: []
   m_Metadata:
