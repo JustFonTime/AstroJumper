@@ -290,6 +290,7 @@ namespace UnityEngine.InputSystem.Samples.RebindUI
 
         private void PerformInteractiveRebind(InputAction action, int bindingIndex, bool allCompositeParts = false)
         {
+            action.Disable();
             m_RebindOperation?.Cancel(); // Will null out m_RebindOperation.
 
             // Extract enabled state to allow restoring enabled state after rebind completes
