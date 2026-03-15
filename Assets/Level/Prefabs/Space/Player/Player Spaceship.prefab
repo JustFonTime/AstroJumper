@@ -222,7 +222,7 @@ MonoBehaviour:
   brakeStrength: 6
   alignStrength: 6
   coastDampStrength: 1.25
-  minTurnDegPerSec: 0
+  minTurnDegPerSec: 70
   maxTurnDegPerSec: 240
   turnAuthorityBySpeed:
     serializedVersion: 2
@@ -257,7 +257,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  requireForwardSpeedToTurn: 1
+  requireForwardSpeedToTurn: 0
   barrellRollDistance: 10.37
   barrellRollDuration: 0.5
   barrellRollSpinDegrees: 360

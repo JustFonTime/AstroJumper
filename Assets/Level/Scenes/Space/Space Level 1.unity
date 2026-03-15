@@ -1062,13 +1062,13 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2582741178997624428, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 3350557924722327067, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
       propertyPath: m_Name
       value: Player Spaceship
+      objectReference: {fileID: 0}
+    - target: {fileID: 7396577382986853205, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
+      propertyPath: minTurnDegPerSec
+      value: 120
       objectReference: {fileID: 0}
     - target: {fileID: 7670360865814592282, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1127,12 +1127,28 @@ PrefabInstance:
       propertyPath: m_Name
       value: Spaceship Player HUD
       objectReference: {fileID: 0}
+    - target: {fileID: 1501955465510026767, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1548926147540261882, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1548926147540261882, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
       propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2242713837611569483, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -85
+      objectReference: {fileID: 0}
+    - target: {fileID: 2242713837611569483, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 608
+      objectReference: {fileID: 0}
+    - target: {fileID: 2287534407084225601, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2295874869269274131, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
@@ -1230,6 +1246,14 @@ PrefabInstance:
     - target: {fileID: 4290392395574374901, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
       propertyPath: m_hasFontAssetChanged
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4635152529021860074, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -85
+      objectReference: {fileID: 0}
+    - target: {fileID: 4635152529021860074, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 506
       objectReference: {fileID: 0}
     - target: {fileID: 4709896190755064355, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
       propertyPath: m_AnchorMax.x
