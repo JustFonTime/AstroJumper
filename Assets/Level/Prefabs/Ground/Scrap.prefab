@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7626386911337812985}
   - component: {fileID: 3094665594911661441}
   - component: {fileID: 12249798728727431}
+  - component: {fileID: 5241908447769906276}
   m_Layer: 0
   m_Name: Scrap
   m_TagString: Untagged
@@ -152,3 +153,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ItemPickup
   item: {fileID: 11400000, guid: 758c282f4a8398549be050e6119b318d, type: 2}
+  PickupSound: {fileID: 5241908447769906276}
+--- !u!114 &5241908447769906276
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6932504488287900922}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11e5269d347972149b33de721a402e39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PickupSound
+  pickupAudio: {fileID: 8300000, guid: e430e97b69a2f814bb92a5602b1c2edd, type: 3}

@@ -3,7 +3,9 @@ using UnityEngine;
 public class ItemPickup : MonoBehaviour
 {
     public Item item;
+    public PickupSound PickupSound;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
+
     void Start()
     {
         
@@ -27,6 +29,7 @@ public class ItemPickup : MonoBehaviour
                 if (item != null)
                 {
                     inventory.AddItem(item);
+                    PickupSound.PlayPickupSound();
                     Destroy(gameObject); // Destroy the pickup after adding it to the inventory
                 }
             }
