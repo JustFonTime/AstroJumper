@@ -167,6 +167,10 @@ MonoBehaviour:
     m_Localized: Flagship Shields
     m_Metadata:
       m_Items: []
+  - m_Id: 4408636383789056
+    m_Localized: Change Keybinds
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

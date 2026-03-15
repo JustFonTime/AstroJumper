@@ -127,6 +127,10 @@ MonoBehaviour:
     m_Key: Flagship_Shields
     m_Metadata:
       m_Items: []
+  - m_Id: 4408636383789056
+    m_Key: Change Keybinds
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
