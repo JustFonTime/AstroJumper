@@ -127,6 +127,10 @@ MonoBehaviour:
     m_Key: Flagship_Shields
     m_Metadata:
       m_Items: []
+  - m_Id: 4053708450029568
+    m_Key: HUD_FLAGSHIP_BATTLE
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

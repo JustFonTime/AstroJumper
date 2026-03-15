@@ -385,7 +385,7 @@ MonoBehaviour:
   firePoint: {fileID: 3234909650482045839}
   turretPivots: []
   shipProfile: {fileID: 11400000, guid: 81357e49726fbf240b1daaadd1ddbd89, type: 2}
-  laserPrefab: {fileID: 659358672219713016, guid: 0f075aa575b24054d9af932f0af45de2, type: 3}
+  laserPrefab: {fileID: 659358672219713016, guid: 323e69ff10ed04747991fff7df429b60, type: 3}
   orbitFirePointAroundShip: 1
   rotateTurretPivotsTowardAim: 1
   autoUseFirePointChildrenAsTurretPivots: 1

@@ -9,6 +9,7 @@ public class ProjectilePool : MonoBehaviour
     public GameObject projectilePrefab;
     public int poolSize = 10;
     public Queue<GameObject> projectilePool = new Queue<GameObject>();
+    public ProjectileAudio playSound;
 
     void Awake()
     {
@@ -26,8 +27,10 @@ public class ProjectilePool : MonoBehaviour
             GameObject projectile = projectilePool.Dequeue();
             projectile.SetActive(true);
             projectile.GetComponent<Projectile>().enabled = true; 
-            projectile.transform.GetChild(0).gameObject.SetActive(true); 
+            projectile.transform.GetChild(0).gameObject.SetActive(true);
+            playSound.PlayRandomSound();
             return projectile;
+
         }
         else
         {

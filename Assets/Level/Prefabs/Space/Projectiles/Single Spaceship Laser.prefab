@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 5276842242530782639}
   - component: {fileID: 7480344593560246085}
   - component: {fileID: 3107268486563652869}
+  - component: {fileID: 105930661847334178}
   m_Layer: 0
   m_Name: Single Spaceship Laser
   m_TagString: Projectile
@@ -194,9 +195,9 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 8300000, guid: 5c99a88afd8fa4645a7f97bdad89701b, type: 3}
-  m_PlayOnAwake: 1
-  m_Volume: 0.4
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 0.3
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -280,6 +281,23 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &105930661847334178
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 659358672219713016}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c3b852e69a4422429739da932c37abe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  audioClips:
+  - {fileID: 8300000, guid: 5c99a88afd8fa4645a7f97bdad89701b, type: 3}
+  - {fileID: 8300000, guid: 82e8497da2caa6c42aa4f2eccca7b7ef, type: 3}
+  - {fileID: 8300000, guid: 62cae6490aea88a4985ba9642f5bc56b, type: 3}
+  - {fileID: 8300000, guid: 48dc53af1caa75441b378ac1aa3e6b30, type: 3}
 --- !u!1001 &131798471528002907
 PrefabInstance:
   m_ObjectHideFlags: 0

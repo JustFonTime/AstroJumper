@@ -14,7 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
   m_GroupName: Default Local Group
   m_GUID: f42099ed7ed964d1b8ffa4a57c2117f5
-  m_SerializeEntries: []
+  m_SerializeEntries:
+  - m_GUID: 0ec8235a41e1a154ab355d9b2337227f
+    m_Address: Assets/Art/Models/Animations/JumpFall.anim
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: aa013e559c216459bacf4320eea2b8de, type: 2}
   m_SchemaSet:

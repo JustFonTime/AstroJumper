@@ -128,12 +128,24 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1412570048484421713, guid: e5dc360da6c157940a327e3bdc1adb5b, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 249
+      objectReference: {fileID: 0}
+    - target: {fileID: 1412570048484421713, guid: e5dc360da6c157940a327e3bdc1adb5b, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 140
+      objectReference: {fileID: 0}
+    - target: {fileID: 1412570048484421713, guid: e5dc360da6c157940a327e3bdc1adb5b, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1412570048484421713, guid: e5dc360da6c157940a327e3bdc1adb5b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 4.4088
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1412570048484421713, guid: e5dc360da6c157940a327e3bdc1adb5b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.6478
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1412570048484421713, guid: e5dc360da6c157940a327e3bdc1adb5b, type: 3}
       propertyPath: m_LocalPosition.z
@@ -167,10 +179,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1412570048484421713, guid: e5dc360da6c157940a327e3bdc1adb5b, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2986369485186554745, guid: e5dc360da6c157940a327e3bdc1adb5b, type: 3}
       propertyPath: cam
       value: 
       objectReference: {fileID: 1354088537}
+    - target: {fileID: 2986369485186554745, guid: e5dc360da6c157940a327e3bdc1adb5b, type: 3}
+      propertyPath: parallax
+      value: 0.004
+      objectReference: {fileID: 0}
+    - target: {fileID: 2986369485186554745, guid: e5dc360da6c157940a327e3bdc1adb5b, type: 3}
+      propertyPath: extraScale
+      value: 1.2
+      objectReference: {fileID: 0}
     - target: {fileID: 2986369485186554745, guid: e5dc360da6c157940a327e3bdc1adb5b, type: 3}
       propertyPath: scrollTarget
       value: 
@@ -225,7 +249,7 @@ AudioSource:
   m_GameObject: {fileID: 402720237}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 24300002, guid: af38ba69cdbdf49d487bf969fbeba72f, type: 2}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: f7f6bb893034a4e49a039be4e0cf1dba, type: 3}
   m_PlayOnAwake: 1
