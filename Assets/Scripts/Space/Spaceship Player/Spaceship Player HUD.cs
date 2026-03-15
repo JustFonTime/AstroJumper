@@ -22,6 +22,11 @@ public class SpaceshipPlayerHUD : MonoBehaviour
     [SerializeField] private int enemyFlagshipTeamId = 1;
     [SerializeField] private float flagshipLookupInterval = 0.5f;
 
+    [Header("Font Settings")]
+    [SerializeField] private TMP_FontAsset defaultFont; // Anta-Regular SDF
+    [SerializeField] private TMP_FontAsset koreanFont;  // NotoSansKR_SDF (fallback)
+    [SerializeField] private TMP_FontAsset chineseFont; // NotoSansSC_SDF (fallback)
+
     private GameObject player;
     private SpaceshipHealthComponent playerHealth;
     private SpaceshipMovement playerMovement;
@@ -36,6 +41,7 @@ public class SpaceshipPlayerHUD : MonoBehaviour
 
         if (waveText != null)
             waveText.text = GetTranslatedText("HUD_FLAGSHIP_BATTLE");
+            SetFontForText(waveText);
 
         fleetSpawner = FleetSpawner.Instance;
         if (fleetSpawner != null)
@@ -97,12 +103,23 @@ public class SpaceshipPlayerHUD : MonoBehaviour
         shieldSlider.value = playerHealth.ShieldRatio;
     }
 
+    private void SetFontForText(TextMeshProUGUI textComponent)
+    {
+        if (textComponent == null) return;
+    
+        string localeCode = LocalizationSettings.SelectedLocale.Identifier.Code;
+        
+        textComponent.font = defaultFont; // Anta-Regular SDF
+    }
+
     public void SetAliveEnemies(int aliveEnemies)
     {
         if (aliveEnemiesText != null)
         {
             string label = GetTranslatedText("HUD_ENEMIES_LEFT");
             aliveEnemiesText.text = label + " " + aliveEnemies.ToString();
+
+            SetFontForText(aliveEnemiesText);
         }
     }
 
@@ -125,7 +142,10 @@ public class SpaceshipPlayerHUD : MonoBehaviour
     private void OnLanguageChanged(Locale newLocale)
     {
         if (waveText != null)
+        {
             waveText.text = GetTranslatedText("HUD_FLAGSHIP_BATTLE");
+            SetFontForText(waveText);
+        }
     
         if (fleetSpawner != null)
             SetAliveEnemies(fleetSpawner.AliveTrackedEnemies);
