@@ -12,6 +12,7 @@ public class Menu_Manager : MonoBehaviour
     public GameObject mainMenuPanel;
     public GameObject optionsPanel;
     public GameObject creditsPanel;
+    public GameObject keybindPanel;
 
     [Header("Audio Settings")]
     public AudioMixer audioMixer;
@@ -75,6 +76,7 @@ public class Menu_Manager : MonoBehaviour
         mainMenuPanel.SetActive(true);
         optionsPanel.SetActive(false);
         creditsPanel.SetActive(false);
+        keybindPanel.SetActive(false);
     }
 
     public void StartGame()
@@ -87,6 +89,7 @@ public class Menu_Manager : MonoBehaviour
         mainMenuPanel.SetActive(false);
         optionsPanel.SetActive(true);
         creditsPanel.SetActive(false);
+        keybindPanel.SetActive(false);
     }
 
     public void ShowCreditsMenu()
@@ -94,6 +97,15 @@ public class Menu_Manager : MonoBehaviour
         mainMenuPanel.SetActive(false);
         optionsPanel.SetActive(false);
         creditsPanel.SetActive(true);
+        keybindPanel.SetActive(false);
+    }
+
+    public void ShowKeybindMenu()
+    {
+        mainMenuPanel.SetActive(false);
+        optionsPanel.SetActive(false);
+        creditsPanel.SetActive(false);
+        keybindPanel.SetActive(true); 
     }
 
     System.Collections.IEnumerator LoadSavedLanguage(string savedLanguage)
