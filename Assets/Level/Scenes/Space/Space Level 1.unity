@@ -1066,6 +1066,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player Spaceship
       objectReference: {fileID: 0}
+    - target: {fileID: 7396577382986853205, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
+      propertyPath: minTurnDegPerSec
+      value: 120
+      objectReference: {fileID: 0}
     - target: {fileID: 7670360865814592282, guid: b8a43b8f09201984ba3df41d2de086ab, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
