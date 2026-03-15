@@ -182,7 +182,8 @@ public class Unit : MonoBehaviour
         spriteRenderer.sprite = hitBoxInfo.GetSprite();
         
         attackSprite.transform.position = transform.position + offset;
-        if(hitBoxInfo.GetIsMelee())
+        attackSprite.transform.localScale = hitBoxPrefab.transform.localScale;//makes it so white box matches actual hitbox
+        if (hitBoxInfo.GetIsMelee())
         {
             attackSprite.transform.parent = transform; 
         }
