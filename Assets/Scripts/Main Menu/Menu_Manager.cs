@@ -27,7 +27,7 @@ public class Menu_Manager : MonoBehaviour
         if (PlayerPrefs.GetInt("OpenOptionsOnLoad", 0) == 1)
         {
             ShowOptionsMenu();
-            PlayerPrefs.SetInt("OpenOptionsOnLoad", 0); // Clear the flag
+            PlayerPrefs.SetInt("OpenOptionsOnLoad", 0);
         }
 
         string savedLanguage = PlayerPrefs.GetString("SelectedLanguage", "en");
