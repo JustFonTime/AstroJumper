@@ -301,21 +301,19 @@ public class EnemyAI : MonoBehaviour
                 return;
             }
 
-            // If not in true hit range yet, continue to get closer
-            if (dist > meleeRange)
-            {
-                motor.Move();
-                return;
-            }
-
-            // Now we're close enough to strike - stop and attack
-            motor.StopHorizontal();
-
+            // Attack on cooldown regardless of position
             if (Time.time >= nextAttackTime)
             {
                 nextAttackTime = Time.time + attackCooldown;
                 DoAttack();
             }
+
+            // Keep rushing
+            if (dist > meleeRange * 0.5f)
+                motor.Move();
+            else
+                motor.StopHorizontal();
+
             return;
         }
 
@@ -350,7 +348,7 @@ public class EnemyAI : MonoBehaviour
 
         // Use X-only distance to match TickAttack - Vector2.Distance
         float dist = Mathf.Abs(player.position.x - transform.position.x);
-        if (attackTypes.HasFlag(AttackType.Melee) && dist <= meleeRange)
+        if (attackTypes.HasFlag(AttackType.Melee) && !attackTypes.HasFlag(AttackType.Ranged))
         {
             DoMeleeAttack();
             return;

@@ -169,6 +169,8 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 4408636383789056
     m_Localized: Change Keybinds
+  - m_Id: 4053708450029568
+    m_Localized: Flagship Battle
     m_Metadata:
       m_Items: []
   references:

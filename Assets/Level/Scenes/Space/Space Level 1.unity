@@ -1219,6 +1219,18 @@ PrefabInstance:
       propertyPath: player
       value: 
       objectReference: {fileID: 1020784283}
+    - target: {fileID: 4290392395574374901, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: f8c7ee3eaf354784d91cd565e5814446, type: 2}
+    - target: {fileID: 4290392395574374901, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 1811558722457428070, guid: f8c7ee3eaf354784d91cd565e5814446, type: 2}
+    - target: {fileID: 4290392395574374901, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4709896190755064355, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -1227,6 +1239,18 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5739730639106616279, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
+      propertyPath: koreanFont
+      value: 
+      objectReference: {fileID: 11400000, guid: ef5222abbaa684154ae80e36379c4248, type: 2}
+    - target: {fileID: 5739730639106616279, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
+      propertyPath: chineseFont
+      value: 
+      objectReference: {fileID: 11400000, guid: 1a77308f398b6470cbe730947eb244f4, type: 2}
+    - target: {fileID: 5739730639106616279, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
+      propertyPath: defaultFont
+      value: 
+      objectReference: {fileID: 11400000, guid: f8c7ee3eaf354784d91cd565e5814446, type: 2}
     - target: {fileID: 5850687036317708674, guid: 24864c5f7cc558a4bb8aa67f64db9923, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
