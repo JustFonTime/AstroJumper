@@ -283,7 +283,7 @@ MonoBehaviour:
   investigateDuration: 2
   investigateTolerance: 0.15
   attackTypes: 1
-  meleeEnterBuffer: 0.7
+  meleeEnterBuffer: 0.75
   meleeRange: 2
   rangedRange: 5
   firePoint: {fileID: 4124021642724615479}
@@ -312,6 +312,7 @@ MonoBehaviour:
   hitBoxPrefab: {fileID: 174109804372061078, guid: b454596e713e44f4daefd355156d1fcf, type: 3}
   hitBoxPrefab2: {fileID: 0}
   unitProjectilePool: {fileID: 0}
+  DeathDrop: {fileID: 0}
 --- !u!70 &7832879575391480077
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
