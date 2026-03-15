@@ -9,7 +9,7 @@ public class SaveData
     public int newMoney; //Important
 
     //------Upgrades (Player Spaceship current levels)-------
-    public SpaceshipUpgradeData spaceshipUpgradeData;
+    public SpaceshipUpgradeData spaceshipUpgradeData = new SpaceshipUpgradeData();
 
     [Serializable]
     public class SpaceshipUpgradeData
@@ -25,39 +25,40 @@ public class SaveData
         public int maxHealthLevel;
     }
 
+    public void EnsureInitialized(DefualtGameSaveSO defaults)
+    {
+        if (spaceshipUpgradeData == null)
+        {
+            spaceshipUpgradeData = CreateDefaultUpgradeData(defaults != null ? defaults.playerSpaceshipUpgradesSO : null);
+        }
+    }
+
     public static SaveData CreateDefualtSaveData(DefualtGameSaveSO defaults)
     {
         var d = new SaveData();
         //Init everything to the defualt value
         d.newMoney = (defaults != null) ? defaults.startingNewMoney : 0;
-
-        if (defaults != null && defaults.playerSpaceshipUpgradesSO != null)
-        {
-            var u = defaults.playerSpaceshipUpgradesSO;
-            d.spaceshipUpgradeData.moveForceLevel = u.moveForceStartingLevel;
-            d.spaceshipUpgradeData.maxSpeedLevel = u.maxSpeedStartingLevel;
-            d.spaceshipUpgradeData.boostForceLevel = u.boostForceStartingLevel;
-            d.spaceshipUpgradeData.barrelRollDistanceLevel =
-                u.barrelRollDistanceStartingLevel;
-            d.spaceshipUpgradeData.barrelRollSpeedLevel =
-                u.barrelRollSpeedStartingLevel;
-            d.spaceshipUpgradeData.fireRateLevel = u.fireRateStartingLevel;
-            d.spaceshipUpgradeData.maxHealthLevel = u.maxHealthStartingLevel;
-            d.spaceshipUpgradeData.maxShieldsLevel = u.maxShieldsStartingLevel;
-        }
-        else
-        {
-            //Fallback
-            d.spaceshipUpgradeData.moveForceLevel = 0;
-            d.spaceshipUpgradeData.maxSpeedLevel = 0;
-            d.spaceshipUpgradeData.boostForceLevel = 0;
-            d.spaceshipUpgradeData.barrelRollDistanceLevel = 0;
-            d.spaceshipUpgradeData.barrelRollSpeedLevel = 0;
-            d.spaceshipUpgradeData.fireRateLevel = 0;
-            d.spaceshipUpgradeData.maxHealthLevel = 0;
-            d.spaceshipUpgradeData.maxShieldsLevel = 0;
-        }
+        d.spaceshipUpgradeData = CreateDefaultUpgradeData(defaults != null ? defaults.playerSpaceshipUpgradesSO : null);
 
         return d;
+    }
+
+    private static SpaceshipUpgradeData CreateDefaultUpgradeData(PlayerSpaceshipUpgradesSO upgradeDefaults)
+    {
+        var upgradeData = new SpaceshipUpgradeData();
+
+        if (upgradeDefaults != null)
+        {
+            upgradeData.moveForceLevel = upgradeDefaults.moveForceStartingLevel;
+            upgradeData.maxSpeedLevel = upgradeDefaults.maxSpeedStartingLevel;
+            upgradeData.boostForceLevel = upgradeDefaults.boostForceStartingLevel;
+            upgradeData.barrelRollDistanceLevel = upgradeDefaults.barrelRollDistanceStartingLevel;
+            upgradeData.barrelRollSpeedLevel = upgradeDefaults.barrelRollSpeedStartingLevel;
+            upgradeData.fireRateLevel = upgradeDefaults.fireRateStartingLevel;
+            upgradeData.maxHealthLevel = upgradeDefaults.maxHealthStartingLevel;
+            upgradeData.maxShieldsLevel = upgradeDefaults.maxShieldsStartingLevel;
+        }
+
+        return upgradeData;
     }
 }

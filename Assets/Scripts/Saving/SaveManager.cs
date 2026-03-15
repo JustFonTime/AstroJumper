@@ -1,5 +1,7 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 using System.Collections;
+using System;
 using System.IO;
 
 public class SaveManager : MonoBehaviour
@@ -22,7 +24,13 @@ public class SaveManager : MonoBehaviour
     private float dirtyTimer;
 
     [Header("AutoSave")] [SerializeField] private bool autoSave = true;
+    [FormerlySerializedAs("autoSaveDelay")]
     [SerializeField] private float autoSaveDelaySaveTime = 10.0f;
+
+    [Header("Debug")]
+    [SerializeField] private bool enableMoneyTestHotkey = true;
+    [SerializeField] private KeyCode addMoneyTestKey = KeyCode.M;
+    [SerializeField] private int addMoneyTestAmount = 100;
 
 
     private void Awake()
@@ -39,10 +47,10 @@ public class SaveManager : MonoBehaviour
 
         LoadGame();
 
-        StartCoroutine(AutoSave());
-
-        AddNewMoney(100);
- 
+        if (autoSave)
+        {
+            StartCoroutine(AutoSave());
+        }
     }
 
     private IEnumerator AutoSave()
@@ -50,12 +58,17 @@ public class SaveManager : MonoBehaviour
         while (autoSave)
         {
             yield return new WaitForSeconds(autoSaveDelaySaveTime);
-            SaveGame();
+            if (dirty)
+            {
+                SaveGame();
+            }
         }
     }
 
     private void Update()
     {
+        HandleDebugHotkeys();
+
         if (!autoSave || !dirty) return;
         dirtyTimer += Time.unscaledDeltaTime;
         if (dirtyTimer >= dirtyDelaySaveTime)
@@ -70,36 +83,54 @@ public class SaveManager : MonoBehaviour
         dirtyTimer = 0f;
     }
 
+    private void HandleDebugHotkeys()
+    {
+        if (!enableMoneyTestHotkey || !Input.GetKeyDown(addMoneyTestKey))
+            return;
+
+        AddNewMoney(addMoneyTestAmount);
+        Debug.Log($"Save test hotkey pressed. Added {addMoneyTestAmount} money. Current money is now {CurrentSaveData.newMoney}.");
+    }
+
     private void LoadGame()
     {
         if (!File.Exists(SaveFilePath))
         {
-            //No file found, create new save data
-            CurrentSaveData = SaveData.CreateDefualtSaveData(defualtGameSaveSO);
-            WriteToDisk();
+            CreateDefaultSaveFile("No save file found.");
             return;
         }
 
-        string json = File.ReadAllText(SaveFilePath);
+        try
+        {
+            string json = File.ReadAllText(SaveFilePath);
 
-        CurrentSaveData = JsonUtility.FromJson<SaveData>(json);
+            CurrentSaveData = JsonUtility.FromJson<SaveData>(json);
+        }
+        catch (Exception ex)
+        {
+            CreateDefaultSaveFile($"Failed reading save file at {SaveFilePath}. {ex.Message}");
+            return;
+        }
 
         if (CurrentSaveData == null)
         {
-            CurrentSaveData = SaveData.CreateDefualtSaveData(defualtGameSaveSO);
-            WriteToDisk();
-            Debug.LogWarning("Save file was corrupted. Created new save data at ^^^^^^");
+            CreateDefaultSaveFile($"Save file was empty or invalid JSON at {SaveFilePath}.");
             return;
+        }
+
+        bool repairedMissingUpgradeData = CurrentSaveData.spaceshipUpgradeData == null;
+        CurrentSaveData.EnsureInitialized(defualtGameSaveSO);
+
+        if (repairedMissingUpgradeData)
+        {
+            Debug.LogWarning($"Save file at {SaveFilePath} was missing upgrade data. Restored defaults for that section.");
+            WriteToDisk();
         }
     }
 
     public void SaveGame()
     {
-        if (CurrentSaveData == null)
-        {
-            Debug.LogError("No save data to write to json using defualts!");
-            CurrentSaveData = SaveData.CreateDefualtSaveData(defualtGameSaveSO);
-        }
+        EnsureCurrentSaveData();
 
         dirty = false;
         dirtyTimer = 0f;
@@ -109,8 +140,19 @@ public class SaveManager : MonoBehaviour
 
     private void WriteToDisk()
     {
-        string json = JsonUtility.ToJson(CurrentSaveData, true);
-        File.WriteAllText(SaveFilePath, json);
+        EnsureCurrentSaveData();
+
+        try
+        {
+            Directory.CreateDirectory(Application.persistentDataPath);
+            string json = JsonUtility.ToJson(CurrentSaveData, true);
+            File.WriteAllText(SaveFilePath, json);
+            Debug.Log($"Saved game to {SaveFilePath}. Money={CurrentSaveData.newMoney}");
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"Failed writing save file at {SaveFilePath}. {ex}");
+        }
     }
 
     private void OnApplicationQuit()
@@ -130,28 +172,35 @@ public class SaveManager : MonoBehaviour
 
     #region Helper Functions
 
-    public int GetNewMoney() => (CurrentSaveData != null) ? CurrentSaveData.newMoney : 0;
+    public int GetNewMoney()
+    {
+        EnsureCurrentSaveData();
+        return (CurrentSaveData != null) ? CurrentSaveData.newMoney : 0;
+    }
 
     public void SetNewMoney(int newMoney)
     {
-        if (CurrentSaveData != null)
-            CurrentSaveData.newMoney = newMoney;
-        else
-            Debug.LogError("CurrentSaveData.newMoney is null!");
+        EnsureCurrentSaveData();
+        if (CurrentSaveData == null) return;
+
+        CurrentSaveData.newMoney = newMoney;
         MakeDirty();
     }
 
     public void AddNewMoney(int amount)
     {
-        if (CurrentSaveData != null)
-            CurrentSaveData.newMoney += amount;
-        else
-            Debug.LogError("CurrentSaveData.newMoney is null!");
+        EnsureCurrentSaveData();
+        if (CurrentSaveData == null) return;
+
+        CurrentSaveData.newMoney += amount;
         MakeDirty();
     }
 
     public int GetUpgradeLevel(PlayerUpgradeState.UpgradeType upgradeType)
     {
+        EnsureCurrentSaveData();
+        if (CurrentSaveData == null) return 0;
+
         switch (upgradeType)
         {
             case PlayerUpgradeState.UpgradeType.MoveForce:
@@ -178,6 +227,9 @@ public class SaveManager : MonoBehaviour
 
     public void AddUpgradeLevel(PlayerUpgradeState.UpgradeType upgradeType)
     {
+        EnsureCurrentSaveData();
+        if (CurrentSaveData == null) return;
+
         switch (upgradeType)
         {
             case PlayerUpgradeState.UpgradeType.MoveForce:
@@ -205,7 +257,26 @@ public class SaveManager : MonoBehaviour
                 CurrentSaveData.spaceshipUpgradeData.maxShieldsLevel++;
                 break;
         }
+
+        MakeDirty();
     }
 
     #endregion
+
+    private void EnsureCurrentSaveData()
+    {
+        if (CurrentSaveData == null)
+        {
+            CurrentSaveData = SaveData.CreateDefualtSaveData(defualtGameSaveSO);
+        }
+
+        CurrentSaveData.EnsureInitialized(defualtGameSaveSO);
+    }
+
+    private void CreateDefaultSaveFile(string reason)
+    {
+        CurrentSaveData = SaveData.CreateDefualtSaveData(defualtGameSaveSO);
+        Debug.LogWarning($"{reason} Created a new save file at {SaveFilePath}.");
+        WriteToDisk();
+    }
 }
