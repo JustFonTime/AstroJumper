@@ -110,7 +110,7 @@ MonoBehaviour:
   damage: 10
   isPermanent: 0
   duration: 1
-  knockbackForce: 1
+  knockbackForce: 3
   knockbackVerticalForce: 2
   isMelee: 0
   projectileSpeed: 6

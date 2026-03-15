@@ -1,17 +1,28 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerSpaceshipCombat : MonoBehaviour
 {
-    [Header("Refs")] [SerializeField] private PlayerUpgradeState upgrades;
+    [Header("Refs")]
+    [SerializeField] private PlayerUpgradeState upgrades;
     [SerializeField] private SpaceAttackInfo[] attacks;
     [SerializeField] private Camera cam;
 
     [Tooltip("Default spawn point that gets rotated around the ship to sit between ship + aim direction.")]
-    [SerializeField]
-    private Transform projectileSpawn;
+    [SerializeField] private Transform projectileSpawn;
 
-    [Header("Debug")] [SerializeField] private bool drawDebug = false;
+    [Header("Input Actions")]
+    [SerializeField] private InputActionAsset actionsAsset;
+    [SerializeField] private string actionMapName = "Player";
+    [SerializeField] private string primaryFireActionName = "PrimaryFire";
+    [SerializeField] private string secondaryFireActionName = "SecondaryFire";
+
+    private InputAction primaryFireAction;
+    private InputAction secondaryFireAction;
+
+    [Header("Debug")]
+    [SerializeField] private bool drawDebug = false;
     [SerializeField] private float debugLineLen = 3f;
 
     public Vector3 AimDirectionWorld { get; private set; }
@@ -27,6 +38,17 @@ public class PlayerSpaceshipCombat : MonoBehaviour
             spawnRadius = projectileSpawn.localPosition.magnitude;
             if (spawnRadius < 0.001f) spawnRadius = 1f;
         }
+
+        if (actionsAsset == null)
+        {
+            Debug.LogError("PlayerSpaceshipCombat: No InputActionAsset assigned.");
+            return;
+        }
+
+        var map = actionsAsset.FindActionMap(actionMapName, true);
+
+        primaryFireAction = map.FindAction(primaryFireActionName, true);
+        secondaryFireAction = map.FindAction(secondaryFireActionName, true);
     }
 
     private void Update()
@@ -34,13 +56,13 @@ public class PlayerSpaceshipCombat : MonoBehaviour
         UpdateAimDirection();
         RotateSpawnPointAroundCenter();
 
-        if (Input.GetMouseButton(0))
+        if (primaryFireAction != null && primaryFireAction.IsPressed())
         {
             if (attacks != null && attacks.Length > 0)
                 TryAttack(attacks[0]);
         }
 
-        if (Input.GetMouseButton(1))
+        if (secondaryFireAction != null && secondaryFireAction.IsPressed())
         {
             if (attacks != null && attacks.Length > 1)
                 TryAttack(attacks[1]);
@@ -49,6 +71,7 @@ public class PlayerSpaceshipCombat : MonoBehaviour
         if (drawDebug)
         {
             Debug.DrawLine(transform.position, transform.position + AimDirectionWorld * debugLineLen, Color.yellow);
+
             if (projectileSpawn != null)
                 Debug.DrawLine(transform.position, projectileSpawn.position, Color.cyan);
         }
@@ -64,15 +87,16 @@ public class PlayerSpaceshipCombat : MonoBehaviour
             return;
         }
 
-        Vector3 mouse = Input.mousePosition;
-        float zDist = Mathf.Abs(transform.position.z - cam.transform.position.z);
-        mouse.z = zDist;
+        Vector2 mousePos = Mouse.current.position.ReadValue();
 
-        Vector3 mouseWorld = cam.ScreenToWorldPoint(mouse);
+        float zDist = Mathf.Abs(transform.position.z - cam.transform.position.z);
+
+        Vector3 mouseWorld = cam.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, zDist));
+
         Vector2 toMouse = (Vector2)(mouseWorld - transform.position);
 
         AimDirectionWorld = (toMouse.sqrMagnitude < 0.0001f)
-            ? (Vector3)transform.up
+            ? transform.up
             : (Vector3)toMouse.normalized;
     }
 
@@ -81,11 +105,13 @@ public class PlayerSpaceshipCombat : MonoBehaviour
         if (projectileSpawn == null) return;
 
         Vector2 aimDir = AimDirectionWorld;
+
         if (aimDir.sqrMagnitude < 0.0001f)
             aimDir = transform.up;
 
         Vector2 localAimDir = transform.InverseTransformDirection(aimDir).normalized;
-        projectileSpawn.localPosition = (Vector3)(localAimDir * spawnRadius);
+
+        projectileSpawn.localPosition = localAimDir * spawnRadius;
         projectileSpawn.up = aimDir;
     }
 
@@ -98,8 +124,15 @@ public class PlayerSpaceshipCombat : MonoBehaviour
         Transform firePoint = attack.firePoint != null ? attack.firePoint : projectileSpawn;
         if (firePoint == null) return;
 
-        Vector3 shotDirection = ApplySpread(AimDirectionWorld, attack.useSpread, attack.minSpreadAngle, attack.maxSpreadAngle);
+        Vector3 shotDirection = ApplySpread(
+            AimDirectionWorld,
+            attack.useSpread,
+            attack.minSpreadAngle,
+            attack.maxSpreadAngle
+        );
+
         Quaternion rot = Quaternion.FromToRotation(Vector3.up, shotDirection);
+
         Instantiate(attack.projectile, firePoint.position, rot);
 
         StartCoroutine(AttackCooldown(attack));
@@ -110,12 +143,14 @@ public class PlayerSpaceshipCombat : MonoBehaviour
         attack.canFire = false;
 
         float upgradedRate = attack.fireRate;
+
         if (upgrades != null)
             upgradedRate -= upgrades.GetUpgradeBoost(PlayerUpgradeState.UpgradeType.FireRate);
 
         upgradedRate = Mathf.Max(0.02f, upgradedRate);
 
         yield return new WaitForSeconds(upgradedRate);
+
         attack.canFire = true;
     }
 
@@ -125,7 +160,19 @@ public class PlayerSpaceshipCombat : MonoBehaviour
             return baseDirection;
 
         float angle = Random.Range(minSpreadAngle, maxSpreadAngle);
+
         return Quaternion.Euler(0f, 0f, angle) * baseDirection;
     }
-}
 
+    private void OnEnable()
+    {
+        if (primaryFireAction != null) primaryFireAction.Enable();
+        if (secondaryFireAction != null) secondaryFireAction.Enable();
+    }
+
+    private void OnDisable()
+    {
+        if (primaryFireAction != null) primaryFireAction.Disable();
+        if (secondaryFireAction != null) secondaryFireAction.Disable();
+    }
+}

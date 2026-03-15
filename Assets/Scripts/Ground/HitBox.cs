@@ -4,6 +4,7 @@
 // I might just add a rigidbody2D to the hitbox if more problems appear.
 using Unity.VisualScripting;
 using UnityEngine;
+using System.Collections;
 using System;
 
 public class HitBox : MonoBehaviour
@@ -49,7 +50,16 @@ public class HitBox : MonoBehaviour
         {
             spriteRenderer.sprite = sprite;    
         }
-        
+        StartCoroutine(ResetCollider());
+
+    }
+
+    //resets collider so that when player continues to be in the hitbox after it is created, it can still trigger the hitbox
+    private IEnumerator ResetCollider()
+    {
+        hitBoxCollider.enabled = false;
+        yield return null;
+        hitBoxCollider.enabled = true;
     }
 
     // Update is called once per frame

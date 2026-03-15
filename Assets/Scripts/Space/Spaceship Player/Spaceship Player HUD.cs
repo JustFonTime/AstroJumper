@@ -24,8 +24,8 @@ public class SpaceshipPlayerHUD : MonoBehaviour
 
     [Header("Font Settings")]
     [SerializeField] private TMP_FontAsset defaultFont; // Anta-Regular SDF
-    [SerializeField] private TMP_FontAsset koreanFont;  // NotoSansKR_SDF (fallback)
-    [SerializeField] private TMP_FontAsset chineseFont; // NotoSansSC_SDF (fallback)
+    [SerializeField] private TMP_FontAsset koreanFont;  // NotoSansKR_SDF
+    [SerializeField] private TMP_FontAsset chineseFont; // NotoSansSC_SDF
 
     private GameObject player;
     private SpaceshipHealthComponent playerHealth;
