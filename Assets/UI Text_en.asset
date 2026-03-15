@@ -167,6 +167,10 @@ MonoBehaviour:
     m_Localized: Flagship Shields
     m_Metadata:
       m_Items: []
+  - m_Id: 4053708450029568
+    m_Localized: Flagship Battle
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []
